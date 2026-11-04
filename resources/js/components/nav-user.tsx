@@ -1,4 +1,3 @@
-
 import { usePage } from '@inertiajs/react';
 import { ChevronsUpDown } from 'lucide-react';
 import {
@@ -47,8 +46,8 @@ export function NavUser() {
                             isMobile
                                 ? 'bottom'
                                 : state === 'collapsed'
-                                    ? 'left'
-                                    : 'bottom'
+                                  ? 'left'
+                                  : 'bottom'
                         }
                     >
                         <UserMenuContent user={auth.user} />

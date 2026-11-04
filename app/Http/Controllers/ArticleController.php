@@ -8,7 +8,8 @@ use Inertia\Response;
 
 class ArticleController extends Controller
 {
-    public function index(): Response {
+    public function index(): Response
+    {
         $articles = Article::all();
 
         return Inertia::render('Articles/Index', [
