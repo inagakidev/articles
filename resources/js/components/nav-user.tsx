@@ -1,3 +1,4 @@
+
 import { usePage } from '@inertiajs/react';
 import { ChevronsUpDown } from 'lucide-react';
 import {
@@ -16,9 +17,14 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export function NavUser() {
-    const { auth, currentTeam } = usePage().props;
+    const { auth } = usePage().props;
     const { state } = useSidebar();
     const isMobile = useIsMobile();
+
+    // Visitantes não possuem menu de usuário.
+    if (!auth.user) {
+        return null;
+    }
 
     return (
         <SidebarMenu>
@@ -30,7 +36,7 @@ export function NavUser() {
                             className="group text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent"
                             data-test="sidebar-menu-button"
                         >
-                            <UserInfo user={auth.user} team={currentTeam} />
+                            <UserInfo user={auth.user} />
                             <ChevronsUpDown className="ml-auto size-4" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
@@ -41,8 +47,8 @@ export function NavUser() {
                             isMobile
                                 ? 'bottom'
                                 : state === 'collapsed'
-                                  ? 'left'
-                                  : 'bottom'
+                                    ? 'left'
+                                    : 'bottom'
                         }
                     >
                         <UserMenuContent user={auth.user} />

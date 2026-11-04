@@ -1,7 +1,7 @@
 <?php
 
-test('returns a successful response', function () {
+test('homepage redirects to the articles list', function () {
     $response = $this->get(route('home'));
 
-    $response->assertOk();
+    $response->assertRedirect(route('articles.index'));
 });
