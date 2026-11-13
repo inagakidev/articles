@@ -193,29 +193,29 @@ Cada decisão tem um destes status:
 
 ### Pendências originais resolvidas
 
-| Código | Pendência | Decisão |
-|---|---|---|
-| P01 | Exclusão de artigo e histórico de versões | Todas as versões são apagadas; imagens pela rotina de imagens sem uso |
-| P02 | Exclusão de artigo e comentários | Comentários e respostas são apagados |
-| P03 | Exclusão de artigo e denúncias | Denúncias abertas encerradas como "conteúdo removido" |
-| P04 | Versões pendentes na exclusão de conta | Voltam a rascunho no pedido; na exclusão definitiva, publicados ficam só com a versão em vigor e não publicados são apagados |
-| P05 | Edição pelo administrador durante a análise | Não permitida; o administrador aprova ou rejeita |
-| P06 | Reenvio de artigos rejeitados | Espera de 24 horas após cada rejeição |
-| P07 | Limite de tamanho do artigo | Título até 150 caracteres; conteúdo até 50.000 |
-| P08 | Limites dos comentários | Até 2.000 caracteres, um a cada 30 segundos, respostas até 3 níveis |
-| P09 | Autor do artigo denunciando comentários | Permitido |
-| P10 | Notificações de curtidas e favoritos | Só curtidas (em artigos e comentários próprios), agrupadas por item |
+| Código | Pendência                                   | Decisão                                                                                                                      |
+| ------ | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| P01    | Exclusão de artigo e histórico de versões   | Todas as versões são apagadas; imagens pela rotina de imagens sem uso                                                        |
+| P02    | Exclusão de artigo e comentários            | Comentários e respostas são apagados                                                                                         |
+| P03    | Exclusão de artigo e denúncias              | Denúncias abertas encerradas como "conteúdo removido"                                                                        |
+| P04    | Versões pendentes na exclusão de conta      | Voltam a rascunho no pedido; na exclusão definitiva, publicados ficam só com a versão em vigor e não publicados são apagados |
+| P05    | Edição pelo administrador durante a análise | Não permitida; o administrador aprova ou rejeita                                                                             |
+| P06    | Reenvio de artigos rejeitados               | Espera de 24 horas após cada rejeição                                                                                        |
+| P07    | Limite de tamanho do artigo                 | Título até 150 caracteres; conteúdo até 50.000                                                                               |
+| P08    | Limites dos comentários                     | Até 2.000 caracteres, um a cada 30 segundos, respostas até 3 níveis                                                          |
+| P09    | Autor do artigo denunciando comentários     | Permitido                                                                                                                    |
+| P10    | Notificações de curtidas e favoritos        | Só curtidas (em artigos e comentários próprios), agrupadas por item                                                          |
 
 Todas aprovadas em 12/11/2026.
 
 ## 1d. Decisões de produto registradas no PRODUCT.md
 
-| Tema | Decisão |
-|---|---|
-| Administradora do MVP | Amanda, responsável pelo projeto, como única administradora. |
-| Métricas de sucesso | Artigos publicados por mês e autores ativos por mês (autores com pelo menos um artigo aprovado no mês). |
-| Oferta | Gratuita para ler e publicar durante o MVP; o modelo será revisto depois. |
-| Problema e propósito | A comunidade já publica no dev.to; a plataforma é o espaço próprio da He4rt, com publicação revisada. É, antes de tudo, um projeto de estudo e de portfólio. |
+| Tema                  | Decisão                                                                                                                                                      |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Administradora do MVP | Amanda, responsável pelo projeto, como única administradora.                                                                                                 |
+| Métricas de sucesso   | Artigos publicados por mês e autores ativos por mês (autores com pelo menos um artigo aprovado no mês).                                                      |
+| Oferta                | Gratuita para ler e publicar durante o MVP; o modelo será revisto depois.                                                                                    |
+| Problema e propósito  | A comunidade já publica no dev.to; a plataforma é o espaço próprio da He4rt, com publicação revisada. É, antes de tudo, um projeto de estudo e de portfólio. |
 
 Todas aprovadas em 12/11/2026.
 
@@ -225,24 +225,24 @@ Todas aprovadas em 12/11/2026.
 
 Propostas como consequência das decisões acima e confirmadas explicitamente em 12/11/2026. Status: Aprovada.
 
-| Regra | Origem | Descrição |
-|---|---|---|
-| R01 | A01 | No máximo um rascunho e uma versão pendente por artigo ao mesmo tempo. |
-| R02 | A01 | Ao retirar a pendente, ela volta a ser o rascunho; se houver um rascunho mais recente, o autor escolhe qual manter. |
-| R03 | A01 | Se o autor retirar a versão durante a análise, a retirada prevalece e a decisão do administrador é recusada com aviso. |
-| R04 | A01 | O autor corrige uma versão rejeitada criando um rascunho a partir dela. |
-| R05 | A01 | O salvamento automático não cria versões. |
-| R06 | A02 | Durante a carência, o nome do autor aparece nos artigos sem link para o perfil. |
-| R07 | A02 | Durante a carência, as contagens de curtidas caem e voltam se a exclusão for cancelada. |
-| R08 | A02 | Artigos anonimizados não podem ser editados; o administrador pode despublicar ou excluir. |
-| R09 | A02 | Comentários e curtidas de outros usuários em artigos anonimizados permanecem. |
-| R10 | A02 | Denúncias contra artigos que permanecem no ar continuam abertas após a exclusão da conta do autor. |
-| R11 | A06 | Se a reativação após contestação aceita não for autorizada antes do fim do prazo, a reativação automática acontece normalmente. |
-| R12 | A07 | Desfechos de denúncia de perfil: redefinir foto e bio para o padrão; exigir troca de username no próximo acesso; casos graves, penalidade. |
-| R13 | A07 | Lista inicial de motivos: spam, ofensa ou assédio, plágio, informação enganosa, outro. |
-| R14 | A08 | Reset do 2FA do administrador por comando no servidor, como último recurso. |
-| R15 | A08 | Com mais de um administrador, as regras de conflito de interesse passam a valer. |
-| R16 | A10 | Curtidas em comentários seguem as mesmas regras das curtidas em artigos. |
+| Regra | Origem | Descrição                                                                                                                                  |
+| ----- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| R01   | A01    | No máximo um rascunho e uma versão pendente por artigo ao mesmo tempo.                                                                     |
+| R02   | A01    | Ao retirar a pendente, ela volta a ser o rascunho; se houver um rascunho mais recente, o autor escolhe qual manter.                        |
+| R03   | A01    | Se o autor retirar a versão durante a análise, a retirada prevalece e a decisão do administrador é recusada com aviso.                     |
+| R04   | A01    | O autor corrige uma versão rejeitada criando um rascunho a partir dela.                                                                    |
+| R05   | A01    | O salvamento automático não cria versões.                                                                                                  |
+| R06   | A02    | Durante a carência, o nome do autor aparece nos artigos sem link para o perfil.                                                            |
+| R07   | A02    | Durante a carência, as contagens de curtidas caem e voltam se a exclusão for cancelada.                                                    |
+| R08   | A02    | Artigos anonimizados não podem ser editados; o administrador pode despublicar ou excluir.                                                  |
+| R09   | A02    | Comentários e curtidas de outros usuários em artigos anonimizados permanecem.                                                              |
+| R10   | A02    | Denúncias contra artigos que permanecem no ar continuam abertas após a exclusão da conta do autor.                                         |
+| R11   | A06    | Se a reativação após contestação aceita não for autorizada antes do fim do prazo, a reativação automática acontece normalmente.            |
+| R12   | A07    | Desfechos de denúncia de perfil: redefinir foto e bio para o padrão; exigir troca de username no próximo acesso; casos graves, penalidade. |
+| R13   | A07    | Lista inicial de motivos: spam, ofensa ou assédio, plágio, informação enganosa, outro.                                                     |
+| R14   | A08    | Reset do 2FA do administrador por comando no servidor, como último recurso.                                                                |
+| R15   | A08    | Com mais de um administrador, as regras de conflito de interesse passam a valer.                                                           |
+| R16   | A10    | Curtidas em comentários seguem as mesmas regras das curtidas em artigos.                                                                   |
 
 ---
 
@@ -250,14 +250,14 @@ Propostas como consequência das decisões acima e confirmadas explicitamente em
 
 ### 3.1. Stack [A23]
 
-| Camada | Tecnologia | Status |
-|---|---|---|
-| Backend | PHP 8.4 + Laravel 13 | Aprovada |
-| Frontend | React + TypeScript | Aprovada |
-| Integração | Inertia.js | Aprovada |
-| Banco de dados | MariaDB | Aprovada |
-| Estilização | Tailwind CSS | Aprovada |
-| Testes | Pest (backend) e Vitest (frontend) | Aprovada |
+| Camada         | Tecnologia                         | Status   |
+| -------------- | ---------------------------------- | -------- |
+| Backend        | PHP 8.4 + Laravel 13               | Aprovada |
+| Frontend       | React + TypeScript                 | Aprovada |
+| Integração     | Inertia.js                         | Aprovada |
+| Banco de dados | MariaDB                            | Aprovada |
+| Estilização    | Tailwind CSS                       | Aprovada |
+| Testes         | Pest (backend) e Vitest (frontend) | Aprovada |
 
 ### 3.2. Organização em módulos
 
@@ -282,19 +282,19 @@ Esta lista é conceitual e não representa o modelo definitivo do banco de dados
 
 ### 3.4. Diretrizes arquiteturais
 
-| Diretriz | Status |
-|---|---|
-| Separar artigo de versões, permitindo histórico, aprovação de edições e preservação da versão publicada | Aprovada [A01] |
-| Autorização no backend; a interface não é camada de segurança | Aprovada |
-| Registrar ações administrativas com responsável, data, tipo e informações de rastreabilidade | Aprovada |
-| Separar notificações internas do envio de e-mails | Recomendada |
-| Centralizar o gerenciamento de imagens (upload, validação, otimização, tamanhos, alt, legenda, limpeza de órfãos) | Recomendada |
-| Filas para operações demoradas: e-mails, imagens, exclusões programadas, limpeza de registros, métricas | Recomendada |
-| Uma regra única de visibilidade pública usada em todas as consultas públicas | Recomendada (auditoria) |
+| Diretriz                                                                                                                                                            | Status                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| Separar artigo de versões, permitindo histórico, aprovação de edições e preservação da versão publicada                                                             | Aprovada [A01]          |
+| Autorização no backend; a interface não é camada de segurança                                                                                                       | Aprovada                |
+| Registrar ações administrativas com responsável, data, tipo e informações de rastreabilidade                                                                        | Aprovada                |
+| Separar notificações internas do envio de e-mails                                                                                                                   | Recomendada             |
+| Centralizar o gerenciamento de imagens (upload, validação, otimização, tamanhos, alt, legenda, limpeza de órfãos)                                                   | Recomendada             |
+| Filas para operações demoradas: e-mails, imagens, exclusões programadas, limpeza de registros, métricas                                                             | Recomendada             |
+| Uma regra única de visibilidade pública usada em todas as consultas públicas                                                                                        | Recomendada (auditoria) |
 | Operações transacionais para aprovação, rejeição, penalidades, exclusão de conta, curtidas e transferência de categoria; e-mails só após a confirmação da transação | Recomendada (auditoria) |
-| Contagens armazenadas de curtidas e favoritos, com recálculo periódico | Recomendada (auditoria) |
-| Exclusões em massa como operações de domínio auditadas, não cascatas automáticas no banco | Recomendada (auditoria) |
-| Rich Text armazenado em formato estruturado, sanitizado na exibição, com texto puro extraído para busca e contagens | Recomendada (auditoria) |
+| Contagens armazenadas de curtidas e favoritos, com recálculo periódico                                                                                              | Recomendada (auditoria) |
+| Exclusões em massa como operações de domínio auditadas, não cascatas automáticas no banco                                                                           | Recomendada (auditoria) |
+| Rich Text armazenado em formato estruturado, sanitizado na exibição, com texto puro extraído para busca e contagens                                                 | Recomendada (auditoria) |
 
 ### 3.5. Pontos técnicos não definidos
 

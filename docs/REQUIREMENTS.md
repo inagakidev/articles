@@ -350,9 +350,9 @@ Desfechos de uma denúncia procedente:
 - **RF-176** **Artigo:** despublicar, excluir permanentemente ou aplicar penalidade ao autor.
 - **RF-177** **Comentário:** excluir o comentário ou aplicar penalidade ao autor.
 - **RF-178** **Perfil:**
-  - Foto ou bio inadequadas: o administrador as redefine para o padrão (avatar padrão e bio vazia), com justificativa.
-  - Username inadequado: o usuário é obrigado a trocar o username no próximo acesso.
-  - Casos graves: penalidade normal.
+    - Foto ou bio inadequadas: o administrador as redefine para o padrão (avatar padrão e bio vazia), com justificativa.
+    - Username inadequado: o usuário é obrigado a trocar o username no próximo acesso.
+    - Casos graves: penalidade normal.
 
 ### 2.15. Notificações
 
@@ -547,20 +547,20 @@ Contestação rejeitada:
 
 ### 2.23. Retenção de dados **[A20]**
 
-| Dado | Prazo | Depois do prazo |
-|---|---|---|
-| Conta em carência de exclusão | 20 dias | Exclusão definitiva; artigos anonimizados |
-| Conta e perfil de usuário banido | Até encerrar a contestação | Exclusão |
-| Conta nunca verificada | 7 dias | Exclusão |
-| Confirmação de troca de e-mail | 24 horas | Troca cancelada |
-| Artigo na lixeira | 7 dias, pausado na suspensão (A24) | Exclusão permanente |
-| Versões substituídas | As 5 mais recentes por artigo | As mais antigas são apagadas |
-| Imagem sem nenhuma versão que a use | 24 horas | Arquivo apagado |
-| Notificações | 90 dias, pausado na suspensão (A24) | Exclusão |
-| Denúncias encerradas | 12 meses | Exclusão |
-| Tentativas suspeitas de login | 90 dias | Exclusão |
-| Registros de auditoria de conta excluída | 12 meses após a exclusão, anonimizados | Exclusão |
-| Visualizações individuais (depois do MVP) | 12 meses | Exclusão |
+| Dado                                      | Prazo                                  | Depois do prazo                           |
+| ----------------------------------------- | -------------------------------------- | ----------------------------------------- |
+| Conta em carência de exclusão             | 20 dias                                | Exclusão definitiva; artigos anonimizados |
+| Conta e perfil de usuário banido          | Até encerrar a contestação             | Exclusão                                  |
+| Conta nunca verificada                    | 7 dias                                 | Exclusão                                  |
+| Confirmação de troca de e-mail            | 24 horas                               | Troca cancelada                           |
+| Artigo na lixeira                         | 7 dias, pausado na suspensão (A24)     | Exclusão permanente                       |
+| Versões substituídas                      | As 5 mais recentes por artigo          | As mais antigas são apagadas              |
+| Imagem sem nenhuma versão que a use       | 24 horas                               | Arquivo apagado                           |
+| Notificações                              | 90 dias, pausado na suspensão (A24)    | Exclusão                                  |
+| Denúncias encerradas                      | 12 meses                               | Exclusão                                  |
+| Tentativas suspeitas de login             | 90 dias                                | Exclusão                                  |
+| Registros de auditoria de conta excluída  | 12 meses após a exclusão, anonimizados | Exclusão                                  |
+| Visualizações individuais (depois do MVP) | 12 meses                               | Exclusão                                  |
 
 ### 2.24. Auditoria **[A20]**
 
@@ -584,7 +584,6 @@ Contestação rejeitada:
 **RF-297** Pode: fazer login, ler artigos e comentários, pesquisar e navegar, consultar o próprio perfil e atualizar dados permitidos. A conta é excluída se não for verificada em 7 dias. **[A13] [A19]**
 
 **RF-298** Não pode: publicar artigos, comentar, curtir, favoritar ou denunciar.
-
 
 ### 3.3. Usuário verificado
 
@@ -664,11 +663,11 @@ O estado do artigo e o estado de cada versão são independentes.
 
 ### 5.1. Estados do artigo
 
-| Estado | Descrição |
-|---|---|
-| Não publicado | Nunca teve versão aprovada, ou foi despublicado |
-| Publicado | Existe uma versão aprovada em vigor |
-| Na lixeira | Removido pelo autor; guarda o estado anterior para a restauração |
+| Estado        | Descrição                                                        |
+| ------------- | ---------------------------------------------------------------- |
+| Não publicado | Nunca teve versão aprovada, ou foi despublicado                  |
+| Publicado     | Existe uma versão aprovada em vigor                              |
+| Na lixeira    | Removido pelo autor; guarda o estado anterior para a restauração |
 
 Transições:
 
@@ -680,13 +679,13 @@ Transições:
 
 ### 5.2. Estados da versão
 
-| Estado | Descrição |
-|---|---|
-| Rascunho | Editável; recebe o salvamento automático |
-| Pendente | Retrato congelado enviado para aprovação; não editável |
-| Aprovada em vigor | A versão que o público lê |
-| Rejeitada | Recusada na revisão ou despublicada, com justificativa |
-| Substituída | Aprovada anteriormente; mantida no histórico |
+| Estado            | Descrição                                              |
+| ----------------- | ------------------------------------------------------ |
+| Rascunho          | Editável; recebe o salvamento automático               |
+| Pendente          | Retrato congelado enviado para aprovação; não editável |
+| Aprovada em vigor | A versão que o público lê                              |
+| Rejeitada         | Recusada na revisão ou despublicada, com justificativa |
+| Substituída       | Aprovada anteriormente; mantida no histórico           |
 
 Transições:
 
@@ -961,41 +960,41 @@ As decisões técnicas e a arquitetura estão em `DECISIONS.md`.
 
 ### 10.2. Resolvidas
 
-| Pendência | Resolução |
-|---|---|
-| Níveis administrativos | Depois do MVP; MVP com um administrador [A08] |
-| Suspensão de usuário em exclusão voluntária | Permitida; vale se a exclusão for cancelada [A03] |
-| Contestar penalidade aplicada durante a exclusão | Segue normalmente; sem restauração após a exclusão definitiva [A03] [A04] |
-| Divisão entre MVP e posterior | Aprovada [A09] |
-| Primeira versão pública | Corresponde ao MVP da seção 8.1 [A09] |
-| Modelo de permissões | Seções 2.19 e 3 [A08] |
-| Estado de suspensão do autor versus estado editorial | Condição sobreposta, fora do estado do artigo [A01] |
-| Exclusão permanente de artigo na auditoria | Registrada sem conteúdo [A20] |
-| Ações de autores auditadas | Somente eventos de segurança da conta [A20] |
-| Termos, políticas, cookies e idade mínima | Seções 2.2 e 2.21 [A12] |
-| Visibilidade dos comentários | Leitura pública [A13] |
-| Exclusão em cascata e evidências | Cascata mantida; sem cópia do conteúdo denunciado [A14] |
-| Acessibilidade do editor e texto alternativo | Seção 2.5 [A15] |
-| Imagens | Seção 2.5 [A16] |
-| Popularidade, ordenação padrão e datas | Seções 2.8 e 2.9 [A17] |
-| Notificações e e-mails | Seção 2.15 [A18] |
-| Username, contas não verificadas e troca de e-mail | Seções 2.2 e 2.3 [A19] |
-| Retenção e auditoria | Seções 2.23 e 2.24 [A20] |
-| Campos obrigatórios e lixeira com versão pendente | Seções 2.6 e 4.1 [A21] |
-| Restauração de versão sem revisão | Sempre passa por aprovação [A22] |
-| Entidades faltantes e banco de dados | `DECISIONS.md` [A23] |
-| Mecânicas caras | Pausa como extensão do prazo; visitas anônimas reavaliadas depois do MVP [A24] |
-| Permissões em casos de borda | Seções 2.11, 2.14 e 2.16 [A25] |
-| Exclusão de artigo e histórico de versões | Versões apagadas [P01] |
-| Exclusão de artigo e comentários | Comentários e respostas apagados [P02] |
-| Exclusão de artigo e denúncias | Encerradas como "conteúdo removido" [P03] |
-| Versões pendentes na exclusão de conta | Seção 2.4 [P04] |
-| Edição pelo administrador durante a análise | Não permitida [P05] |
-| Reenvio de artigos rejeitados | Espera de 24 horas após cada rejeição [P06] |
-| Limite de tamanho do artigo | 150 caracteres no título, 50.000 no conteúdo [P07] |
-| Limites dos comentários | 2.000 caracteres, um a cada 30 segundos, até 3 níveis [P08] |
-| Autor do artigo denunciando comentários | Permitido [P09] |
-| Notificações de curtidas e favoritos | Só curtidas, agrupadas por item [P10] |
+| Pendência                                            | Resolução                                                                      |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Níveis administrativos                               | Depois do MVP; MVP com um administrador [A08]                                  |
+| Suspensão de usuário em exclusão voluntária          | Permitida; vale se a exclusão for cancelada [A03]                              |
+| Contestar penalidade aplicada durante a exclusão     | Segue normalmente; sem restauração após a exclusão definitiva [A03] [A04]      |
+| Divisão entre MVP e posterior                        | Aprovada [A09]                                                                 |
+| Primeira versão pública                              | Corresponde ao MVP da seção 8.1 [A09]                                          |
+| Modelo de permissões                                 | Seções 2.19 e 3 [A08]                                                          |
+| Estado de suspensão do autor versus estado editorial | Condição sobreposta, fora do estado do artigo [A01]                            |
+| Exclusão permanente de artigo na auditoria           | Registrada sem conteúdo [A20]                                                  |
+| Ações de autores auditadas                           | Somente eventos de segurança da conta [A20]                                    |
+| Termos, políticas, cookies e idade mínima            | Seções 2.2 e 2.21 [A12]                                                        |
+| Visibilidade dos comentários                         | Leitura pública [A13]                                                          |
+| Exclusão em cascata e evidências                     | Cascata mantida; sem cópia do conteúdo denunciado [A14]                        |
+| Acessibilidade do editor e texto alternativo         | Seção 2.5 [A15]                                                                |
+| Imagens                                              | Seção 2.5 [A16]                                                                |
+| Popularidade, ordenação padrão e datas               | Seções 2.8 e 2.9 [A17]                                                         |
+| Notificações e e-mails                               | Seção 2.15 [A18]                                                               |
+| Username, contas não verificadas e troca de e-mail   | Seções 2.2 e 2.3 [A19]                                                         |
+| Retenção e auditoria                                 | Seções 2.23 e 2.24 [A20]                                                       |
+| Campos obrigatórios e lixeira com versão pendente    | Seções 2.6 e 4.1 [A21]                                                         |
+| Restauração de versão sem revisão                    | Sempre passa por aprovação [A22]                                               |
+| Entidades faltantes e banco de dados                 | `DECISIONS.md` [A23]                                                           |
+| Mecânicas caras                                      | Pausa como extensão do prazo; visitas anônimas reavaliadas depois do MVP [A24] |
+| Permissões em casos de borda                         | Seções 2.11, 2.14 e 2.16 [A25]                                                 |
+| Exclusão de artigo e histórico de versões            | Versões apagadas [P01]                                                         |
+| Exclusão de artigo e comentários                     | Comentários e respostas apagados [P02]                                         |
+| Exclusão de artigo e denúncias                       | Encerradas como "conteúdo removido" [P03]                                      |
+| Versões pendentes na exclusão de conta               | Seção 2.4 [P04]                                                                |
+| Edição pelo administrador durante a análise          | Não permitida [P05]                                                            |
+| Reenvio de artigos rejeitados                        | Espera de 24 horas após cada rejeição [P06]                                    |
+| Limite de tamanho do artigo                          | 150 caracteres no título, 50.000 no conteúdo [P07]                             |
+| Limites dos comentários                              | 2.000 caracteres, um a cada 30 segundos, até 3 níveis [P08]                    |
+| Autor do artigo denunciando comentários              | Permitido [P09]                                                                |
+| Notificações de curtidas e favoritos                 | Só curtidas, agrupadas por item [P10]                                          |
 
 ### 10.3. Regras derivadas
 

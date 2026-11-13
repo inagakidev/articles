@@ -20,19 +20,19 @@ Os commits seguem o [Conventional Commits](https://www.conventionalcommits.org/p
 
 ### Tipos
 
-| Tipo | Quando usar |
-|---|---|
-| `feat` | Nova funcionalidade para o usuário |
-| `fix` | Correção de bug |
-| `refactor` | Mudança de código sem alterar comportamento |
-| `perf` | Melhoria de desempenho |
-| `test` | Criação ou ajuste de testes |
-| `docs` | Somente documentação |
-| `style` | Formatação, sem mudança de lógica |
-| `build` | Dependências, build e empacotamento |
-| `ci` | Pipelines de integração contínua |
-| `chore` | Manutenção que não se encaixa nos tipos acima |
-| `revert` | Reversão de um commit anterior |
+| Tipo       | Quando usar                                   |
+| ---------- | --------------------------------------------- |
+| `feat`     | Nova funcionalidade para o usuário            |
+| `fix`      | Correção de bug                               |
+| `refactor` | Mudança de código sem alterar comportamento   |
+| `perf`     | Melhoria de desempenho                        |
+| `test`     | Criação ou ajuste de testes                   |
+| `docs`     | Somente documentação                          |
+| `style`    | Formatação, sem mudança de lógica             |
+| `build`    | Dependências, build e empacotamento           |
+| `ci`       | Pipelines de integração contínua              |
+| `chore`    | Manutenção que não se encaixa nos tipos acima |
+| `revert`   | Reversão de um commit anterior                |
 
 ### Escopos
 
@@ -49,14 +49,14 @@ O escopo é a área do código afetada. Use um destes, ou omita quando a mudanç
 
 ### Exemplos
 
-| Evite | Prefira |
-|---|---|
-| `feat: fase 02 concluída` | `feat(auth): exige verificação de e-mail para publicar artigos` |
-| `chore: setup inicial p2-01` | `chore: cria aplicação Laravel 13 com React, Inertia e MariaDB` |
-| `fix: ajustes` | `fix(comments): impede resposta além do terceiro nível` |
-| `refactor: remove coisas do starter kit` | `refactor(auth): remove passkeys do starter kit` |
-| `test: testes` | `test(articles): cobre transições inválidas de estado da versão` |
-| `update deps` | `build(deps): atualiza Inertia para 3.1` |
+| Evite                                    | Prefira                                                          |
+| ---------------------------------------- | ---------------------------------------------------------------- |
+| `feat: fase 02 concluída`                | `feat(auth): exige verificação de e-mail para publicar artigos`  |
+| `chore: setup inicial p2-01`             | `chore: cria aplicação Laravel 13 com React, Inertia e MariaDB`  |
+| `fix: ajustes`                           | `fix(comments): impede resposta além do terceiro nível`          |
+| `refactor: remove coisas do starter kit` | `refactor(auth): remove passkeys do starter kit`                 |
+| `test: testes`                           | `test(articles): cobre transições inválidas de estado da versão` |
+| `update deps`                            | `build(deps): atualiza Inertia para 3.1`                         |
 
 Com corpo e rodapé:
 
