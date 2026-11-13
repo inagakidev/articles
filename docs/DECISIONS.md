@@ -1,0 +1,322 @@
+# DECISIONS — Plataforma de Artigos
+
+**Atualizado em:** 12/11/2026
+
+Registro das decisões de produto e de arquitetura, com contexto, alternativas consideradas e impacto. Os requisitos resultantes estão em `REQUIREMENTS.md`; a visão do produto está em `PRODUCT.md`.
+
+Cada decisão tem um destes status:
+
+- **Aprovada:** decidida explicitamente.
+- **Recomendada:** sugestão técnica ainda não aprovada.
+- **Pendente:** sem decisão.
+
+---
+
+## 1. Decisões da auditoria da P1 — Prioridade 1
+
+### A01 — Estado do artigo separado do estado da versão
+
+- **Status:** Aprovada (12/11/2026).
+- **Contexto:** a tabela de transições original fazia um artigo publicado sair do ar ao ser editado e virar "rejeitado" quando a edição era recusada, contrariando as regras de edição.
+- **Decisão:** o artigo tem estado próprio (não publicado, publicado, na lixeira) e cada versão tem o seu (rascunho, pendente, aprovada em vigor, rejeitada, substituída). A versão enviada é um retrato congelado. Com uma versão pendente, o autor pode continuar editando e pode retirá-la da fila.
+- **Alternativas descartadas:** um único estado por artigo; bloquear a edição enquanto há versão pendente; permitir edição sem possibilidade de retirada.
+- **Impacto:** define a modelagem de artigos e versões, a fila de moderação, as seções de "Meus artigos" e a regra de visibilidade pública.
+
+### A02 — Artigos após a exclusão definitiva da conta
+
+- **Status:** Aprovada (12/11/2026).
+- **Contexto:** o documento não dizia o que acontecia com os artigos após a exclusão definitiva.
+- **Decisão:** os artigos permanecem no ar com o autor anonimizado. A tela de exclusão informa que o usuário pode mandar artigos para a lixeira antes. Durante a carência de 20 dias, perfil, comentários e curtidas ficam ocultos; os artigos continuam visíveis com o nome do autor.
+- **Alternativas descartadas:** excluir os artigos junto com a conta; perguntar ao usuário em um fluxo próprio; manter tudo visível durante a carência; ocultar só o perfil.
+- **Impacto:** preserva links e conteúdo usado pela comunidade; exige um "autor anonimizado" no modelo; afeta denúncias (ver derivadas).
+
+### A03 — Penalidades durante a exclusão voluntária
+
+- **Status:** Aprovada (12/11/2026).
+- **Contexto:** a regra original impedia suspender uma conta em exclusão, permitindo fugir da suspensão pedindo exclusão e cancelando depois. O mesmo ponto aparecia como pendente.
+- **Decisão:** uma conta em carência pode ser penalizada; se o usuário cancelar a exclusão, a penalidade continua valendo. Banimento durante a carência é executado imediatamente. Um usuário suspenso só pode pedir a exclusão depois que a suspensão terminar.
+- **Alternativas descartadas:** bloquear o cancelamento enquanto houver processo aberto; manter a regra original.
+- **Impacto:** fecha a brecha e remove a pendência original. Ponto de atenção: a LGPD trata a exclusão como direito do titular; manter um canal de contato para pedidos feitos durante a suspensão e validar com assessoria jurídica.
+
+### A04 — Retenção da conta no banimento e fim da restauração após exclusão
+
+- **Status:** Aprovada (12/11/2026).
+- **Contexto:** o documento prometia restaurar conta e perfil depois do banimento e da exclusão definitiva, mas mandava apagá-los antes de qualquer contestação.
+- **Decisão:** no banimento, conteúdos e interações são excluídos imediatamente; conta e perfil ficam retidos, ocultos e inacessíveis até o fim do prazo de contestação ou até a decisão de uma contestação em análise, e então são excluídos. Após a exclusão definitiva voluntária, não há restauração; uma contestação aceita apenas anula a penalidade no histórico. A reabertura do prazo de contestação só é possível enquanto a conta estiver retida.
+- **Alternativas descartadas:** banimento sem retenção e sem restauração; reabertura sempre possível sem restauração; proibir a reabertura.
+- **Impacto:** torna a contestação de banimento cumprível; cria um período curto e justificado de retenção.
+
+### A05 — Suspensão oculta em vez de apagar
+
+- **Status:** Aprovada (12/11/2026).
+- **Contexto:** a suspensão apagava rascunhos, pendentes e rejeitadas, mas preservava a lixeira; uma contestação aceita não devolvia o conteúdo.
+- **Decisão:** durante a suspensão, rascunhos, rejeitadas e lixeira ficam ocultos e preservados; versões pendentes saem da fila e voltam a ser rascunho. Na reativação, tudo volta.
+- **Alternativa descartada:** manter a exclusão e registrar a perda.
+- **Impacto:** suspensões revertidas não causam perda; a lixeira deixa de ser exceção.
+
+### A06 — Término da suspensão e reativação após contestação
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** a suspensão termina automaticamente no fim do prazo, com aviso por e-mail. Com contestação de suspensão aceita, a penalidade é anulada e um administrador autoriza a reativação, com justificativa registrada. A contestação é feita pelo link do e-mail da penalidade, sem login.
+- **Alternativas descartadas:** reativação sempre manual; reativação imediata ao aceitar a contestação.
+- **Impacto:** elimina a dependência de ação manual no fim da suspensão; resolve o acesso ao formulário de contestação com a conta inacessível.
+
+### A07 — Ciclo das denúncias e despublicação
+
+- **Status:** Aprovada (12/11/2026).
+- **Contexto:** denúncias não tinham motivo, status nem desfecho; o administrador só tinha medidas extremas para artigos publicados.
+- **Decisão:** denúncias têm motivo, status (aberta, procedente, improcedente) e decisão com justificativa; um usuário pode ter uma denúncia aberta por item. O denunciante recebe apenas o aviso de que a denúncia foi analisada. Perfis (bio, foto e username) podem ser denunciados. O administrador pode despublicar um artigo com justificativa; o artigo volta ao autor pelo fluxo da rejeição. A exclusão permanente pelo administrador exige justificativa e notifica o autor.
+- **Alternativas descartadas:** ciclo sem despublicação; informar o desfecho ao denunciante; nenhum retorno; denúncias só de artigos e comentários.
+- **Impacto:** dá desfechos ao painel de denúncias; adiciona uma ação proporcional reaproveitando o fluxo de rejeição.
+
+### A08 — Administração no MVP
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** o MVP tem um único administrador, criado na instalação. Com um único administrador, as regras de conflito de interesse ficam dispensadas. A tela de gestão de administradores fica para depois do MVP; quando existir, a gestão será pelo painel. Códigos de recuperação do 2FA são obrigatórios.
+- **Alternativas descartadas:** exigir no mínimo dois administradores; gestão por comando no servidor; tela de gestão no MVP.
+- **Riscos assumidos:** o único administrador aprova os próprios artigos e julga contestações das penalidades que aplicou; perda de acesso do administrador depende dos códigos de recuperação.
+
+### A09 — Escopo do MVP
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** classificação da seção 8 de `REQUIREMENTS.md`, incluindo no MVP as notificações internas, os e-mails, a interface completa em PT e EN, a contestação de penalidades e o WCAG 2.2 AA como piso.
+- **Alternativas descartadas:** notificações internas depois do MVP; MVP só em PT com estrutura pronta para EN.
+- **Risco assumido:** MVP grande para um projeto de portfólio; moderação e mídia são os blocos mais caros.
+
+### A10 — Mudanças em relação ao plano anterior
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** o editor é Rich Text, substituindo o Markdown do plano anterior. As curtidas em comentários voltam ao escopo (haviam sido omitidas por esquecimento).
+- **Impacto:** o Rich Text exige regras de acessibilidade para cores e destaques (A15) e sanitização mais cuidadosa. A regra "um usuário não curte o mesmo comentário mais de uma vez" continua válida. O `PRODUCT.md` e o painel de acompanhamento precisam refletir as mudanças.
+
+### A11 — Organização da documentação
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** os requisitos ficam em `REQUIREMENTS.md`, as decisões e a arquitetura em `DECISIONS.md`, e o `PRODUCT.md` continua curto e estratégico, no padrão product.md.
+- **Impacto:** o antigo product.md (documento de requisitos) foi dividido entre esses arquivos sem alteração de decisões além das registradas acima.
+
+## 1b. Decisões da auditoria da P1 — Prioridade 2
+
+### A12 — Termos, políticas e idade mínima
+
+- **Status:** Aprovada (12/11/2026).
+- **Contexto:** a moderação se apoiava em "conteúdo inadequado" sem uma política pública; faltavam política de privacidade e idade mínima.
+- **Decisão:** três páginas públicas (Termos de uso, Política de conteúdo, Política de privacidade); aceite de Termos e Privacidade no cadastro com registro de data e versão, e novo aceite no próximo login quando mudarem. Rejeições, despublicações e penalidades indicam o item da Política de conteúdo violado, além da justificativa. Idade mínima de 16 anos, por autodeclaração, sem armazenar data de nascimento. Apenas cookies essenciais no MVP.
+- **Alternativas descartadas:** aceite sem nova versão; justificativa só em texto; idades mínimas de 18 ou 13 anos; data de nascimento no cadastro.
+- **Ponto de atenção:** validar com assessoria jurídica os requisitos da LGPD para adolescentes, cookies e pedidos de titulares.
+
+### A13 — Leitura pública dos comentários
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** todos leem os comentários, inclusive visitantes; só usuários verificados participam. Para quem não pode participar, não há formulário nem convite.
+- **Alternativas descartadas:** leitura só para verificados; leitura só para usuários logados.
+- **Impacto:** comentários ficam públicos e indexáveis, com o nome do autor; a Política de privacidade precisa informar isso.
+
+### A14 — Exclusão em cascata e evidências de denúncia
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** excluir um comentário apaga todas as respostas, em todos os casos, inclusive no banimento. A denúncia não guarda cópia do conteúdo denunciado.
+- **Alternativas descartadas:** marcador "comentário removido" mantendo as respostas; cópia do conteúdo na denúncia.
+- **Riscos assumidos:** uma pessoa pode apagar respostas úteis de terceiros ao excluir o comentário de origem; o autor de um conteúdo denunciado pode editá-lo ou excluí-lo antes da análise, e o administrador vê apenas a versão atual.
+
+### A15 — Acessibilidade do editor e das imagens
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** cores de texto e destaques vêm de uma paleta fixa, com variações para os temas claro e escuro, todas com contraste mínimo de 4,5:1; o artigo guarda o nome da cor. Sublinhado e texto justificado saem do editor. Texto alternativo obrigatório, com opção explícita de imagem decorativa; legenda opcional.
+- **Alternativas descartadas:** remover cores e destaques; manter sublinhado ou justificado; texto alternativo opcional com conformidade parcial.
+- **Impacto:** mantém o piso WCAG 2.2 AA sem exceções; exige a paleta em `DESIGN.md`.
+
+### A16 — Imagens
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** formatos JPG, PNG e WebP (sem SVG e GIF); metadados removidos no upload; imagens de versões pendentes privadas até a aprovação; limite de cinco imagens internas por versão; são guardadas as 5 versões substituídas mais recentes por artigo.
+- **Alternativas descartadas:** aceitar GIF; guardar todas as versões ou as 10 mais recentes.
+- **Impacto:** reduz riscos de XSS e de exposição de localização; limita o crescimento do armazenamento.
+
+### A18 — Notificações e e-mails
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** aviso ao e-mail antigo quando o e-mail é alterado; aviso de senha alterada; notificação de perfil moderado. O autor de um comentário removido por outra pessoa não é avisado. "Notificações pausadas" significa que as existentes ficam guardadas e o prazo de 90 dias para de contar. Denúncia cujo conteúdo foi excluído antes da análise é encerrada como "conteúdo removido".
+- **Alternativas descartadas:** avisar o autor do comentário removido pelo administrador ou pelo autor do artigo.
+
+### A19 — Username, contas não verificadas e troca de e-mail
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** username de 3 a 30 caracteres, só minúsculas sem acento, números, hífen e sublinhado, começando por letra, com palavras reservadas. Username liberado fica disponível imediatamente. Contas não verificadas em 7 dias são excluídas. Na troca de e-mail, o usuário segue verificado com o antigo até confirmar o novo em até 24 horas.
+- **Alternativas descartadas:** bloquear o username liberado por 90 dias com redirecionamento; nunca reutilizar; excluir contas não verificadas em 30 dias ou mantê-las.
+- **Risco assumido:** outra pessoa pode assumir imediatamente o username de alguém conhecido, e links antigos do perfil passam a apontar para ela.
+
+### A20 — Retenção e auditoria
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** tabela única de retenção (seção 2.23 de `REQUIREMENTS.md`), incluindo imagens órfãs em 24 horas, denúncias encerradas em 12 meses e tentativas suspeitas de login em 90 dias. A auditoria só aceita inclusões; a única remoção é a da tabela de retenção. A exclusão permanente de artigo é auditada sem conteúdo. Das ações de autores, só eventos de segurança da conta são auditados.
+- **Alternativas descartadas:** auditar ações editoriais dos autores; não auditar autores.
+- **Impacto:** resolve a contradição entre "preservar o histórico" e a retenção de 12 meses.
+
+### A23 — Entidades conceituais e stack
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** acrescentar Penalty, AccountDeletionRequest, SecurityEvent, PolicyVersion e PolicyAcceptance, e ligar ArticleImage às versões. Banco de dados: MariaDB. Stack confirmada: PHP 8.4, Laravel 13, React com TypeScript, Inertia.js, Tailwind CSS, Pest e Vitest.
+- **Alternativa descartada:** MySQL.
+
+## 1c. Decisões da auditoria da P1 — Prioridade 3 e pendências originais
+
+### A17 — Descoberta
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** ordenação padrão "mais curtidos dos últimos 30 dias". A popularidade é o período em que as curtidas são contadas (7, 30 ou 90 dias, ou histórico completo), com padrão de 30 dias. O artigo mostra a data da primeira publicação, com "atualizado em" quando houver nova versão aprovada; "mais recentes" usa a primeira publicação.
+- **Alternativas descartadas:** ordenação padrão por mais recentes ou por curtidas no histórico completo; retirar o filtro de popularidade; usar a data da última versão aprovada.
+- **Impacto técnico:** a listagem pública precisa de contagens de curtidas pré-calculadas por período.
+
+### A21 — Campos obrigatórios e lixeira com versão pendente
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** para enviar, são obrigatórios título, conteúdo, categoria, idioma e o texto alternativo das imagens; capa e tags são opcionais; rascunhos podem ser salvos vazios. Mandar para a lixeira um artigo com versão pendente a retira da fila e a devolve a rascunho.
+- **Alternativas descartadas:** capa e/ou ao menos uma tag obrigatórias.
+
+### A22 — Restauração de versão antiga
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** restaurar uma versão aprovada antiga (depois do MVP) sempre passa por aprovação; a restauração cria uma versão pendente.
+- **Alternativas descartadas:** publicação imediata; publicação imediata só sem moderação posterior.
+
+### A24 — Simplificação de mecânicas caras
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** os prazos "pausados" na suspensão (lixeira e notificações) são implementados como extensão do prazo pelos dias de suspensão, com as rotinas de limpeza ignorando itens de usuários suspensos. A contagem de visitas de anônimos será reavaliada quando entrar, depois do MVP.
+
+### A25 — Casos de borda de permissões
+
+- **Status:** Aprovada (12/11/2026).
+- **Decisão:** o autor não curte o próprio artigo nem o próprio comentário (favoritar o próprio artigo é permitido); ninguém denuncia o próprio conteúdo; o perfil de um usuário suspenso fica oculto.
+- **Motivo:** a ordenação padrão por curtidas tornaria a autocurtida uma forma de autopromoção; o perfil sem artigos expunha a suspensão publicamente.
+
+### Pendências originais resolvidas
+
+| Código | Pendência | Decisão |
+|---|---|---|
+| P01 | Exclusão de artigo e histórico de versões | Todas as versões são apagadas; imagens pela rotina de imagens sem uso |
+| P02 | Exclusão de artigo e comentários | Comentários e respostas são apagados |
+| P03 | Exclusão de artigo e denúncias | Denúncias abertas encerradas como "conteúdo removido" |
+| P04 | Versões pendentes na exclusão de conta | Voltam a rascunho no pedido; na exclusão definitiva, publicados ficam só com a versão em vigor e não publicados são apagados |
+| P05 | Edição pelo administrador durante a análise | Não permitida; o administrador aprova ou rejeita |
+| P06 | Reenvio de artigos rejeitados | Espera de 24 horas após cada rejeição |
+| P07 | Limite de tamanho do artigo | Título até 150 caracteres; conteúdo até 50.000 |
+| P08 | Limites dos comentários | Até 2.000 caracteres, um a cada 30 segundos, respostas até 3 níveis |
+| P09 | Autor do artigo denunciando comentários | Permitido |
+| P10 | Notificações de curtidas e favoritos | Só curtidas (em artigos e comentários próprios), agrupadas por item |
+
+Todas aprovadas em 12/11/2026.
+
+## 1d. Decisões de produto registradas no PRODUCT.md
+
+| Tema | Decisão |
+|---|---|
+| Administradora do MVP | Amanda, responsável pelo projeto, como única administradora. |
+| Métricas de sucesso | Artigos publicados por mês e autores ativos por mês (autores com pelo menos um artigo aprovado no mês). |
+| Oferta | Gratuita para ler e publicar durante o MVP; o modelo será revisto depois. |
+| Problema e propósito | A comunidade já publica no dev.to; a plataforma é o espaço próprio da He4rt, com publicação revisada. É, antes de tudo, um projeto de estudo e de portfólio. |
+
+Todas aprovadas em 12/11/2026.
+
+---
+
+## 2. Regras derivadas
+
+Propostas como consequência das decisões acima e confirmadas explicitamente em 12/11/2026. Status: Aprovada.
+
+| Regra | Origem | Descrição |
+|---|---|---|
+| R01 | A01 | No máximo um rascunho e uma versão pendente por artigo ao mesmo tempo. |
+| R02 | A01 | Ao retirar a pendente, ela volta a ser o rascunho; se houver um rascunho mais recente, o autor escolhe qual manter. |
+| R03 | A01 | Se o autor retirar a versão durante a análise, a retirada prevalece e a decisão do administrador é recusada com aviso. |
+| R04 | A01 | O autor corrige uma versão rejeitada criando um rascunho a partir dela. |
+| R05 | A01 | O salvamento automático não cria versões. |
+| R06 | A02 | Durante a carência, o nome do autor aparece nos artigos sem link para o perfil. |
+| R07 | A02 | Durante a carência, as contagens de curtidas caem e voltam se a exclusão for cancelada. |
+| R08 | A02 | Artigos anonimizados não podem ser editados; o administrador pode despublicar ou excluir. |
+| R09 | A02 | Comentários e curtidas de outros usuários em artigos anonimizados permanecem. |
+| R10 | A02 | Denúncias contra artigos que permanecem no ar continuam abertas após a exclusão da conta do autor. |
+| R11 | A06 | Se a reativação após contestação aceita não for autorizada antes do fim do prazo, a reativação automática acontece normalmente. |
+| R12 | A07 | Desfechos de denúncia de perfil: redefinir foto e bio para o padrão; exigir troca de username no próximo acesso; casos graves, penalidade. |
+| R13 | A07 | Lista inicial de motivos: spam, ofensa ou assédio, plágio, informação enganosa, outro. |
+| R14 | A08 | Reset do 2FA do administrador por comando no servidor, como último recurso. |
+| R15 | A08 | Com mais de um administrador, as regras de conflito de interesse passam a valer. |
+| R16 | A10 | Curtidas em comentários seguem as mesmas regras das curtidas em artigos. |
+
+---
+
+## 3. Decisões técnicas iniciais
+
+### 3.1. Stack [A23]
+
+| Camada | Tecnologia | Status |
+|---|---|---|
+| Backend | PHP 8.4 + Laravel 13 | Aprovada |
+| Frontend | React + TypeScript | Aprovada |
+| Integração | Inertia.js | Aprovada |
+| Banco de dados | MariaDB | Aprovada |
+| Estilização | Tailwind CSS | Aprovada |
+| Testes | Pest (backend) e Vitest (frontend) | Aprovada |
+
+### 3.2. Organização em módulos
+
+Autenticação e usuários; perfis; artigos; editor e mídia; categorias e tags; publicação e aprovação; comentários; curtidas e favoritos; denúncias; notificações; moderação; administração e auditoria; pesquisa e descoberta; métricas e visualizações.
+
+### 3.3. Entidades conceituais
+
+User, Profile, Article, ArticleVersion, ArticleImage, Category, Tag, ArticleTag, Comment, Like, Favorite, Report, Notification, AdminAuditLog, Appeal, ArticleView, Penalty, AccountDeletionRequest, SecurityEvent, PolicyVersion, PolicyAcceptance.
+
+Ajustes decorrentes das decisões:
+
+- **Article** e **ArticleVersion** seguem o modelo de dois estados [A01].
+- **ArticleImage** se liga às versões, não ao artigo; uma imagem pode ser compartilhada entre versões [A16] [A23].
+- **Like** cobre artigos e comentários [A10].
+- **Report** tem motivo, status e alvo (artigo, comentário ou perfil) [A07].
+- **Penalty** guarda suspensões e banimentos, com tipo, motivo, item da política, duração, responsável e status (ativa, encerrada, anulada); **Appeal** se refere a uma Penalty [A23].
+- **AccountDeletionRequest** guarda a carência de 20 dias e seu status (em carência, cancelado, concluído) [A23].
+- **SecurityEvent** guarda tentativas suspeitas de login e eventos de segurança da conta [A20] [A23].
+- **PolicyVersion** e **PolicyAcceptance** guardam as versões dos termos e os aceites [A12] [A23].
+
+Esta lista é conceitual e não representa o modelo definitivo do banco de dados.
+
+### 3.4. Diretrizes arquiteturais
+
+| Diretriz | Status |
+|---|---|
+| Separar artigo de versões, permitindo histórico, aprovação de edições e preservação da versão publicada | Aprovada [A01] |
+| Autorização no backend; a interface não é camada de segurança | Aprovada |
+| Registrar ações administrativas com responsável, data, tipo e informações de rastreabilidade | Aprovada |
+| Separar notificações internas do envio de e-mails | Recomendada |
+| Centralizar o gerenciamento de imagens (upload, validação, otimização, tamanhos, alt, legenda, limpeza de órfãos) | Recomendada |
+| Filas para operações demoradas: e-mails, imagens, exclusões programadas, limpeza de registros, métricas | Recomendada |
+| Uma regra única de visibilidade pública usada em todas as consultas públicas | Recomendada (auditoria) |
+| Operações transacionais para aprovação, rejeição, penalidades, exclusão de conta, curtidas e transferência de categoria; e-mails só após a confirmação da transação | Recomendada (auditoria) |
+| Contagens armazenadas de curtidas e favoritos, com recálculo periódico | Recomendada (auditoria) |
+| Exclusões em massa como operações de domínio auditadas, não cascatas automáticas no banco | Recomendada (auditoria) |
+| Rich Text armazenado em formato estruturado, sanitizado na exibição, com texto puro extraído para busca e contagens | Recomendada (auditoria) |
+
+### 3.5. Pontos técnicos não definidos
+
+- Editor Rich Text escolhido.
+- Armazenamento de imagens.
+- Estratégia de versionamento do conteúdo.
+- Tecnologia de busca.
+- Estratégia de cache.
+- Infraestrutura de hospedagem.
+- Estratégia de backup.
+- Política técnica de exclusão e retenção.
+- Processamento de visualizações.
+- Mecanismo técnico de identificação do administrador (coluna booleana, papel ou pacote de permissões), a decidir na p2-08.
+
+---
+
+## 4. Decisões durante a implementação
+
+### D50 — Times e passkeys do starter kit
+
+- **Status:** Aprovada (12/11/2026).
+- **Contexto:** o starter kit React do Laravel 13 criou tabelas e código para times (`teams`, `current_team_id`) e para passkeys, que não estão no `REQUIREMENTS.md`.
+- **Decisão:** remover times e passkeys antes da Fase 03. As colunas de 2FA permanecem, para o 2FA obrigatório da administradora e o 2FA de usuários previsto para depois do MVP.
+- **Alternativas descartadas:** manter passkeys; manter os dois.
+- **Motivo:** ainda não há código próprio sobre esses recursos; removê-los depois das Policies e do modelo de usuários custaria muito mais.
