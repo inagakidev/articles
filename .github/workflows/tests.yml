@@ -13,6 +13,28 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
+    services:
+      mariadb:
+        image: mariadb:11.8
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: articles
+          MARIADB_USER: articles
+          MARIADB_PASSWORD: articles
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USERNAME: articles
+      DB_PASSWORD: articles
+
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -30,6 +52,12 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
+
+      - name: Create Testing Database
+        run: >-
+          docker exec ${{ job.services.mariadb.id }} mariadb -uroot -proot -e
+          "CREATE DATABASE articles_testing CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+          GRANT ALL PRIVILEGES ON articles_testing.* TO 'articles'@'%';"
 
       - name: Setup Application
         run: composer setup
