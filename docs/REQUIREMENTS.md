@@ -2,7 +2,7 @@
 
 **Versão:** 1.3 — Consolidação da P1 (auditoria completa incorporada)
 **Data:** 12/11/2026
-**Status:** Requisitos de produto da P1 consolidados e aguardando validação final. Restam as escolhas técnicas da seção 10.1, a decidir no início da Fase 02.
+**Status:** Requisitos de produto da P1 consolidados e aguardando validação final. As escolhas técnicas da seção 10.1 foram decididas em `DECISIONS.md` (D51 a D56).
 
 Este documento reúne os requisitos funcionais, perfis de acesso, regras de publicação, estados, fluxos, interações e escopo do MVP. A visão estratégica do produto está em `PRODUCT.md`. As decisões e suas justificativas estão em `DECISIONS.md`.
 
@@ -952,11 +952,13 @@ As decisões técnicas e a arquitetura estão em `DECISIONS.md`.
 
 ### 10.1. Escolhas técnicas para o início da Fase 02
 
-1. Editor Rich Text a ser utilizado.
-2. Armazenamento de imagens.
-3. Estratégia de busca.
-4. Estratégia de backup e infraestrutura.
-5. Mecanismo técnico de identificação do administrador (D12).
+Decididas em 14/11/2026 e registradas em `DECISIONS.md`:
+
+1. Editor Rich Text: Tiptap 3 com tiptap-php (D51).
+2. Imagens: Intervention Image 4 (D52) e Cloudflare R2 (D53).
+3. Busca: MariaDB FULLTEXT (D54).
+4. Backup: Spatie Laravel Backup com R2 (D55). A hospedagem fica para a p8-01.
+5. Identificação do administrador: coluna `is_admin` (D56).
 
 ### 10.2. Resolvidas
 

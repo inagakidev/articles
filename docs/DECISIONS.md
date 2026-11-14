@@ -1,6 +1,6 @@
 # DECISIONS — Plataforma de Artigos
 
-**Atualizado em:** 12/11/2026
+**Atualizado em:** 14/11/2026
 
 Registro das decisões de produto e de arquitetura, com contexto, alternativas consideradas e impacto. Os requisitos resultantes estão em `REQUIREMENTS.md`; a visão do produto está em `PRODUCT.md`.
 
@@ -258,6 +258,12 @@ Propostas como consequência das decisões acima e confirmadas explicitamente em
 | Banco de dados | MariaDB                            | Aprovada |
 | Estilização    | Tailwind CSS                       | Aprovada |
 | Testes         | Pest (backend) e Vitest (frontend) | Aprovada |
+| Editor         | Tiptap 3 + tiptap-php [D51]        | Aprovada |
+| Imagens        | Intervention Image 4 [D52]         | Aprovada |
+| Armazenamento  | Cloudflare R2 [D53]                | Aprovada |
+| Busca          | MariaDB FULLTEXT [D54]             | Aprovada |
+| Backup         | Spatie Laravel Backup + R2 [D55]   | Aprovada |
+| Administrador  | Coluna `is_admin` [D56]            | Aprovada |
 
 ### 3.2. Organização em módulos
 
@@ -298,16 +304,13 @@ Esta lista é conceitual e não representa o modelo definitivo do banco de dados
 
 ### 3.5. Pontos técnicos não definidos
 
-- Editor Rich Text escolhido.
-- Armazenamento de imagens.
 - Estratégia de versionamento do conteúdo.
-- Tecnologia de busca.
 - Estratégia de cache.
-- Infraestrutura de hospedagem.
-- Estratégia de backup.
+- Infraestrutura de hospedagem (p8-01). Requisitos já conhecidos: PHP 8.4 com GD (WebP) e `exif`, MariaDB, worker de fila permanente, agendador e acesso ao R2. De preferência com controle da configuração do MariaDB (ver D54).
 - Política técnica de exclusão e retenção.
 - Processamento de visualizações.
-- Mecanismo técnico de identificação do administrador (coluna booleana, papel ou pacote de permissões), a decidir na p2-08.
+
+Editor, imagens, busca, backup e identificação do administrador foram decididos em D51 a D56.
 
 ---
 
@@ -320,3 +323,49 @@ Esta lista é conceitual e não representa o modelo definitivo do banco de dados
 - **Decisão:** remover times e passkeys antes da Fase 03. As colunas de 2FA permanecem, para o 2FA obrigatório da administradora e o 2FA de usuários previsto para depois do MVP.
 - **Alternativas descartadas:** manter passkeys; manter os dois.
 - **Motivo:** ainda não há código próprio sobre esses recursos; removê-los depois das Policies e do modelo de usuários custaria muito mais.
+
+### D51 — Editor Rich Text
+
+- **Status:** Aprovada (14/11/2026).
+- **Contexto:** RF-066 a RF-078 e A15 exigem tabelas, código, alinhamento restrito, cores e destaques de paleta fixa guardados pelo nome e nenhum sublinhado. A diretriz 3.4 pede Rich Text em formato estruturado, sanitizado na exibição, com texto puro extraído.
+- **Decisão:** Tiptap 3 no frontend, com conteúdo persistido em JSON. As extensões habilitadas são só as previstas nos requisitos: sublinhado desligado (vem ativo no StarterKit), alinhamento limitado a esquerda, centro e direita, cor e destaque por uma extensão própria que grava o nome da cor. No backend, o tiptap-php valida o JSON, gera o HTML aceitando apenas os elementos permitidos e extrai o texto puro para busca, contagem de palavras e tempo de leitura. Prévia e página pública usam a mesma renderização no servidor.
+- **Alternativas descartadas:** Lexical e Plate (sem renderizador em PHP; sanitização dependeria do navegador ou de um servidor Node); CKEditor 5 (persiste HTML e tem licença GPL ou comercial).
+- **Riscos:** o esquema do documento existe em dois lugares (extensões JS e PHP) e precisa de testes de paridade. O tiptap-php tem ciclo de lançamentos mais lento que o Tiptap; uma atualização do Tiptap pode exigir extensão PHP própria.
+
+### D52 — Processamento de imagens
+
+- **Status:** Aprovada (14/11/2026).
+- **Contexto:** RF-079 a RF-091 e A16 exigem JPG, PNG e WebP, remoção de metadados, vários tamanhos, limite de 10 MB e imagens compartilhadas entre versões.
+- **Decisão:** Intervention Image 4 com o driver GD, usado por um único componente de processamento. A imagem é regravada (o que descarta EXIF, GPS e modelo do aparelho) depois de corrigida a orientação; o original tratado é guardado e os tamanhos derivados são gerados em WebP, em fila. Um arquivo físico não pertence a uma versão: as versões referenciam imagens, e a remoção acontece pela rotina de imagens sem referência (24 horas).
+- **Alternativas descartadas:** spatie/laravel-medialibrary (cada mídia pertence a um único registro, o que conflita com o compartilhamento entre versões); usar GD diretamente.
+- **Impacto:** o servidor de produção precisa de GD com WebP e da extensão `exif`.
+
+### D53 — Armazenamento de imagens
+
+- **Status:** Aprovada (14/11/2026).
+- **Decisão:** Cloudflare R2, acessado só pelo filesystem do Laravel (driver S3); em desenvolvimento, disco local. Imagens e backups ficam em buckets separados, com credenciais independentes e menor privilégio.
+- **Entrega:** o bucket de imagens é privado. As imagens são servidas por uma rota da aplicação que aplica a regra de acesso (pendente: só autor e administrador; aprovada: pública) e redireciona para uma URL pré-assinada de curta duração. A expiração é arredondada para janelas fixas, para que a URL fique estável e o navegador consiga reaproveitar o cache.
+- **Alternativas consideradas:** disco local do servidor (prende a aplicação a uma máquina e mistura arquivos com o backup do servidor); bucket público com cópia na aprovação (exige mover arquivos na aprovação, despublicação e suspensão, e complica imagens compartilhadas); servir os bytes pela aplicação (gasta PHP e banda do servidor sem necessidade).
+- **Impacto:** exige o pacote `league/flysystem-aws-s3-v3`. Se o desempenho exigir CDN para imagens aprovadas, a alternativa é um segundo bucket público só com derivados de imagens aprovadas.
+
+### D54 — Busca
+
+- **Status:** Aprovada (14/11/2026).
+- **Decisão:** índice FULLTEXT do MariaDB, sem mecanismo externo e sem Laravel Scout. A consulta de busca fica em um único componente, que compõe a regra única de visibilidade pública (p5-01); nenhum outro módulo monta `MATCH ... AGAINST`. Uma interface só será criada quando houver uma segunda implementação (Meilisearch), se houver necessidade comprovada.
+- **Alternativas descartadas:** Meilisearch ou Typesense no MVP (serviço extra e regra de visibilidade replicada no índice); Scout com driver de banco (camada sem ganho atual).
+- **Riscos:** sem tolerância a erros de digitação nem variações de palavras. O InnoDB ignora palavras com menos de 3 caracteres (`innodb_ft_min_token_size`), o que afeta termos técnicos como "Go", "JS", "UI" e "C#". Mitigação a definir na p5-04: reduzir o valor no servidor (exige controle da configuração do MariaDB, ver 3.5) ou tratar termos curtos à parte.
+
+### D55 — Backups
+
+- **Status:** Aprovada (14/11/2026).
+- **Decisão:** spatie/laravel-backup, com backup diário do banco, retenção de sete cópias diárias e quatro semanais, destino em bucket R2 privado exclusivo para backups, notificação por e-mail em caso de falha ou backup antigo e teste de restauração na p8-05.
+- **Imagens:** o pacote copia apenas arquivos locais e não lê o bucket de imagens. As imagens terão uma cópia própria e agendada do bucket de imagens para o bucket de backups, guardando por um período os objetos apagados, para que uma restauração do banco encontre as imagens que ele referencia.
+- **Conta separada:** o bucket de backups fica em uma conta Cloudflare diferente da conta das imagens, para que a suspensão de uma conta ou uma credencial comprometida não atinja imagens e backups ao mesmo tempo. A credencial da aplicação acessa só esse bucket. Como a limpeza das cópias antigas e o monitoramento do pacote precisam listar e apagar, a proteção contra exclusão indevida vem de uma regra de retenção (bloqueio) no próprio bucket, que impede apagar cópias recentes mesmo com a credencial comprometida. A disponibilidade desse recurso no R2 e o prazo do bloqueio são confirmados ao configurar o backup (p8-05).
+- **Riscos:** imagens e backups continuam no mesmo provedor; outro provedor pode ser adotado quando o projeto crescer. Os backups guardam dados de contas excluídas até expirarem (cerca de quatro semanas); a Política de privacidade deve informar isso, e uma restauração deve executar de novo as rotinas de retenção.
+
+### D56 — Identificação do administrador
+
+- **Status:** Aprovada (14/11/2026).
+- **Decisão:** coluna booleana `is_admin` em `users`, fora dos atributos preenchíveis em massa. A administradora é criada por um comando de instalação (RF-244). As Policies verificam o atributo diretamente, sem liberação geral ao administrador, porque ele também tem restrições (P05, R08 e, no futuro, R15). O painel exige 2FA confirmado (RF-017).
+- **Alternativas descartadas:** coluna `role` (pouco ganho, já que os níveis futuros exigem permissões e não só papéis); spatie/laravel-permission (excessivo para um único administrador).
+- **Impacto:** os níveis de administração (depois do MVP) exigirão migrar para um modelo de permissões.
