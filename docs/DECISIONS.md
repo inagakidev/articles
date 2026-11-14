@@ -330,7 +330,10 @@ Editor, imagens, busca, backup e identificação do administrador foram decidido
 - **Contexto:** RF-066 a RF-078 e A15 exigem tabelas, código, alinhamento restrito, cores e destaques de paleta fixa guardados pelo nome e nenhum sublinhado. A diretriz 3.4 pede Rich Text em formato estruturado, sanitizado na exibição, com texto puro extraído.
 - **Decisão:** Tiptap 3 no frontend, com conteúdo persistido em JSON. As extensões habilitadas são só as previstas nos requisitos: sublinhado desligado (vem ativo no StarterKit), alinhamento limitado a esquerda, centro e direita, cor e destaque por uma extensão própria que grava o nome da cor. No backend, o tiptap-php valida o JSON, gera o HTML aceitando apenas os elementos permitidos e extrai o texto puro para busca, contagem de palavras e tempo de leitura. Prévia e página pública usam a mesma renderização no servidor.
 - **Alternativas descartadas:** Lexical e Plate (sem renderizador em PHP; sanitização dependeria do navegador ou de um servidor Node); CKEditor 5 (persiste HTML e tem licença GPL ou comercial).
-- **Riscos:** o esquema do documento existe em dois lugares (extensões JS e PHP) e precisa de testes de paridade. O tiptap-php tem ciclo de lançamentos mais lento que o Tiptap; uma atualização do Tiptap pode exigir extensão PHP própria.
+- **Esquema único:** os elementos, formatações e atributos permitidos, os nomes das cores da paleta e os alinhamentos aceitos ficam em um único arquivo de esquema, lido pelas extensões do Tiptap e do tiptap-php. Nenhum dos lados mantém lista própria.
+- **Testes de paridade:** um conjunto compartilhado de documentos JSON de exemplo, cada um com o HTML esperado, cobre todos os elementos permitidos e casos proibidos (sublinhado, texto justificado, cor fora da paleta, `<script>`). Vitest e Pest verificam os mesmos arquivos.
+- **Conteúdo fora do esquema:** no envio para aprovação, o servidor recusa o documento com erro de validação, em vez de remover em silêncio o que não reconhece. O autor nunca envia algo diferente do que viu na prévia.
+- **Riscos:** o esquema é interpretado por duas bibliotecas; os testes de paridade detectam divergências, mas precisam acompanhar cada extensão nova. O tiptap-php tem ciclo de lançamentos mais lento que o Tiptap; uma atualização do Tiptap pode exigir extensão PHP própria.
 
 ### D52 — Processamento de imagens
 
