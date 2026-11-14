@@ -1,7 +1,7 @@
 # REQUIREMENTS — Plataforma de Artigos
 
-**Versão:** 1.3 — Consolidação da P1 (auditoria completa incorporada)
-**Data:** 12/11/2026
+**Versão:** 1.4 — Retenção dos backups (D55)
+**Data:** 14/11/2026
 **Status:** Requisitos de produto da P1 consolidados e aguardando validação final. As escolhas técnicas da seção 10.1 foram decididas em `DECISIONS.md` (D51 a D56).
 
 Este documento reúne os requisitos funcionais, perfis de acesso, regras de publicação, estados, fluxos, interações e escopo do MVP. A visão estratégica do produto está em `PRODUCT.md`. As decisões e suas justificativas estão em `DECISIONS.md`.
@@ -547,20 +547,27 @@ Contestação rejeitada:
 
 ### 2.23. Retenção de dados **[A20]**
 
-| Dado                                      | Prazo                                  | Depois do prazo                           |
-| ----------------------------------------- | -------------------------------------- | ----------------------------------------- |
-| Conta em carência de exclusão             | 20 dias                                | Exclusão definitiva; artigos anonimizados |
-| Conta e perfil de usuário banido          | Até encerrar a contestação             | Exclusão                                  |
-| Conta nunca verificada                    | 7 dias                                 | Exclusão                                  |
-| Confirmação de troca de e-mail            | 24 horas                               | Troca cancelada                           |
-| Artigo na lixeira                         | 7 dias, pausado na suspensão (A24)     | Exclusão permanente                       |
-| Versões substituídas                      | As 5 mais recentes por artigo          | As mais antigas são apagadas              |
-| Imagem sem nenhuma versão que a use       | 24 horas                               | Arquivo apagado                           |
-| Notificações                              | 90 dias, pausado na suspensão (A24)    | Exclusão                                  |
-| Denúncias encerradas                      | 12 meses                               | Exclusão                                  |
-| Tentativas suspeitas de login             | 90 dias                                | Exclusão                                  |
-| Registros de auditoria de conta excluída  | 12 meses após a exclusão, anonimizados | Exclusão                                  |
-| Visualizações individuais (depois do MVP) | 12 meses                               | Exclusão                                  |
+| Dado                                      | Prazo                                                  | Depois do prazo                           |
+| ----------------------------------------- | ------------------------------------------------------ | ----------------------------------------- |
+| Conta em carência de exclusão             | 20 dias                                                | Exclusão definitiva; artigos anonimizados |
+| Conta e perfil de usuário banido          | Até encerrar a contestação                             | Exclusão                                  |
+| Conta nunca verificada                    | 7 dias                                                 | Exclusão                                  |
+| Confirmação de troca de e-mail            | 24 horas                                               | Troca cancelada                           |
+| Artigo na lixeira                         | 7 dias, pausado na suspensão (A24)                     | Exclusão permanente                       |
+| Versões substituídas                      | As 5 mais recentes por artigo                          | As mais antigas são apagadas              |
+| Imagem sem nenhuma versão que a use       | 24 horas                                               | Arquivo apagado                           |
+| Notificações                              | 90 dias, pausado na suspensão (A24)                    | Exclusão                                  |
+| Denúncias encerradas                      | 12 meses                                               | Exclusão                                  |
+| Tentativas suspeitas de login             | 90 dias                                                | Exclusão                                  |
+| Registros de auditoria de conta excluída  | 12 meses após a exclusão, anonimizados                 | Exclusão                                  |
+| Visualizações individuais (depois do MVP) | 12 meses                                               | Exclusão                                  |
+| Backups (D55)                             | 7 cópias diárias e 4 semanais (até cerca de 5 semanas) | Cópia expirada é apagada                  |
+
+**Backups** **[D55]**
+
+- **RF-374** Dados excluídos, incluindo os de contas excluídas, permanecem nos backups até a cópia expirar, no máximo cerca de cinco semanas. A Política de privacidade informa esse prazo.
+- **RF-375** As rotinas de retenção calculam os prazos pelas datas registradas no banco. Depois de restaurar um backup, elas são executadas novamente e apagam o que já venceu.
+- **RF-376** Pedidos de exclusão de conta feitos entre o último backup e a restauração não estão no banco restaurado. O roteiro de restauração os reaplica a partir dos e-mails de confirmação (RF-202). Limitação conhecida: no máximo 24 horas de pedidos dependem dessa reaplicação manual.
 
 ### 2.24. Auditoria **[A20]**
 
