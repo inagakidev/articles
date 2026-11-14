@@ -9,6 +9,7 @@ Publicação e leitura de artigos técnicos para a comunidade He4rt e para devs 
 - [docs/DECISIONS.md](docs/DECISIONS.md): decisões de produto e de arquitetura
 - [docs/ROADMAP.md](docs/ROADMAP.md): fases e tarefas
 - [CONTRIBUTING.md](CONTRIBUTING.md): padrão de mensagens de commit
+- [AGENTS.md](AGENTS.md): diretrizes de engenharia e processo de desenvolvimento
 
 ## Stack
 
