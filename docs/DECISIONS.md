@@ -1,6 +1,6 @@
 # DECISIONS — Plataforma de Artigos
 
-**Atualizado em:** 16/11/2026
+**Atualizado em:** 17/11/2026
 
 Registro das decisões de produto e de arquitetura, com contexto, alternativas consideradas e impacto. Os requisitos resultantes estão em `REQUIREMENTS.md`; a visão do produto está em `PRODUCT.md`.
 
@@ -393,3 +393,10 @@ Editor, imagens, busca, backup e identificação do administrador foram decidido
 - **Status:** Aprovada (16/11/2026).
 - **Decisão:** quando `DESIGN.md` contradiz `PRODUCT.md` ou `REQUIREMENTS.md`, valem estes dois. Por isso, as sugestões durante a digitação na busca e o destaque de artigos no perfil ficam para depois do MVP, e o painel pessoal não tem números em destaque, gráficos nem métricas de leitura.
 - **Motivo:** o escopo do MVP já aprovado (A09) e as anti-referências do produto ("sem contadores em destaque", "sem analytics de leitura para autores") não devem mudar por uma decisão visual.
+
+### D60 — Implementação dos tokens visuais
+
+- **Status:** Aprovada (17/11/2026).
+- **Decisão:** os tokens semânticos do `DESIGN.md` são a única fonte de cor, definidos no `@theme` do Tailwind e redefinidos no bloco `.dark`. A paleta padrão do Tailwind é removida, para que nenhum componente use cor fora dos tokens. Os nomes usados pelos componentes do shadcn são apenas apelidos desses tokens. O tema escuro continua com o mecanismo do starter kit (classe `.dark`, cookie `appearance`). Manrope e Nunito Sans são servidas pela própria aplicação (Fontsource, OFL).
+- **Alternativas descartadas:** manter as variáveis do shadcn com valores próprios ao lado dos tokens (duas fontes de cor que divergiriam); manter a paleta padrão do Tailwind (permitiria cores fora do design system); trocar para `[data-theme]` (mudaria Blade, hook, Tailwind e componentes sem ganho); fontes pela CDN Bunny (requisição a terceiros, contrária ao uso só de cookies e recursos essenciais).
+- **Impacto:** a página promocional do Laravel foi substituída por uma página inicial mínima. Estados desabilitados usam tokens próprios em vez de opacidade, e anéis de foco são opacos (DESIGN §2.8).
