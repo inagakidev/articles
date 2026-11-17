@@ -181,6 +181,42 @@ paleta (§2.1--§2.5) existem só para alimentar os semânticos. Os dois
 temas têm conjuntos independentes: o mesmo token pode ter valores e
 até lógicas diferentes em cada tema.
 
+**Implementação:** os tokens ficam em `resources/css/app.css`, no
+`@theme` do Tailwind (tema claro) e no bloco `.dark` (tema escuro).
+Cada token vira uma classe com o mesmo nome: `bg-surface`,
+`text-text-secondary`, `border-border-strong`, `bg-danger-bg`. A paleta
+padrão do Tailwind (`neutral-500`, `red-600` …) é removida, então
+nenhum componente consegue usar uma cor fora destes tokens.
+
+Os componentes de interface gerados pelo shadcn usam outros nomes
+(`background`, `muted-foreground`, `accent` …). Eles existem só como
+apelidos dos tokens acima, sem valores próprios:
+
+| Nome do shadcn                                 | Token                                                                  |
+| ---------------------------------------------- | ---------------------------------------------------------------------- |
+| `background` · `foreground`                    | `bg` · `text-primary`                                                  |
+| `card` · `popover`                             | `surface` · `surface-elevated`                                         |
+| `primary-foreground`                           | `text-on-primary`                                                      |
+| `secondary` · `muted`                          | `surface-muted`                                                        |
+| `muted-foreground`                             | `text-secondary` (não `text-muted`, que é restrito a `bg` e `surface`) |
+| `accent`                                       | `surface-hover`                                                        |
+| `destructive`                                  | `danger-fg`                                                            |
+| `input`                                        | `border-strong` (campos precisam de 3:1)                               |
+| `ring` · `sidebar-ring`                        | `focus`                                                                |
+| `sidebar-accent` · `sidebar-accent-foreground` | `surface-selected` · `text-on-selected`                                |
+
+Código novo usa os nomes do DESIGN; os apelidos servem para os
+componentes do shadcn continuarem funcionando sem edição.
+
+Tokens acrescentados na implementação (status **Preliminar**):
+
+| Token                                        | Claro                 | Escuro                | Uso                                         |
+| -------------------------------------------- | --------------------- | --------------------- | ------------------------------------------- |
+| `--color-overlay`                            | `rgb(41 38 56 / 0.6)` | `rgb(15 13 22 / 0.7)` | Fundo atrás de modais e painéis             |
+| `--color-tag-lavender` … `--color-tag-peach` | pastéis de §2.2       | iguais                | Pills de tags e categorias, avatar sem foto |
+| `--color-tag-text`                           | `#292638`             | igual                 | Texto sobre as pills                        |
+| `--color-editor-*`                           | §2.11                 | §2.11                 | Paleta do editor                            |
+
 #### 2.6.1 Tema claro
 
 | Token semântico         | Variável CSS                                                          | Valor                             | Origem              | Status     | Uso                                                                                                    |
@@ -594,16 +630,20 @@ ser refeita a cada ajuste de valor.
 - **Nunito Sans:** corpo dos artigos, interface, botões, formulários e
   metadados.
 
-Ambas são fontes sem serifa.
+Ambas são fontes sem serifa, hospedadas pela própria aplicação
+(pacotes Fontsource, licença OFL), sem requisição a serviços de
+terceiros. São versões variáveis: um arquivo cobre todos os pesos, e o
+navegador baixa só os conjuntos de caracteres usados na página.
+
+Classes: `font-sans` (Nunito Sans, padrão do `body`) e `font-display`
+(Manrope, padrão de `h1` a `h3`).
 
 ### 3.2 Pesos previstos
 
-Família Pesos
-
----
-
-Manrope 500, 600, 700, 800
-Nunito Sans 400, 500, 600, 700
+| Família     | Pesos              |
+| ----------- | ------------------ |
+| Manrope     | 500, 600, 700, 800 |
+| Nunito Sans | 400, 500, 600, 700 |
 
 A hierarquia deve ser construída principalmente com tamanho, peso,
 espaçamento e comprimento de linha. Evitar usar muitos pesos sem
@@ -619,8 +659,15 @@ necessidade.
 - Elementos em formato pill são reservados principalmente para tags,
   categorias e itens de navegação selecionados.
 
-Os valores exatos de `border-radius` ainda devem ser definidos como
-tokens durante a implementação.
+Escala de raios (status **Preliminar**):
+
+| Token          | Valor | Uso                                     |
+| -------------- | ----- | --------------------------------------- |
+| `rounded-sm`   | 6 px  | Etiquetas de status, elementos pequenos |
+| `rounded-md`   | 10 px | Botões, campos, itens de menu           |
+| `rounded-lg`   | 14 px | Cards, avatares, painéis                |
+| `rounded-xl`   | 20 px | Modais e blocos de destaque             |
+| `rounded-full` | ---   | Pills de tags e categorias              |
 
 ### 4.2 Cards de artigos
 
@@ -640,9 +687,18 @@ Escala conceitual inicial:
 - `shadow-lg`
 - `shadow-hover`
 
-Os valores concretos devem ser definidos e testados no tema claro e
-escuro. Sombras não devem ser o único recurso para indicar separação ou
-foco.
+Valores (status **Preliminar**). No claro, a sombra é tingida com o
+texto principal (`#292638`); no escuro, é preta e mais forte, porque a
+elevação vem principalmente da cor da superfície.
+
+| Token          | Claro                    | Escuro                   |
+| -------------- | ------------------------ | ------------------------ |
+| `shadow-sm`    | `0 1px 2px 0` / 6%       | `0 1px 2px 0` / 30%      |
+| `shadow-md`    | `0 4px 12px -2px` / 8%   | `0 4px 12px -2px` / 35%  |
+| `shadow-lg`    | `0 12px 32px -4px` / 12% | `0 12px 32px -4px` / 45% |
+| `shadow-hover` | `0 8px 24px -4px` / 14%  | `0 8px 24px -4px` / 45%  |
+
+Sombras não devem ser o único recurso para indicar separação ou foco.
 
 ## 5. Ilustrações e elementos gráficos
 
@@ -987,15 +1043,17 @@ movimento excessivo.
 
 ### 9.2 Tokens preliminares
 
-Token Valor inicial
+| Token             | Valor inicial                    | Uso no código                  |
+| ----------------- | -------------------------------- | ------------------------------ |
+| `duration-fast`   | `150ms`                          | `duration-(--duration-fast)`   |
+| `duration-normal` | `250ms`                          | `duration-(--duration-normal)` |
+| `duration-slow`   | `350ms`                          | `duration-(--duration-slow)`   |
+| `ease-standard`   | `ease-in-out`                    | `ease-standard`                |
+| `ease-emphasized` | `cubic-bezier(0.2, 0.8, 0.2, 1)` | `ease-emphasized`              |
 
----
-
-`duration-fast` `150ms`
-`duration-normal` `250ms`
-`duration-slow` `350ms`
-`ease-standard` `ease-in-out`
-`ease-emphasized` `cubic-bezier(0.2, 0.8, 0.2, 1)`
+Com `prefers-reduced-motion`, transições e animações são reduzidas a
+praticamente zero em toda a aplicação, e a leve redução de escala ao
+pressionar botões não acontece.
 
 ### 9.3 Aplicações
 
@@ -1018,8 +1076,9 @@ Densidade escolhida: **confortável**.
 - Listagens informativas sem ficarem apertadas.
 - Uso eficiente da tela em desktop e mobile.
 
-A escala exata de espaçamento ainda deve ser definida em tokens durante
-a implementação.
+Espaçamento: escala padrão do Tailwind, em múltiplos de 4 px (`p-4` =
+16 px). Não há escala própria; a densidade confortável vem do uso
+consistente dela.
 
 ## 11. Responsividade
 
@@ -1032,7 +1091,9 @@ Adotar abordagem mobile-first:
 - Leitura com largura de linha adequada em diferentes telas.
 - Evitar que barras fixas cubram conteúdo ou controles.
 
-Os breakpoints exatos ainda precisam ser definidos na implementação.
+Breakpoints: os padrões do Tailwind. Cards em uma coluna abaixo de
+`md` (768 px), duas a partir de `md` e três a partir de `lg` (1024 px).
+Acima de `xl` (1280 px), três colunas e largura de conteúdo limitada.
 
 ## 12. Acessibilidade
 
@@ -1107,8 +1168,10 @@ Grupos necessários:
 1.  ~~Calcular os pares de cores para WCAG 2.2 AA~~ --- feito em §2.9.
     Pendente: validar visualmente os tokens **Preliminares** em telas
     reais, nos dois temas, e repetir o cálculo após qualquer ajuste.
-2.  Definir os valores finais dos tokens de tipografia, espaçamento,
-    raios, sombras e breakpoints.
+2.  Valores iniciais de tipografia, espaçamento, raios, sombras,
+    movimento e breakpoints definidos (§3, §4, §9, §10, §11). Pendente:
+    validá-los em telas reais e definir as camadas de sobreposição
+    (z-index) quando houver menus, drawers e modais próprios.
 3.  Testar os componentes em telas reais e com conteúdo editorial longo.
 4.  Verificar navegação por teclado e leitores de tela.
 5.  Verificar o comportamento de `prefers-reduced-motion`.
@@ -1121,108 +1184,46 @@ Grupos necessários:
 
 ## Resumo das decisões
 
----
-
-Área Decisão
-
----
-
-Direção visual Playful & Colorful
-
-Cor de assinatura Lavender (escala 50--700, com
-600 adicionado para texto e hover)
-
-Tokens de cor Semânticos, independentes por tema
-(§2.6)
-
-Botões Primários intensos, secundários
-pastéis e terciários discretos
-
-Tipografia Manrope + Nunito Sans
-
-Formas Arredondadas
-
-Animações Moderadas
-
-Fundo claro Off-white, com cards brancos
-
-Cores secundárias Sistema híbrido: funcionais e
-decorativas
-
-Cards de artigos Brancos com detalhes gráficos
-coloridos
-
-Capas Proporção 16:9
-
-Grid 3 desktop, 2 tablet, 1 mobile
-
-Sombras Suaves
-
-Navegação Arredondada, com elementos pill
-
-Ícones Lucide, outline padrão e filled em
-estados ativos
-
-Tema escuro Escuro colorido
-
-Ilustrações Doodles equilibrados
-
-Mascote Kit vetorial chapado; estados
-vazios, boas-vindas e conquistas
-(§5.3)
-
-Paleta do editor 6 cores por nome, texto e
-destaque por tema (§2.11)
-
-Avatares Quadrados com cantos
-arredondados; iniciais sem foto
-
-Tags e status Pills para tags; etiquetas para
-metadados/status
-
-Formulários Neutros, com foco em lavanda
-
-Editor Área ampla e limpa, com barra de
-ferramentas própria
-
-Leitura Editorial moderna
-
-Cabeçalho Contextual
-
-Estados vazios Contextuais
-
-Feedback Toasts + inline
-
-Modais Equilibrados e acessíveis
-
-Paginação Tradicional
-
-Busca Ao enviar; sugestões depois do
-MVP
-
-Filtros Painel expansível
-
-Navegação mobile Barra inferior + menu adicional
-
-Botões Interativos, com movimento moderado
-
-Carregamento Skeletons + spinners
-
-Notificações Lista limpa, ícones por categoria e
-contador
-
-Perfil Editorial
-
-Painel pessoal Estado dos artigos, sem métricas
-
-Configurações Categorias com navegação lateral
-
-Administração Híbrida, mais funcional e menos
-decorativa
-
-Densidade Confortável
-
-Acessibilidade Meta WCAG 2.2 AA; contraste da
-paleta calculado, conformidade
-ainda não avaliada
------------------------------------------------------------------------
+| Área              | Decisão                                                                          |
+| ----------------- | -------------------------------------------------------------------------------- |
+| Direção visual    | Playful & Colorful                                                               |
+| Cor de assinatura | Lavender (escala 50--700, com 600 adicionado para texto e hover)                 |
+| Tokens de cor     | Semânticos, independentes por tema (§2.6)                                        |
+| Botões            | Primários intensos, secundários pastéis e terciários discretos                   |
+| Tipografia        | Manrope + Nunito Sans                                                            |
+| Formas            | Arredondadas                                                                     |
+| Animações         | Moderadas                                                                        |
+| Fundo claro       | Off-white, com cards brancos                                                     |
+| Cores secundárias | Sistema híbrido: funcionais e decorativas                                        |
+| Cards de artigos  | Brancos com detalhes gráficos coloridos                                          |
+| Capas             | Proporção 16:9                                                                   |
+| Grid              | 3 desktop, 2 tablet, 1 mobile                                                    |
+| Sombras           | Suaves                                                                           |
+| Navegação         | Arredondada, com elementos pill                                                  |
+| Ícones            | Lucide, outline padrão e filled em estados ativos                                |
+| Tema escuro       | Escuro colorido                                                                  |
+| Ilustrações       | Doodles equilibrados                                                             |
+| Mascote           | Kit vetorial chapado; estados vazios, boas-vindas e conquistas (§5.3)            |
+| Paleta do editor  | 6 cores por nome, texto e destaque por tema (§2.11)                              |
+| Avatares          | Quadrados com cantos arredondados; iniciais sem foto                             |
+| Tags e status     | Pills para tags; etiquetas para metadados/status                                 |
+| Formulários       | Neutros, com foco em lavanda                                                     |
+| Editor            | Área ampla e limpa, com barra de ferramentas própria                             |
+| Leitura           | Editorial moderna                                                                |
+| Cabeçalho         | Contextual                                                                       |
+| Estados vazios    | Contextuais                                                                      |
+| Feedback          | Toasts + inline                                                                  |
+| Modais            | Equilibrados e acessíveis                                                        |
+| Paginação         | Tradicional                                                                      |
+| Busca             | Ao enviar; sugestões depois do MVP                                               |
+| Filtros           | Painel expansível                                                                |
+| Navegação mobile  | Barra inferior + menu adicional                                                  |
+| Botões            | Interativos, com movimento moderado                                              |
+| Carregamento      | Skeletons + spinners                                                             |
+| Notificações      | Lista limpa, ícones por categoria e contador                                     |
+| Perfil            | Editorial                                                                        |
+| Painel pessoal    | Estado dos artigos, sem métricas                                                 |
+| Configurações     | Categorias com navegação lateral                                                 |
+| Administração     | Híbrida, mais funcional e menos decorativa                                       |
+| Densidade         | Confortável                                                                      |
+| Acessibilidade    | Meta WCAG 2.2 AA; contraste da paleta calculado, conformidade ainda não avaliada |
