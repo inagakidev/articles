@@ -8,6 +8,8 @@ Publicação e leitura de artigos técnicos para a comunidade He4rt e para devs 
 - [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md): requisitos funcionais, perfis, estados, fluxos e escopo do MVP
 - [docs/DECISIONS.md](docs/DECISIONS.md): decisões de produto e de arquitetura
 - [docs/ROADMAP.md](docs/ROADMAP.md): fases e tarefas
+- [docs/DESIGN.md](docs/DESIGN.md): design system, paleta do editor e uso do mascote
+- [design/mascote/](design/mascote/): kit do mascote, guia de identidade e scripts
 - [CONTRIBUTING.md](CONTRIBUTING.md): padrão de mensagens de commit
 - [AGENTS.md](AGENTS.md): diretrizes de engenharia e processo de desenvolvimento
 

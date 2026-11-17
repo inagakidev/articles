@@ -1,6 +1,6 @@
 # DECISIONS — Plataforma de Artigos
 
-**Atualizado em:** 14/11/2026
+**Atualizado em:** 16/11/2026
 
 Registro das decisões de produto e de arquitetura, com contexto, alternativas consideradas e impacto. Os requisitos resultantes estão em `REQUIREMENTS.md`; a visão do produto está em `PRODUCT.md`.
 
@@ -372,3 +372,24 @@ Editor, imagens, busca, backup e identificação do administrador foram decidido
 - **Decisão:** coluna booleana `is_admin` em `users`, fora dos atributos preenchíveis em massa. A administradora é criada por um comando de instalação (RF-244). As Policies verificam o atributo diretamente, sem liberação geral ao administrador, porque ele também tem restrições (P05, R08 e, no futuro, R15). O painel exige 2FA confirmado (RF-017).
 - **Alternativas descartadas:** coluna `role` (pouco ganho, já que os níveis futuros exigem permissões e não só papéis); spatie/laravel-permission (excessivo para um único administrador).
 - **Impacto:** os níveis de administração (depois do MVP) exigirão migrar para um modelo de permissões.
+
+### D57 — Mascote
+
+- **Status:** Aprovada (16/11/2026).
+- **Contexto:** o kit do mascote chegou em três versões: vetorial chapada (SVGs do kit), vetorial com degradês (só na prancha HTML, sem arquivos exportados) e traçada a partir da ilustração original.
+- **Decisão:** a versão oficial é a vetorial chapada, em `design/mascote/`, com os SVGs usados pela aplicação em `resources/images/mascote/`. Onde e como o mascote aparece está em `DESIGN.md` §5.3: estados vazios, boas-vindas, artigo aprovado, aguardando aprovação e páginas de erro; nunca na leitura, no editor, no painel administrativo, em rejeições ou penalidades. É sempre decorativo. A animação usa o rig próprio do kit, portado para TypeScript, sem Rive. PNGs só para e-mails, regenerados pelos scripts do kit. A versão traçada fica fora do repositório.
+- **Alternativas descartadas:** versão com degradês (sem arquivos exportados e contrária ao guia de identidade); versão traçada (até 2,1 MB por SVG e com artefatos visíveis em fundo escuro; serve só para apresentação); Rive (dependência a mais e formato editável apenas no editor deles); mascote como foto padrão de usuário (confundiria perfis comuns e o autor anonimizado com a plataforma; usam-se iniciais).
+
+### D58 — Paleta do editor e links no artigo
+
+- **Status:** Aprovada (16/11/2026).
+- **Contexto:** RF-068 e A15 exigem cores de texto e destaques por nome, com variação por tema e contraste mínimo de 4,5:1. O `DESIGN.md` recebido não tinha essa paleta.
+- **Decisão:** seis cores (`lavanda`, `rosa`, `amarelo`, `menta`, `azul`, `pessego`), cada uma com texto e destaque para os temas claro e escuro, em `DESIGN.md` §2.11. Todas as combinações de texto colorido com destaque passam (mínimo 4,62:1), então podem ser usadas juntas. Links no corpo do artigo são sempre sublinhados, porque o texto lavanda e o link têm cores próximas; como o editor não oferece sublinhado, sublinhado no artigo significa sempre link.
+- **Alternativas descartadas:** destaques em tons mais claros que os pastéis (quase invisíveis sobre o fundo); pastéis como destaque no tema escuro (áreas claras grandes); proibir texto colorido dentro de destaque (desnecessário depois de ajustar os tons de texto).
+- **Impacto:** a verificação de contraste da paleta faz parte dos testes do frontend; o esquema do editor (D51) lista exatamente esses seis nomes.
+
+### D59 — Precedência entre DESIGN.md e os requisitos
+
+- **Status:** Aprovada (16/11/2026).
+- **Decisão:** quando `DESIGN.md` contradiz `PRODUCT.md` ou `REQUIREMENTS.md`, valem estes dois. Por isso, as sugestões durante a digitação na busca e o destaque de artigos no perfil ficam para depois do MVP, e o painel pessoal não tem números em destaque, gráficos nem métricas de leitura.
+- **Motivo:** o escopo do MVP já aprovado (A09) e as anti-referências do produto ("sem contadores em destaque", "sem analytics de leitura para autores") não devem mudar por uma decisão visual.

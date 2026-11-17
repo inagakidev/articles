@@ -85,5 +85,5 @@ Gratuita para ler e para publicar durante o MVP. O modelo será revisto depois, 
 - DECISIONS.md: decisões de produto e de arquitetura, com justificativas
 - ARCHITECTURE.md: camadas, responsabilidades e convenções
 - DATABASE.md: modelagem e relacionamentos
-- DESIGN.md: tokens visuais, como cores, tipografia e espaçamento (a criar)
+- DESIGN.md: tokens visuais, paleta do editor e uso do mascote
 - AGENTS.md: convenções para agentes de código (opcional)
