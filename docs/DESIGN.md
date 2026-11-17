@@ -447,6 +447,18 @@ sempre com `--color-tag-text: #292638`.
 
 ### 2.9 Auditoria de contraste --- todos os pares testados
 
+**Verificação automatizada:** `resources/js/test/design-tokens.test.ts`
+lê os valores reais de `resources/css/app.css` e confere, nos dois
+temas, cada par de uso permitido em §2.7, §2.8 e §2.11 (texto ≥ 4,5:1;
+bordas de controles, foco e primário como componente ≥ 3:1), incluindo
+as 36 combinações de texto colorido com destaque do editor. O mesmo
+teste confere que as tabelas de §2.6.1, §2.6.2 e §2.11 têm os mesmos
+valores do CSS. `npm run test:contrast` lista cada par com a razão
+calculada; a execução no CI é a evidência de cada versão.
+
+A tabela abaixo continua sendo a referência humana, inclusive dos usos
+proibidos (†), que o teste não cobre.
+
 Legenda: **Aprovado** = atende ao critério do uso; **Só texto grande / UI** = passa 3:1 mas não 4,5:1, portanto proibido para texto normal; **Reprovado** = não atende nem a 3:1; **Decorativo** e **Isento** = sem mínimo aplicável no uso previsto.
 
 Pares marcados com † documentam **usos proibidos** e o motivo da restrição. A margem do par C08 (4,53:1) é estreita: qualquer ajuste em Lavender 100 ou Text secondary exige recálculo.
@@ -1116,7 +1128,8 @@ Requisitos de implementação:
 
 ### 12.1 Situação da paleta
 
-As razões de contraste da seção 2 foram **calculadas** (§2.9). Cálculo
+As razões de contraste da seção 2 foram **calculadas** (§2.9) e são
+verificadas automaticamente a cada alteração. Cálculo
 não equivale a conformidade: o projeto **não** pode ser declarado
 conforme à WCAG 2.2 AA antes de uma avaliação completa, com testes
 manuais, ferramentas automatizadas e tecnologias assistivas, em

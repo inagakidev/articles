@@ -10,7 +10,8 @@
         "check:fix": "vp check --fix",
         "types:check": "tsc --noEmit",
         "test": "vp test run",
-        "test:watch": "vp test"
+        "test:watch": "vp test",
+        "test:contrast": "vp test run resources/js/test/design-tokens.test.ts --reporter=verbose"
     },
     "dependencies": {
         "@fontsource-variable/manrope": "^5.3.0",

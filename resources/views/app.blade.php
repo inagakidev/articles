@@ -19,7 +19,7 @@
             })();
         </script>
 
-        {{-- Fundo antes de o CSS carregar; mesmos valores de --color-bg em resources/css/app.css --}}
+        {{-- Fundo antes de o CSS carregar: --color-bg de cada tema (app.css), conferido em design-tokens.test.ts --}}
         <style>
             html {
                 background-color: #fffdf8;
