@@ -15,4 +15,12 @@ class DatabaseConnectionTest extends TestCase
         $this->assertLessThan(60, abs($databaseNow->diffInSeconds(now())));
     }
 
+    public function test_text_comparison_ignores_case_and_accents_but_distinguishes_emoji()
+    {
+        $equal = fn (string $a, string $b): bool => (bool) DB::selectOne('select ? = ? as igual', [$a, $b])->igual;
+
+        $this->assertTrue($equal('Laravel', 'laravel'));
+        $this->assertTrue($equal('café', 'cafe'));
+        $this->assertFalse($equal('🔥', '🎉'));
+    }
 }
