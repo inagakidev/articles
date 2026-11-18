@@ -414,3 +414,15 @@ Editor, imagens, busca, backup e identificação do administrador foram decidido
     - A interface usa "Aguardando revisão" e "Não aprovado" para os estados pendente e rejeitado (`DESIGN.md` §8.13).
 - **Alternativas descartadas:** a paleta da prancha (reaproveitava cores de estado como texto e, no tema escuro, texto colorido sobre destaque ficava perto de 1:1); mascote também na rejeição, com pose neutra.
 - **Pendente:** o nome do produto (`[NOME]` nas telas) e as telas no tema escuro.
+
+### D62 — Interface em português e inglês
+
+- **Status:** Aprovada (18/11/2026).
+- **Contexto:** RF-008 exige a interface completa em PT e EN no MVP; o critério da p2-06 é uma página funcionando nos dois idiomas, sem strings fixas.
+- **Decisão:**
+    - Os textos da interface ficam em `lang/pt_BR.json` e `lang/en.json`, com chaves por área (`site.nav.login`, `theme.system`). O Laravel usa os mesmos arquivos no servidor, e o React os lê com uma função `t()` própria, sem biblioteca.
+    - O tipo das chaves vem do arquivo em português, então uma chave inexistente ou uma tradução faltando em inglês é erro de compilação. Um teste confere que os dois idiomas têm as mesmas chaves e os mesmos valores substituíveis.
+    - O idioma vem do cookie essencial `locale` (escolha da pessoa) ou, sem ele, do navegador; o padrão é português. A preferência salva na conta entra com a modelagem de usuários.
+    - As mensagens de validação em português foram copiadas uma vez de laravel-lang/lang 15.39.0 (MIT, com a licença em `lang/pt_BR`), sem dependência no projeto.
+- **Alternativas descartadas:** i18next e react-i18next (biblioteca maior e traduções separadas das do Laravel); enviar as traduções pelo servidor a cada página (respostas maiores); o texto em inglês como chave, padrão do Laravel (impede detectar texto fixo esquecido); instalar o laravel-lang/publisher (exige a extensão `bcmath`).
+- **Pendente:** revisar o tom das mensagens de validação herdadas do pacote, que são formais demais para o PRODUCT.
