@@ -117,8 +117,8 @@ export default function Register({ passwordRules }: Props) {
 Register.layout = {
     variante: 'painel',
     arte: 'pose-acenando',
-    chamada: 'Escreva para a comunidade He4rt.',
-    apoio: 'Rascunho, revisão e publicação, num lugar que a comunidade lê.',
+    chamada: 'account.register.headline',
+    apoio: 'account.register.support',
     title: 'Create an account',
     description: 'Enter your details below to create your account',
 };

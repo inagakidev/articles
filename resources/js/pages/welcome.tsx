@@ -1,15 +1,18 @@
 import { Head } from '@inertiajs/react';
+import { useTraducao } from '@/lib/i18n';
 
 export default function Welcome() {
+    const { t } = useTraducao();
+
     return (
         <>
-            <Head title="Início" />
+            <Head title={t('home.title')} />
             <section className="mx-auto flex w-full max-w-page flex-1 flex-col justify-center px-4 py-16 sm:px-8">
                 <h1 className="max-w-2xl text-h1 font-extrabold sm:text-display">
-                    Artigos técnicos da comunidade He4rt
+                    {t('home.headline')}
                 </h1>
                 <p className="mt-4 max-w-xl text-article text-text-secondary">
-                    Escreva, envie para revisão, publique.
+                    {t('home.tagline')}
                 </p>
             </section>
         </>

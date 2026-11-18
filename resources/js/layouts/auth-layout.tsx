@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import type { ArteDoMascote } from '@/components/mascote';
 import Mascote from '@/components/mascote';
 import SiteLogo from '@/components/site/site-logo';
+import type { ChaveDeTraducao } from '@/lib/i18n';
+import { useTraducao } from '@/lib/i18n';
 
 type Props = {
     title?: string;
@@ -11,9 +13,9 @@ type Props = {
     /** Pose do mascote (DESIGN §5.3). Sem arte, a página fica sem mascote. */
     arte?: ArteDoMascote;
     /** Frase grande ao lado do mascote, só na variante "painel". */
-    chamada?: string;
+    chamada?: ChaveDeTraducao;
     /** Texto de apoio abaixo da chamada. */
-    apoio?: string;
+    apoio?: ChaveDeTraducao;
     children: ReactNode;
 };
 
@@ -79,6 +81,8 @@ function PainelLayout({
     apoio,
     children,
 }: Omit<Props, 'variante'>) {
+    const { t } = useTraducao();
+
     return (
         <div className="flex min-h-svh flex-col bg-bg text-text-primary lg:flex-row">
             <aside className="relative hidden flex-1 flex-col justify-between overflow-hidden bg-surface-muted px-14 pt-10 pb-14 lg:flex">
@@ -88,12 +92,12 @@ function PainelLayout({
                     {arte && <Mascote arte={arte} tamanho={300} />}
                     {chamada && (
                         <p className="max-w-md font-display text-h2 font-extrabold">
-                            {chamada}
+                            {t(chamada)}
                         </p>
                     )}
                     {apoio && (
                         <p className="max-w-md text-article text-text-secondary">
-                            {apoio}
+                            {t(apoio)}
                         </p>
                     )}
                 </div>
@@ -107,7 +111,7 @@ function PainelLayout({
                 <div className="mx-4 flex items-center gap-3 rounded-xl bg-surface-muted px-4 py-3 lg:hidden">
                     <Mascote arte={arte} tamanho={110} />
                     <p className="font-display text-card-title font-extrabold">
-                        {chamada}
+                        {t(chamada)}
                     </p>
                 </div>
             )}

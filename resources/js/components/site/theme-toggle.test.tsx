@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import '@/test/inertia';
 
 // O hook de tema guarda a escolha em memória; cada teste carrega uma cópia nova.
 async function loadComponents() {
