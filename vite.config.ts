@@ -4,14 +4,23 @@ import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, lazyPlugins } from 'vite-plus';
+
+// O plugin do Laravel cuida do servidor de desenvolvimento e do build, e se
+// recusa a subir um servidor em CI. Nos testes ele não tem função.
+const isVitest = process.env.VITEST !== undefined;
 
 export default defineConfig({
     plugins: lazyPlugins(() => [
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.tsx'],
-            refresh: true,
-        }),
+        ...(isVitest
+            ? []
+            : [
+                  laravel({
+                      input: ['resources/css/app.css', 'resources/js/app.tsx'],
+                      refresh: true,
+                  }),
+              ]),
         inertia(),
         react(),
         babel({
@@ -26,6 +35,10 @@ export default defineConfig({
         environment: 'jsdom',
         include: ['resources/js/**/*.test.{ts,tsx}'],
         setupFiles: ['resources/js/test/setup.ts'],
+        // Atalho que o plugin do Laravel define fora dos testes
+        alias: {
+            '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
+        },
     },
     server: {
         watch: {
