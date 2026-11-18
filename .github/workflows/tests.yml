@@ -62,5 +62,9 @@ jobs:
       - name: Setup Application
         run: composer setup
 
+      # Desfaz e refaz todas as migrations: um down() que esquece uma tabela ou coluna faz o segundo migrate falhar
+      - name: Check Migrations Rollback
+        run: php artisan migrate:reset --force && php artisan migrate --force
+
       - name: Run CI Checks
         run: composer ci:check
