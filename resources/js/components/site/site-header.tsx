@@ -13,8 +13,8 @@ export default function SiteHeader() {
     return (
         <header className="border-b border-border bg-bg">
             <div className="mx-auto flex h-18 max-w-page items-center gap-4 px-4 sm:px-8">
-                <SiteLogo />
-                <div className="ml-auto flex items-center gap-2">
+                <SiteLogo nomeSoNoDesktop />
+                <div className="ml-auto flex items-center gap-1 sm:gap-2">
                     <ThemeToggle />
                     <LanguageToggle />
                     {auth.user ? (

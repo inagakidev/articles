@@ -5,9 +5,12 @@ import { home } from '@/routes';
 
 export default function SiteLogo({
     tamanho = 32,
+    nomeSoNoDesktop = false,
     className,
 }: {
     tamanho?: number;
+    /** No celular, mostra só o avatar; o nome continua para leitores de tela. */
+    nomeSoNoDesktop?: boolean;
     className?: string;
 }) {
     const { name } = usePage().props;
@@ -21,7 +24,12 @@ export default function SiteLogo({
             )}
         >
             <Mascote arte="mascote-avatar" tamanho={tamanho} />
-            <span className="font-display text-lg font-extrabold tracking-tight">
+            <span
+                className={cn(
+                    'font-display text-lg font-extrabold tracking-tight',
+                    nomeSoNoDesktop && 'sr-only sm:not-sr-only',
+                )}
+            >
                 {name}
             </span>
         </Link>
