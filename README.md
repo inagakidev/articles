@@ -56,13 +56,14 @@ Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24 e MariaDB 11.
 
 ## Testes e verificações
 
-| Comando               | O que faz                                     |
-| --------------------- | --------------------------------------------- |
-| `php artisan test`    | Testes Pest (usam o banco `articles_testing`) |
-| `npm test`            | Testes Vitest dos componentes React           |
-| `npm run types:check` | Checagem de tipos TypeScript                  |
-| `npm run check`       | Formatação e lint do frontend                 |
-| `composer test`       | Pint, PHPStan e Pest                          |
-| `composer ci:check`   | Todas as verificações acima                   |
+| Comando                 | O que faz                                                         |
+| ----------------------- | ----------------------------------------------------------------- |
+| `php artisan test`      | Testes Pest (usam o banco `articles_testing`)                     |
+| `npm test`              | Testes Vitest dos componentes React                               |
+| `npm run test:contrast` | Lista o contraste de cada par de cores dos tokens, nos dois temas |
+| `npm run types:check`   | Checagem de tipos TypeScript                                      |
+| `npm run check`         | Formatação e lint do frontend                                     |
+| `composer test`         | Pint, PHPStan e Pest                                              |
+| `composer ci:check`     | Todas as verificações acima                                       |
 
 Testes de frontend ficam ao lado do componente, com o sufixo `.test.tsx`.

@@ -16,6 +16,14 @@
 > sublinhados no artigo (§8.3). Itens que contrariavam `PRODUCT.md` e
 > `REQUIREMENTS.md` foram ajustados (§6.2, §8.6, §8.9, §8.10), pois
 > esses documentos prevalecem.
+>
+> **Telas de referência (17/11/2026):** as telas desktop e mobile e a
+> prancha de estilo estão num canvas de design privado, compartilhado
+> pela responsável pelo projeto (o link não fica no repositório). A
+> prancha aprovou
+> raios, escala tipográfica, sombras e larguras (§3.3, §4.1, §4.3, §11).
+> Quando tela e documento divergirem, valem este documento,
+> `PRODUCT.md` e `REQUIREMENTS.md`, e a tela é corrigida.
 
 ## 1. Direção visual
 
@@ -447,6 +455,18 @@ sempre com `--color-tag-text: #292638`.
 
 ### 2.9 Auditoria de contraste --- todos os pares testados
 
+**Verificação automatizada:** `resources/js/test/design-tokens.test.ts`
+lê os valores reais de `resources/css/app.css` e confere, nos dois
+temas, cada par de uso permitido em §2.7, §2.8 e §2.11 (texto ≥ 4,5:1;
+bordas de controles, foco e primário como componente ≥ 3:1), incluindo
+as 36 combinações de texto colorido com destaque do editor. O mesmo
+teste confere que as tabelas de §2.6.1, §2.6.2 e §2.11 têm os mesmos
+valores do CSS. `npm run test:contrast` lista cada par com a razão
+calculada; a execução no CI é a evidência de cada versão.
+
+A tabela abaixo continua sendo a referência humana, inclusive dos usos
+proibidos (†), que o teste não cobre.
+
 Legenda: **Aprovado** = atende ao critério do uso; **Só texto grande / UI** = passa 3:1 mas não 4,5:1, portanto proibido para texto normal; **Reprovado** = não atende nem a 3:1; **Decorativo** e **Isento** = sem mínimo aplicável no uso previsto.
 
 Pares marcados com † documentam **usos proibidos** e o motivo da restrição. A margem do par C08 (4,53:1) é estreita: qualquer ajuste em Lavender 100 ou Text secondary exige recálculo.
@@ -649,6 +669,27 @@ A hierarquia deve ser construída principalmente com tamanho, peso,
 espaçamento e comprimento de linha. Evitar usar muitos pesos sem
 necessidade.
 
+### 3.3 Escala tipográfica
+
+Aprovada na prancha de estilo. A leitura define a escala: corpo do
+artigo em 19/32 px numa coluna de até 680 px (≈ 70 caracteres).
+
+| Classe            | Uso                               | Família e peso  | Tamanho / linha | Espaçamento |
+| ----------------- | --------------------------------- | --------------- | --------------- | ----------- |
+| `text-display`    | Chamada principal                 | Manrope 800     | 48 / 56         | -0,03em     |
+| `text-h1`         | Título do artigo e da página      | Manrope 800     | 40 / 48         | -0,02em     |
+| `text-h2`         | Seção                             | Manrope 700     | 28 / 36         | -0,01em     |
+| `text-h3`         | Subseção                          | Manrope 700     | 22 / 30         | 0           |
+| `text-card-title` | Título de card                    | Manrope 700     | 20 / 28         | -0,01em     |
+| `text-article`    | Corpo do artigo                   | Nunito Sans 400 | 19 / 32         | 0           |
+| `text-body`       | Corpo da interface                | Nunito Sans 400 | 16 / 24         | 0           |
+| `text-label`      | Rótulo e botão                    | Nunito Sans 700 | 15 / 20         | 0           |
+| `text-meta`       | Metadado (data, tempo de leitura) | Nunito Sans 600 | 14 / 20         | 0           |
+| `text-caption`    | Legenda                           | Nunito Sans 600 | 13 / 18         | 0,01em      |
+
+As classes definem tamanho, altura de linha e espaçamento; família e
+peso vêm de `font-display`/`font-sans` e `font-*`.
+
 ## 4. Formas, superfícies e profundidade
 
 ### 4.1 Formas
@@ -659,15 +700,18 @@ necessidade.
 - Elementos em formato pill são reservados principalmente para tags,
   categorias e itens de navegação selecionados.
 
-Escala de raios (status **Preliminar**):
+Escala de raios (aprovada na prancha de estilo):
 
-| Token          | Valor | Uso                                     |
-| -------------- | ----- | --------------------------------------- |
-| `rounded-sm`   | 6 px  | Etiquetas de status, elementos pequenos |
-| `rounded-md`   | 10 px | Botões, campos, itens de menu           |
-| `rounded-lg`   | 14 px | Cards, avatares, painéis                |
-| `rounded-xl`   | 20 px | Modais e blocos de destaque             |
-| `rounded-full` | ---   | Pills de tags e categorias              |
+| Token          | Valor | Uso                                |
+| -------------- | ----- | ---------------------------------- |
+| `rounded-sm`   | 6 px  | Etiquetas de status, código inline |
+| `rounded-md`   | 12 px | Botões, campos                     |
+| `rounded-lg`   | 16 px | Cards, capas                       |
+| `rounded-xl`   | 24 px | Modais, painéis                    |
+| `rounded-full` | ---   | Tags, categorias, navegação ativa  |
+
+As telas de referência ainda usam alguns raios fora da escala (8, 10,
+14, 18 e 20 px); na implementação, valem os da tabela.
 
 ### 4.2 Cards de artigos
 
@@ -687,16 +731,18 @@ Escala conceitual inicial:
 - `shadow-lg`
 - `shadow-hover`
 
-Valores (status **Preliminar**). No claro, a sombra é tingida com o
-texto principal (`#292638`); no escuro, é preta e mais forte, porque a
-elevação vem principalmente da cor da superfície.
+Valores aprovados na prancha de estilo para o tema claro, tingidos com o
+texto principal (`#292638`). No escuro (status **Preliminar**), a
+sombra é preta e mais forte, porque a elevação vem principalmente da
+cor da superfície. Na prancha, sombras sempre vêm acompanhadas de
+borda.
 
-| Token          | Claro                    | Escuro                   |
-| -------------- | ------------------------ | ------------------------ |
-| `shadow-sm`    | `0 1px 2px 0` / 6%       | `0 1px 2px 0` / 30%      |
-| `shadow-md`    | `0 4px 12px -2px` / 8%   | `0 4px 12px -2px` / 35%  |
-| `shadow-lg`    | `0 12px 32px -4px` / 12% | `0 12px 32px -4px` / 45% |
-| `shadow-hover` | `0 8px 24px -4px` / 14%  | `0 8px 24px -4px` / 45%  |
+| Token          | Claro                               | Escuro                                |
+| -------------- | ----------------------------------- | ------------------------------------- |
+| `shadow-sm`    | `0 1px 2px` / 6% + `0 1px 3px` / 8% | `0 1px 2px` / 30% + `0 1px 3px` / 35% |
+| `shadow-md`    | `0 4px 12px` / 8%                   | `0 4px 12px` / 35%                    |
+| `shadow-lg`    | `0 12px 32px` / 12%                 | `0 12px 32px` / 45%                   |
+| `shadow-hover` | `0 8px 24px` / 12%                  | `0 8px 24px` / 45%                    |
 
 Sombras não devem ser o único recurso para indicar separação ou foco.
 
@@ -736,29 +782,44 @@ versão traçada não são usadas na interface.
 **Papel:** acolher em momentos de espera, vazio ou conquista. Nunca
 compete com o texto, nunca carrega informação sozinho.
 
-| Contexto                                                   | Usa o mascote?     | Pose / expressão                  |
-| ---------------------------------------------------------- | ------------------ | --------------------------------- |
-| Busca sem resultados                                       | Sim                | `pose-lupa`                       |
-| Nenhum favorito                                            | Sim                | `pose-segurando-folha`            |
-| Nenhum rascunho ou artigo                                  | Sim                | `pose-escrevendo`                 |
-| Notificações em dia                                        | Sim                | `pose-dormindo`                   |
-| Cadastro, login e verificação de e-mail                    | Sim, pequeno       | `pose-acenando`                   |
-| Artigo aprovado (notificação, e-mail)                      | Sim                | `pose-comemorando`                |
-| Artigo aguardando aprovação                                | Sim, discreto      | `pose-lendo`                      |
-| Erro 404                                                   | Sim                | `pose-lupa` + `expressao-confuso` |
-| Erro 500                                                   | Sim                | `expressao-cansado`               |
-| Manutenção                                                 | Sim                | `pose-dormindo`                   |
-| Favicon e ícones menores que 24 px                         | Só o marcador roxo | ---                               |
-| Página de leitura, editor, painel administrativo           | **Não**            | ---                               |
-| Rejeição, despublicação, suspensão, banimento, contestação | **Não**            | ---                               |
-| Foto padrão de usuário                                     | **Não** (ver §6.2) | ---                               |
+| Contexto                                                             | Usa o mascote?          | Pose / expressão                  |
+| -------------------------------------------------------------------- | ----------------------- | --------------------------------- |
+| Logo no cabeçalho (inclusive no painel administrativo)               | Sim, avatar de 28–32 px | `mascote-avatar`                  |
+| Página inicial, login e cadastro                                     | Sim                     | `pose-acenando`                   |
+| Chamada "publicar aqui" na página inicial                            | Sim                     | `pose-escrevendo`                 |
+| Confirmação de e-mail                                                | Sim                     | `pose-segurando-folha`            |
+| Recuperar senha                                                      | Sim                     | `pose-pensando`                   |
+| Novo aceite dos Termos                                               | Sim                     | `pose-lendo`                      |
+| Editor vazio                                                         | Sim, pequeno            | `pose-escrevendo`                 |
+| Artigo enviado para revisão                                          | Sim, discreto           | `pose-caminhando`                 |
+| Artigo aprovado (Meus artigos, notificação, e-mail)                  | Sim                     | `pose-comemorando`                |
+| Fim do artigo, depois do texto                                       | Sim, pequeno            | `pose-lendo`                      |
+| Busca carregando                                                     | Sim                     | `pose-lupa`                       |
+| Busca sem resultados                                                 | Sim                     | `expressao-confuso`               |
+| Nenhum favorito                                                      | Sim                     | `pose-segurando-folha`            |
+| Nenhum rascunho ou artigo                                            | Sim                     | `pose-escrevendo`                 |
+| Notificações em dia                                                  | Sim                     | `pose-dormindo`                   |
+| Erro 404                                                             | Sim                     | `pose-lupa` + `expressao-confuso` |
+| Erro 500                                                             | Sim                     | `expressao-cansado`               |
+| Manutenção                                                           | Sim                     | `pose-dormindo`                   |
+| Favicon e ícones menores que 24 px                                   | Só o marcador roxo      | ---                               |
+| Durante a leitura e a escrita (corpo do artigo, editor com conteúdo) | **Não**                 | ---                               |
+| Painel administrativo, fora o logo                                   | **Não**                 | ---                               |
+| Artigo não aprovado ou despublicado                                  | **Não**                 | ---                               |
+| Suspensão, banimento, contestação, exclusão de conta, denúncias      | **Não**                 | ---                               |
+| Foto padrão de usuário                                               | **Não** (ver §6.2)      | ---                               |
 
 Os estados vazios de §5.2 continuam contextuais: cada um com mensagem e
 ação próprias, e a pose da tabela como apoio visual.
 
 **Por que não em rejeições e penalidades:** a mensagem precisa ser
-respeitosa e dizer o próximo passo (`PRODUCT.md`, Tone). Um mascote
-triste ou comemorando nesses momentos soa infantil ou irônico.
+respeitosa e dizer o próximo passo (`PRODUCT.md`, Tone). A rejeição é
+uma avaliação do trabalho da pessoa; um mascote nesse momento, mesmo
+neutro, soa infantil ou irônico.
+
+**Leitura e editor:** o mascote aparece só antes de haver texto (editor
+vazio) ou depois que o texto acaba (fim do artigo), pequeno, e nunca
+entre o leitor e o conteúdo.
 
 **Regras de uso**
 
@@ -938,6 +999,8 @@ Estilo **editorial moderno**:
 - Em telas muito largas, manter três colunas e limitar a largura do
   conteúdo.
 - Cards brancos com detalhes gráficos coloridos sutis.
+- Cards mostram as contagens de curtidas e de favoritos (RF-161), discretas
+  e com nome acessível; nunca em destaque sobre o título.
 - Capas em proporção padrão 16:9, usando `object-fit: cover`.
 - Não exigir que a imagem enviada tenha exatamente 16:9; fazer
   enquadramento responsivo.
@@ -1034,6 +1097,20 @@ Mesma identidade visual, com menos decoração:
 - Filtros e indicadores organizados.
 - Confirmações cuidadosas para ações destrutivas.
 
+### 8.13 Nomes dos estados na interface
+
+A interface usa nomes mais próximos de quem escreve; os requisitos e o
+código usam os nomes dos estados (`REQUIREMENTS.md` §5).
+
+| Interface                                       | Estado nos requisitos                                  |
+| ----------------------------------------------- | ------------------------------------------------------ |
+| Rascunho                                        | Versão em rascunho; seção "Rascunhos" (RF-113)         |
+| Aguardando revisão                              | Versão pendente; seção "Aguardando aprovação" (RF-114) |
+| Não aprovado                                    | Versão rejeitada; seção "Rejeitados" (RF-115)          |
+| Publicado                                       | Artigo publicado; seção "Publicados" (RF-112)          |
+| Edição aguardando revisão · Edição não aprovada | Selos "edição pendente" e "edição rejeitada" (RF-112)  |
+| Na lixeira                                      | Artigo na lixeira                                      |
+
 ## 9. Movimento e transições
 
 ### 9.1 Intensidade
@@ -1093,7 +1170,14 @@ Adotar abordagem mobile-first:
 
 Breakpoints: os padrões do Tailwind. Cards em uma coluna abaixo de
 `md` (768 px), duas a partir de `md` e três a partir de `lg` (1024 px).
-Acima de `xl` (1280 px), três colunas e largura de conteúdo limitada.
+
+Larguras de conteúdo:
+
+| Classe          | Largura | Uso                                              |
+| --------------- | ------- | ------------------------------------------------ |
+| `max-w-page`    | 1200 px | Container das páginas a partir de `xl` (1280 px) |
+| `max-w-reading` | 680 px  | Coluna de leitura do artigo                      |
+| `max-w-cover`   | 880 px  | Capa na página de leitura                        |
 
 ## 12. Acessibilidade
 
@@ -1116,7 +1200,8 @@ Requisitos de implementação:
 
 ### 12.1 Situação da paleta
 
-As razões de contraste da seção 2 foram **calculadas** (§2.9). Cálculo
+As razões de contraste da seção 2 foram **calculadas** (§2.9) e são
+verificadas automaticamente a cada alteração. Cálculo
 não equivale a conformidade: o projeto **não** pode ser declarado
 conforme à WCAG 2.2 AA antes de uma avaliação completa, com testes
 manuais, ferramentas automatizadas e tecnologias assistivas, em

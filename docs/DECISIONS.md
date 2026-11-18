@@ -375,7 +375,7 @@ Editor, imagens, busca, backup e identificação do administrador foram decidido
 
 ### D57 — Mascote
 
-- **Status:** Aprovada (16/11/2026).
+- **Status:** Aprovada (16/11/2026); contextos de uso atualizados pela D61 (17/11/2026).
 - **Contexto:** o kit do mascote chegou em três versões: vetorial chapada (SVGs do kit), vetorial com degradês (só na prancha HTML, sem arquivos exportados) e traçada a partir da ilustração original.
 - **Decisão:** a versão oficial é a vetorial chapada, em `design/mascote/`, com os SVGs usados pela aplicação em `resources/images/mascote/`. Onde e como o mascote aparece está em `DESIGN.md` §5.3: estados vazios, boas-vindas, artigo aprovado, aguardando aprovação e páginas de erro; nunca na leitura, no editor, no painel administrativo, em rejeições ou penalidades. É sempre decorativo. A animação usa o rig próprio do kit, portado para TypeScript, sem Rive. PNGs só para e-mails, regenerados pelos scripts do kit. A versão traçada fica fora do repositório.
 - **Alternativas descartadas:** versão com degradês (sem arquivos exportados e contrária ao guia de identidade); versão traçada (até 2,1 MB por SVG e com artefatos visíveis em fundo escuro; serve só para apresentação); Rive (dependência a mais e formato editável apenas no editor deles); mascote como foto padrão de usuário (confundiria perfis comuns e o autor anonimizado com a plataforma; usam-se iniciais).
@@ -400,3 +400,17 @@ Editor, imagens, busca, backup e identificação do administrador foram decidido
 - **Decisão:** os tokens semânticos do `DESIGN.md` são a única fonte de cor, definidos no `@theme` do Tailwind e redefinidos no bloco `.dark`. A paleta padrão do Tailwind é removida, para que nenhum componente use cor fora dos tokens. Os nomes usados pelos componentes do shadcn são apenas apelidos desses tokens. O tema escuro continua com o mecanismo do starter kit (classe `.dark`, cookie `appearance`). Manrope e Nunito Sans são servidas pela própria aplicação (Fontsource, OFL).
 - **Alternativas descartadas:** manter as variáveis do shadcn com valores próprios ao lado dos tokens (duas fontes de cor que divergiriam); manter a paleta padrão do Tailwind (permitiria cores fora do design system); trocar para `[data-theme]` (mudaria Blade, hook, Tailwind e componentes sem ganho); fontes pela CDN Bunny (requisição a terceiros, contrária ao uso só de cookies e recursos essenciais).
 - **Impacto:** a página promocional do Laravel foi substituída por uma página inicial mínima. Estados desabilitados usam tokens próprios em vez de opacidade, e anéis de foco são opacos (DESIGN §2.8).
+
+### D61 — Telas de referência
+
+- **Status:** Aprovada (17/11/2026).
+- **Contexto:** as telas desktop e mobile e uma prancha de estilo foram desenhadas num canvas de design privado (o link não fica no repositório), com valores que o `DESIGN.md` deixava em aberto e alguns pontos que contrariavam decisões anteriores.
+- **Decisão:**
+    - Raios, escala tipográfica, sombras e larguras de layout da prancha passam a valer (`DESIGN.md` §3.3, §4.1, §4.3, §11).
+    - A paleta do editor continua a da D58; as telas foram corrigidas.
+    - O mascote passa a aparecer também no editor vazio, no fim do artigo, no envio para revisão e na busca carregando, mas não no artigo não aprovado nem no despublicado (atualiza a D57; mapa completo em `DESIGN.md` §5.3).
+    - A seção "Em destaque" do perfil sai do MVP (D59), e a busca vazia não sugere grafia, porque o FULLTEXT do MariaDB não faz isso (D54).
+    - As contagens de favoritos, que faltavam nas telas, entram na leitura e nos cards (RF-137, RF-161).
+    - A interface usa "Aguardando revisão" e "Não aprovado" para os estados pendente e rejeitado (`DESIGN.md` §8.13).
+- **Alternativas descartadas:** a paleta da prancha (reaproveitava cores de estado como texto e, no tema escuro, texto colorido sobre destaque ficava perto de 1:1); mascote também na rejeição, com pose neutra.
+- **Pendente:** o nome do produto (`[NOME]` nas telas) e as telas no tema escuro.
