@@ -109,6 +109,10 @@ export default function Login({ status, canResetPassword }: Props) {
 }
 
 Login.layout = {
+    variante: 'painel',
+    arte: 'pose-acenando',
+    chamada: 'Que bom te ver por aqui.',
+    apoio: 'Seus rascunhos ficam salvos e esperando por você.',
     title: 'Log in to your account',
     description: 'Enter your email and password below to log in',
 };
