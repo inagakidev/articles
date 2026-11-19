@@ -24,6 +24,11 @@
 > raios, escala tipográfica, sombras e larguras (§3.3, §4.1, §4.3, §11).
 > Quando tela e documento divergirem, valem este documento,
 > `PRODUCT.md` e `REQUIREMENTS.md`, e a tela é corrigida.
+>
+> **Handoff de design (19/11/2026):** a especificação de componentes,
+> estados, movimento e acessibilidade do handoff foi incorporada (§2.7,
+> §4.1, §7.9 a §7.11, §8.14, §9, §11, §12.3). Decisões e pontos mantidos
+> estão na D63.
 
 ## 1. Direção visual
 
@@ -218,12 +223,12 @@ componentes do shadcn continuarem funcionando sem edição.
 
 Tokens acrescentados na implementação (status **Preliminar**):
 
-| Token                                        | Claro                 | Escuro                | Uso                                         |
-| -------------------------------------------- | --------------------- | --------------------- | ------------------------------------------- |
-| `--color-overlay`                            | `rgb(41 38 56 / 0.6)` | `rgb(15 13 22 / 0.7)` | Fundo atrás de modais e painéis             |
-| `--color-tag-lavender` … `--color-tag-peach` | pastéis de §2.2       | iguais                | Pills de tags e categorias, avatar sem foto |
-| `--color-tag-text`                           | `#292638`             | igual                 | Texto sobre as pills                        |
-| `--color-editor-*`                           | §2.11                 | §2.11                 | Paleta do editor                            |
+| Token                                      | Claro                      | Escuro                      | Uso                                       |
+| ------------------------------------------ | -------------------------- | --------------------------- | ----------------------------------------- |
+| `--color-overlay`                          | `rgb(41 38 56 / 0.6)`      | `rgb(15 13 22 / 0.7)`       | Fundo atrás de modais e painéis           |
+| `--color-pastel-*` e `--color-pastel-*-fg` | pares de §2.7              | iguais                      | Tags, categorias, capas e avatar sem foto |
+| `--color-tint-*-bg` e `--color-tint-*-fg`  | `*-bg` e `*-on-bg` de §2.4 | pastel a 16% e texto pastel | Avisos grandes (§2.7)                     |
+| `--color-editor-*`                         | §2.11                      | §2.11                       | Paleta do editor                          |
 
 #### 2.6.1 Tema claro
 
@@ -412,16 +417,37 @@ sempre com `--color-tag-text: #292638`.
 
 **Tags e categorias (pills)**
 
-- Fundo pastel + texto `#292638` (≥ 9,8:1 em todas as combinações),
-  nos dois temas. Lavender 700 também pode ser usado como texto no
-  claro (≥ 6,4:1).
+- Fundo pastel + texto escuro do mesmo tom, iguais nos dois temas
+  (D63):
+
+    | Pastel     | Fundo     | Texto     |
+    | ---------- | --------- | --------- |
+    | `lavender` | `#DCCBFF` | `#56377F` |
+    | `lilac`    | `#EDE4FF` | `#56377F` |
+    | `mint`     | `#BDEBD9` | `#245C48` |
+    | `yellow`   | `#FFE69A` | `#70520A` |
+    | `pink`     | `#FFC9D6` | `#8B304B` |
+    | `blue`     | `#BFE2FF` | `#24527A` |
+    | `peach`    | `#FFCBAF` | `#292638` |
+
+- **Capas de artigo** usam só esses pares, nunca um token de
+  superfície: no escuro, `surface-selected` vira roxo escuro e o texto
+  da capa some.
 - A categoria é identificada pelo **texto** da tag; a cor é reforço.
-- Para não confundir categoria com estado: categorias usam pill sem
-  ícone de estado; estados usam etiqueta retangular com ícone (§7.2).
+- Para não confundir categoria com estado, que usam as mesmas cores:
+  categorias usam pill sem ícone; estados usam etiqueta retangular
+  com ícone (§7.2). A cor nunca é a única diferença.
 - O contorno da pill não precisa de 3:1, porque o texto já identifica
   o componente. Se a tag for clicável (filtro), o estado selecionado
   precisa de indicação além da cor (ícone de check ou contorno
   `border-strong`).
+
+**Avisos grandes**
+
+- No claro: `tint-*-bg` igual ao `*-bg` e texto `tint-*-fg` igual ao
+  `*-on-bg`.
+- No escuro: fundo translúcido do pastel (16%) e texto pastel. O
+  contraste é calculado sobre a superfície onde o aviso aparece.
 
 **Estados funcionais**
 
@@ -702,13 +728,13 @@ peso vêm de `font-display`/`font-sans` e `font-*`.
 
 Escala de raios (aprovada na prancha de estilo):
 
-| Token          | Valor | Uso                                |
-| -------------- | ----- | ---------------------------------- |
-| `rounded-sm`   | 6 px  | Etiquetas de status, código inline |
-| `rounded-md`   | 12 px | Botões, campos                     |
-| `rounded-lg`   | 16 px | Cards, capas                       |
-| `rounded-xl`   | 24 px | Modais, painéis                    |
-| `rounded-full` | ---   | Tags, categorias, navegação ativa  |
+| Token          | Valor | Uso                                        |
+| -------------- | ----- | ------------------------------------------ |
+| `rounded-sm`   | 6 px  | Etiquetas de status, código inline         |
+| `rounded-md`   | 12 px | Botões, campos                             |
+| `rounded-lg`   | 16 px | Blocos internos, capas dentro do card      |
+| `rounded-xl`   | 24 px | Cards, diálogos, painéis                   |
+| `rounded-full` | ---   | Tags, chips, abas e navegação ativa (pill) |
 
 As telas de referência ainda usam alguns raios fora da escala (8, 10,
 14, 18 e 20 px); na implementação, valem os da tabela.
@@ -784,7 +810,7 @@ compete com o texto, nunca carrega informação sozinho.
 
 | Contexto                                                             | Usa o mascote?          | Pose / expressão                  |
 | -------------------------------------------------------------------- | ----------------------- | --------------------------------- |
-| Logo no cabeçalho (inclusive no painel administrativo)               | Sim, avatar de 28–32 px | `mascote-avatar`                  |
+| Logo no cabeçalho, fora do painel administrativo                     | Sim, avatar de 28–32 px | `mascote-avatar`                  |
 | Página inicial, login e cadastro                                     | Sim                     | `pose-acenando`                   |
 | Chamada "publicar aqui" na página inicial                            | Sim                     | `pose-escrevendo`                 |
 | Confirmação de e-mail                                                | Sim                     | `pose-segurando-folha`            |
@@ -804,7 +830,7 @@ compete com o texto, nunca carrega informação sozinho.
 | Manutenção                                                           | Sim                     | `pose-dormindo`                   |
 | Favicon e ícones menores que 24 px                                   | Só o marcador roxo      | ---                               |
 | Durante a leitura e a escrita (corpo do artigo, editor com conteúdo) | **Não**                 | ---                               |
-| Painel administrativo, fora o logo                                   | **Não**                 | ---                               |
+| Painel administrativo, inclusive o logo                              | **Não**                 | ---                               |
 | Artigo não aprovado ou despublicado                                  | **Não**                 | ---                               |
 | Suspensão, banimento, contestação, exclusão de conta, denúncias      | **Não**                 | ---                               |
 | Foto padrão de usuário                                               | **Não** (ver §6.2)      | ---                               |
@@ -955,6 +981,80 @@ Combinação de feedbacks:
 - Destaque discreto para notificações novas.
 - Marcar individualmente como lida ou marcar todas como lidas.
 
+### 7.9 Componentes base
+
+A base vem do shadcn/ui, ajustada aos tokens, com o código dentro do
+projeto (`components/ui/`).
+
+| Componente              | Variantes                                                                      | Notas                                                                                                                                                                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Button                  | primary, secondary, outline, tertiary, danger; tamanhos sm 40, md 44, lg 52 px | Texto sempre verbo + objeto. `loading` troca o ícone por spinner, mostra o verbo no gerúndio ("Enviando…"), marca `aria-busy` e trava; o Cancelar ao lado também trava. O danger é rosa (`danger-bg`) com texto `danger-on-bg` |
+| IconButton              | 36 e 40 px                                                                     | `aria-label` obrigatório; área de toque de 44 px por pseudo-elemento, sem mudar o desenho                                                                                                                                      |
+| Badge / Status          | rascunho, pendente, publicado, rejeitado, aberta, prioridade, novo             | Etiqueta com ícone, raio de 6 px, texto 12/18 700 (`text-badge`), largura do conteúdo                                                                                                                                          |
+| Tag / Category pill     | 7 pastéis + tag livre                                                          | Pill sem ícone. O "x" de remover tem alvo mínimo de 24 px e nome "Remover tag X"                                                                                                                                               |
+| Input, Textarea, Select | padrão, foco, inválido, desabilitado                                           | Altura de 44 a 48 px, borda `border-strong`. Erro com borda de 2 px, ícone e texto, ligado por `aria-describedby`. Contador colado ao fim do campo                                                                             |
+| Card de artigo          | padrão, favorito, indisponível                                                 | Ver §8.4. Indisponível (favorito removido do ar) é um card tracejado                                                                                                                                                           |
+| Table                   | admin                                                                          | Linha selecionada com `surface-selected`, barra de 4 px e `aria-current`; região rolável com `tabindex="0"`                                                                                                                    |
+| Tabs / Segmented        | pill                                                                           | Indicador desliza; teclado como o Radix Tabs                                                                                                                                                                                   |
+| Dialog, Sheet, Popover  | modal, painel lateral, folha do celular, menu                                  | Radix. Abaixo de 768 px, diálogos viram folhas                                                                                                                                                                                 |
+| Toast                   | simples, com ação                                                              | Sonner, empilhado. Com ação, fica ao menos 10 s e pausa no hover e no foco. No escuro, fundo elevado e borda                                                                                                                   |
+| Skeleton                | linha, bloco, card                                                             | Só aparece depois de 300 ms; brilho por 3 ciclos e depois fica parado                                                                                                                                                          |
+| Stepper                 | 3 passos                                                                       | No modo compacto, só o passo atual tem rótulo                                                                                                                                                                                  |
+
+### 7.10 Estados e interações
+
+Toda página, tabela, formulário e diálogo tem os estados carregando,
+vazio, pronto e erro, mais um aviso onde há risco.
+
+| Elemento          | Estado                  | Comportamento                                                                                                                              |
+| ----------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Card de artigo    | hover                   | Sobe 4 px, `shadow-hover`, borda lavanda e brilho que segue o mouse (só com mouse)                                                         |
+| Editor            | salvando, salvo, falhou | "Salvando…", depois "Salvo às 14:32"; na falha, o texto continua e aparece "Tentar de novo"                                                |
+| Editor            | enviar                  | Bloqueado enquanto houver item pendente na checklist; "Corrigir" leva ao campo                                                             |
+| Decisões do admin | ao abrir                | Nenhuma opção marcada e o botão final escondido; ao escolher "Rejeitar", aparecem o item da Política (com link para ler) e a justificativa |
+| Decisões do admin | depois de enviar        | Aviso com Desfazer por 10 s (o e-mail só sai depois); a próxima versão da fila abre sozinha                                                |
+| Denúncias         | linha                   | A linha inteira abre o painel; a ativa fica selecionada com `aria-current`                                                                 |
+| Comentário        | publicar                | Limite de 1 a cada 30 s: o botão vira "Aguarde 18 s"; na falha, o texto continua                                                           |
+| Comentário        | curtir                  | Só verificados; no próprio comentário, o coração vira texto, sem botão                                                                     |
+| Favoritos         | remover                 | Sai na hora, com aviso "Removido" e Desfazer                                                                                               |
+| Compartilhar      | copiar                  | "Copiar link" vira "Copiado" por 2 s, e "Link copiado" é anunciado                                                                         |
+| Denunciar         | já denunciou            | O formulário dá lugar a "Você já denunciou em 16 nov"                                                                                      |
+| Excluir conta     | suspenso                | O botão some e entra o aviso com a data em que a exclusão fica liberada                                                                    |
+| Cancelar exclusão | escolha                 | "Cancelar a exclusão" e "Manter a exclusão" com o mesmo tamanho e peso                                                                     |
+| Menu do sino      | abrir                   | Painel de 420 px; "Marcar todas como lidas" não fecha o painel                                                                             |
+
+Desfazer uma decisão do admin não apaga registro de auditoria (RF-291):
+a decisão só é efetivada depois da janela de 10 s, ou o desfazer gera
+um novo registro.
+
+### 7.11 Efeitos
+
+Efeitos vêm de bibliotecas como código-fonte, nunca como kit de UI
+instalado (D63). Ficam em `components/effects/`, com
+`// fonte: <URL> · licença: <licença>` no topo, e só entram depois de
+conferida a licença de cada um. Seções da página de apresentação ficam
+em `components/blocks/`.
+
+| Efeito              | Origem                  | Onde                                                                         |
+| ------------------- | ----------------------- | ---------------------------------------------------------------------------- |
+| NumberTicker        | Magic UI                | Painel admin (texto final para leitor de tela)                               |
+| AnimatedBeam        | Magic UI                | Página de apresentação, "Como funciona"                                      |
+| ProgressRing        | Magic UI                | Checklist do editor ("4 de 5 itens prontos")                                 |
+| AnimatedList        | Magic UI                | Menu do sino, "Precisa da sua atenção"                                       |
+| CardSpotlight       | Aceternity              | Cards de artigo, só com mouse                                                |
+| SlidingTabs         | Animate UI              | Admin, Notificações, Meus artigos                                            |
+| LikeButton          | React Bits + Animate UI | Curtir, só ao virar curtido                                                  |
+| CopyButton          | Animate UI              | Compartilhar, blocos de código                                               |
+| AvatarStack         | Magic UI                | Página de apresentação, comunidade (avatares `aria-hidden`, número em texto) |
+| RotatingPlaceholder | Aceternity              | Busca do 404 e da Home; o `label` nunca muda                                 |
+| Confetti            | Magic UI                | E-mail confirmado e primeiro artigo aprovado, uma vez, em CSS                |
+| BlurInText          | Magic UI                | Títulos das telas de passagem; o texto inteiro fica para o leitor de tela    |
+| TracingBeam         | Aceternity              | Sumário da leitura                                                           |
+
+Dependências permitidas para efeitos: as do starter kit e, no máximo,
+`motion`, carregado só nas telas que precisam dele (nunca na primeira
+carga da Home). Sem `three`, `gsap` ou `canvas-confetti`.
+
 ## 8. Padrões de páginas e navegação
 
 ### 8.1 Navegação contextual
@@ -999,8 +1099,11 @@ Estilo **editorial moderno**:
 - Em telas muito largas, manter três colunas e limitar a largura do
   conteúdo.
 - Cards brancos com detalhes gráficos coloridos sutis.
-- Cards mostram as contagens de curtidas e de favoritos (RF-161), discretas
-  e com nome acessível; nunca em destaque sobre o título.
+- Cards não mostram contagens no MVP (RF-161, D63): curtidas e
+  favoritos ficam na página de leitura.
+- O card inteiro é clicável pelo link do título (pseudo-elemento
+  `::after`), e o contorno de foco envolve o card inteiro.
+- Título e resumo cortam em 3 linhas com reticências.
 - Capas em proporção padrão 16:9, usando `object-fit: cover`.
 - Não exigir que a imagem enviada tenha exatamente 16:9; fazer
   enquadramento responsivo.
@@ -1111,6 +1214,15 @@ código usam os nomes dos estados (`REQUIREMENTS.md` §5).
 | Edição aguardando revisão · Edição não aprovada | Selos "edição pendente" e "edição rejeitada" (RF-112)  |
 | Na lixeira                                      | Artigo na lixeira                                      |
 
+### 8.14 Página de apresentação
+
+Fica em `/` (RF-379); a listagem de artigos fica em `/artigos`. Mostra a
+plataforma, "Como funciona" em três passos, artigos recentes num
+marquee, a comunidade e as perguntas frequentes, incluindo a estimativa
+de revisão ("costuma levar até 6 horas", RF-377). O botão "Pausar
+animações" para o marquee e as demais animações, e a escolha fica no
+navegador (RF-383).
+
 ## 9. Movimento e transições
 
 ### 9.1 Intensidade
@@ -1131,6 +1243,16 @@ movimento excessivo.
 Com `prefers-reduced-motion`, transições e animações são reduzidas a
 praticamente zero em toda a aplicação, e a leve redução de escala ao
 pressionar botões não acontece.
+
+Curvas: entrada `cubic-bezier(.2, .8, .2, 1)` (`ease-emphasized`) e
+mola `cubic-bezier(.3, 1.4, .5, 1)` (`ease-spring`), para pulos e
+confete. Durações: 150 ms para hover e foco, 250 a 450 ms para
+entradas, até 1,6 s para contagens e linhas.
+
+**Toda animação para sozinha em até 5 s** (WCAG 2.2.2). A única exceção
+é o marquee da página de apresentação, que pausa no hover, no foco e no
+botão "Pausar animações". Com `prefers-reduced-motion`, nada se move, e
+o elemento aparece já no estado final.
 
 ### 9.3 Aplicações
 
@@ -1173,11 +1295,24 @@ Breakpoints: os padrões do Tailwind. Cards em uma coluna abaixo de
 
 Larguras de conteúdo:
 
-| Classe          | Largura | Uso                                              |
-| --------------- | ------- | ------------------------------------------------ |
-| `max-w-page`    | 1200 px | Container das páginas a partir de `xl` (1280 px) |
-| `max-w-reading` | 680 px  | Coluna de leitura do artigo                      |
-| `max-w-cover`   | 880 px  | Capa na página de leitura                        |
+| Classe          | Largura | Uso                                                                      |
+| --------------- | ------- | ------------------------------------------------------------------------ |
+| `max-w-page`    | 1264 px | Container das páginas, com 32 px de margem interna (conteúdo de 1200 px) |
+| `max-w-reading` | 680 px  | Coluna de leitura do artigo                                              |
+| `max-w-cover`   | 880 px  | Capa na página de leitura                                                |
+
+| Largura     | O que muda                                                                                                              |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------- |
+| ≥ 1280      | Conteúdo até 1264 px, grade de 3 cards, leitura com sumário fixo à direita                                              |
+| 1024 a 1279 | Grade de 3 cards mais estreita; o admin mantém o menu lateral                                                           |
+| 768 a 1023  | Grade de 2 cards; o sumário da leitura vira o botão "Sumário"; o painel de Denúncias desce para baixo da tabela         |
+| < 768       | Barra de navegação inferior, diálogos viram folhas, editor com barra de formatação fixa embaixo e "Detalhes" numa folha |
+
+O editor completo pede 1024 px; abaixo disso, os detalhes vão para uma
+folha. O admin é de uso no computador: no celular, só precisa ser
+legível, com tabelas rolando na própria região. Textos em inglês podem
+ficar até 30% mais longos: botões crescem, nunca cortam o texto, e abas
+quebram em duas linhas antes de rolar.
 
 ## 12. Acessibilidade
 
@@ -1227,6 +1362,27 @@ componentes reais e nos dois temas. Valores marcados como
 | Conteúdo sobre imagens   | Texto sobre capas de artigos e fallbacks pastéis                                                                                                                                                       | 1.4.3                                        | Pendente --- não coberto pela auditoria de paleta            |
 | Paleta do editor         | Validar visualmente os 12 valores e as 36 combinações de §2.11 nos dois temas, com texto longo                                                                                                         | 1.4.3                                        | Calculado; validação visual pendente                         |
 | Mascote no tema escuro   | Silhueta legível sobre `bg` e `surface` escuros                                                                                                                                                        | --- (decorativo)                             | Pendente                                                     |
+
+### 12.3 Regras de implementação
+
+- **Estrutura:** um `h1` por tela (no editor, oculto: "Editar
+  artigo"), sem pular níveis (`h2` oculto antes de grades de cards), e
+  os landmarks `header`, `nav`, `main`, `aside` (com rótulo) e
+  `footer`. Duas buscas na mesma tela têm nomes diferentes.
+- **Alvos:** no mínimo 24 × 24 px em qualquer lugar, e 44 × 44 px de
+  área de toque no celular. Texto nunca abaixo de 12 px.
+- **Anúncios** (`role="status"`, sem mover o foco): "Salvo às 14:32",
+  "Link copiado", "Removido dos favoritos", "Denúncia enviada", "Versão
+  rejeitada" e o total de resultados da busca. Erros de formulário usam
+  `role="alert"`, e o foco vai para o primeiro campo com erro.
+- **Teclado:** diálogos e folhas prendem o foco e devolvem ao botão que
+  abriu ao fechar com Esc; abas trocam com as setas; curtir e favoritar
+  usam `aria-pressed` e o número no nome ("Curtir comentário, 7
+  curtidas"); na moderação, J e K vão à próxima e à anterior, desligados
+  quando o foco está num campo.
+- **Verificação:** cada PR roda o axe em teste de navegador (Pest), sem
+  nenhuma violação "serious" ou "critical" (D63). A varredura automática
+  não substitui o teste com teclado e leitor de tela.
 
 ## 13. Tokens a formalizar na implementação
 
