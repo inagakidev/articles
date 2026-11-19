@@ -62,5 +62,9 @@ jobs:
       - name: Setup Application
         run: composer setup
 
+      # Navegador dos testes de acessibilidade (Pest + axe)
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
       - name: Run CI Checks
         run: composer ci:check

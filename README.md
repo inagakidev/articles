@@ -40,7 +40,7 @@ Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24 e MariaDB 11.
     cp .env.example .env
     ```
 
-3. Instale as dependências, gere a chave, rode as migrations e compile o frontend:
+3. Instale as dependências, gere a chave, rode as migrations e compile o frontend (depois, instale o navegador dos testes com `npx playwright install chromium`; no Linux Mint, que o Playwright não reconhece, use `PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=debian13-x64 npx playwright install chromium`):
 
     ```bash
     composer setup
@@ -56,14 +56,14 @@ Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24 e MariaDB 11.
 
 ## Testes e verificações
 
-| Comando                 | O que faz                                                         |
-| ----------------------- | ----------------------------------------------------------------- |
-| `php artisan test`      | Testes Pest (usam o banco `articles_testing`)                     |
-| `npm test`              | Testes Vitest dos componentes React                               |
-| `npm run test:contrast` | Lista o contraste de cada par de cores dos tokens, nos dois temas |
-| `npm run types:check`   | Checagem de tipos TypeScript                                      |
-| `npm run check`         | Formatação e lint do frontend                                     |
-| `composer test`         | Pint, PHPStan e Pest                                              |
-| `composer ci:check`     | Todas as verificações acima                                       |
+| Comando                 | O que faz                                                                                           |
+| ----------------------- | --------------------------------------------------------------------------------------------------- |
+| `php artisan test`      | Testes Pest, incluindo os de navegador com axe em `tests/Browser` (usam o banco `articles_testing`) |
+| `npm test`              | Testes Vitest dos componentes React                                                                 |
+| `npm run test:contrast` | Lista o contraste de cada par de cores dos tokens, nos dois temas                                   |
+| `npm run types:check`   | Checagem de tipos TypeScript                                                                        |
+| `npm run check`         | Formatação e lint do frontend                                                                       |
+| `composer test`         | Pint, PHPStan e Pest                                                                                |
+| `composer ci:check`     | Todas as verificações acima                                                                         |
 
 Testes de frontend ficam ao lado do componente, com o sufixo `.test.tsx`.

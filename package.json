@@ -54,6 +54,7 @@
         "@types/node": "^22.13.5",
         "babel-plugin-react-compiler": "^1.0.0",
         "jsdom": "^31.0.1",
+        "playwright": "^1.65.1",
         "vite-plus": "1.4.0"
     },
     "optionalDependencies": {
