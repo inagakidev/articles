@@ -33,7 +33,7 @@ export default defineConfig({
     ]),
     test: {
         environment: 'jsdom',
-        include: ['resources/js/**/*.test.{ts,tsx}'],
+        include: ['resources/js/**/*.test.{ts,tsx}', 'scripts/**/*.test.mjs'],
         setupFiles: ['resources/js/test/setup.ts'],
         // Atalho que o plugin do Laravel define fora dos testes
         alias: {
