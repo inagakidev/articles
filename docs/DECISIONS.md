@@ -452,3 +452,13 @@ Editor, imagens, busca, backup e identificação do administrador foram decidido
     - Acessibilidade automatizada com o plugin de navegador do Pest e axe a cada PR, sem nenhuma violação "serious" ou "critical".
 - **Alternativas descartadas:** prazo de 6 horas como garantia (inviável com uma administradora); manter a espera de 24 horas; tags com texto `#292638` em todos os pastéis; mascote com descrição para leitor de tela; axe no Vitest (o jsdom não calcula layout nem contraste).
 - **Riscos:** sem espera entre reenvios, a única administradora pode receber versões em sequência do mesmo artigo; o limite de uma versão pendente por artigo (RF-102) continua valendo.
+
+### D64 — Convenções de código
+
+- **Status:** Aprovada (19/11/2026).
+- **Decisão:** as convenções ficam no `ARCHITECTURE.md`. Em resumo:
+    - nomes no código em inglês; comentários, documentação, commits e descrições de teste em português;
+    - modelos Eloquent em `app/Models` e o domínio organizado por módulo em `app/Domain/<Módulo>` (Actions, Enums, Queries, Rules, Events, Exceptions), com controllers, validação e Resources em `app/Http`;
+    - testes no estilo de funções do Pest.
+- **Alternativas descartadas:** nomes do domínio em português (misturaria idiomas no mesmo arquivo); modelos dentro de cada módulo (exige configurar factories, autenticação e descoberta de Policies fora do padrão); só as pastas padrão do Laravel (regras de um domínio espalhadas); testes em classes PHPUnit (os testes de navegador só aceitam funções, e os dois estilos ficariam misturados).
+- **Impacto:** o código de frontend já escrito em português foi renomeado, e os testes existentes foram convertidos para funções do Pest com descrições em português.

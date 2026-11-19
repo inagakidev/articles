@@ -8,6 +8,7 @@ Todas as decisões e implementações deste projeto seguem estas diretrizes. O o
 
 - Requisitos: [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md). Não modificar requisitos por conveniência técnica.
 - Stack e decisões técnicas: [docs/DECISIONS.md](docs/DECISIONS.md), seção 3.1 e decisões D51 a D56 (editor, imagens, armazenamento, busca, backup e administrador).
+- Organização e convenções do código: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - Mensagens de commit: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Mudanças de stack ou de decisão passam primeiro pelo `DECISIONS.md`.
