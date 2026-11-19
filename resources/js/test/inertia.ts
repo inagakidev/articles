@@ -1,10 +1,10 @@
 import { vi } from 'vitest';
-import type { Idioma } from '@/lib/i18n';
+import type { Locale } from '@/lib/i18n';
 
 /** Props compartilhadas pelo servidor, para testar componentes fora do Inertia. */
-export const paginaDeTeste = { props: { locale: 'pt_BR' as Idioma } };
+export const testPage = { props: { locale: 'pt_BR' as Locale } };
 
 vi.mock('@inertiajs/react', async (original) => ({
     ...(await original<typeof import('@inertiajs/react')>()),
-    usePage: () => paginaDeTeste,
+    usePage: () => testPage,
 }));

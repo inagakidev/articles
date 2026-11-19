@@ -1,16 +1,16 @@
 import { Link, usePage } from '@inertiajs/react';
-import Mascote from '@/components/mascote';
+import Mascot from '@/components/mascot';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 
 export default function SiteLogo({
-    tamanho = 32,
-    nomeSoNoDesktop = false,
+    size = 32,
+    nameOnlyOnDesktop = false,
     className,
 }: {
-    tamanho?: number;
+    size?: number;
     /** No celular, mostra só o avatar; o nome continua para leitores de tela. */
-    nomeSoNoDesktop?: boolean;
+    nameOnlyOnDesktop?: boolean;
     className?: string;
 }) {
     const { name } = usePage().props;
@@ -23,11 +23,11 @@ export default function SiteLogo({
                 className,
             )}
         >
-            <Mascote arte="mascote-avatar" tamanho={tamanho} />
+            <Mascot art="mascote-avatar" size={size} />
             <span
                 className={cn(
                     'font-display text-lg font-extrabold tracking-tight',
-                    nomeSoNoDesktop && 'sr-only sm:not-sr-only',
+                    nameOnlyOnDesktop && 'sr-only sm:not-sr-only',
                 )}
             >
                 {name}

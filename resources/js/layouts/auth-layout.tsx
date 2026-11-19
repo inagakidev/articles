@@ -1,33 +1,33 @@
 import type { ReactNode } from 'react';
-import type { ArteDoMascote } from '@/components/mascote';
-import Mascote from '@/components/mascote';
+import type { MascotArt } from '@/components/mascot';
+import Mascot from '@/components/mascot';
 import SiteLogo from '@/components/site/site-logo';
-import type { ChaveDeTraducao } from '@/lib/i18n';
-import { useTraducao } from '@/lib/i18n';
+import type { TranslationKey } from '@/lib/i18n';
+import { useTranslation } from '@/lib/i18n';
 
 type Props = {
     title?: string;
     description?: string;
     /** "painel": mascote ao lado do formulário (entrar, criar conta). "cartao": cartão centralizado. */
-    variante?: 'painel' | 'cartao';
+    variant?: 'panel' | 'card';
     /** Pose do mascote (DESIGN §5.3). Sem arte, a página fica sem mascote. */
-    arte?: ArteDoMascote;
+    art?: MascotArt;
     /** Frase grande ao lado do mascote, só na variante "painel". */
-    chamada?: ChaveDeTraducao;
+    headline?: TranslationKey;
     /** Texto de apoio abaixo da chamada. */
-    apoio?: ChaveDeTraducao;
+    support?: TranslationKey;
     children: ReactNode;
 };
 
-export default function AuthLayout({ variante = 'cartao', ...props }: Props) {
-    return variante === 'painel' ? (
-        <PainelLayout {...props} />
+export default function AuthLayout({ variant = 'card', ...props }: Props) {
+    return variant === 'panel' ? (
+        <PanelLayout {...props} />
     ) : (
-        <CartaoLayout {...props} />
+        <CardLayout {...props} />
     );
 }
 
-function Cabecalho({
+function AuthHeading({
     title,
     description,
 }: Pick<Props, 'title' | 'description'>) {
@@ -41,7 +41,7 @@ function Cabecalho({
     );
 }
 
-function Rabiscos() {
+function Doodles() {
     return (
         <svg
             aria-hidden="true"
@@ -73,31 +73,31 @@ function Rabiscos() {
     );
 }
 
-function PainelLayout({
+function PanelLayout({
     title,
     description,
-    arte,
-    chamada,
-    apoio,
+    art,
+    headline,
+    support,
     children,
-}: Omit<Props, 'variante'>) {
-    const { t } = useTraducao();
+}: Omit<Props, 'variant'>) {
+    const { t } = useTranslation();
 
     return (
         <div className="flex min-h-svh flex-col bg-bg text-text-primary lg:flex-row">
             <aside className="relative hidden flex-1 flex-col justify-between overflow-hidden bg-surface-muted px-14 pt-10 pb-14 lg:flex">
-                <Rabiscos />
+                <Doodles />
                 <SiteLogo className="relative self-start" />
                 <div className="relative flex flex-col items-center gap-5 text-center">
-                    {arte && <Mascote arte={arte} tamanho={300} />}
-                    {chamada && (
+                    {art && <Mascot art={art} size={300} />}
+                    {headline && (
                         <p className="max-w-md font-display text-h2 font-extrabold">
-                            {t(chamada)}
+                            {t(headline)}
                         </p>
                     )}
-                    {apoio && (
+                    {support && (
                         <p className="max-w-md text-article text-text-secondary">
-                            {t(apoio)}
+                            {t(support)}
                         </p>
                     )}
                 </div>
@@ -105,20 +105,20 @@ function PainelLayout({
             </aside>
 
             <header className="px-4 py-4 lg:hidden">
-                <SiteLogo tamanho={28} />
+                <SiteLogo size={28} />
             </header>
-            {arte && chamada && (
+            {art && headline && (
                 <div className="mx-4 flex items-center gap-3 rounded-xl bg-surface-muted px-4 py-3 lg:hidden">
-                    <Mascote arte={arte} tamanho={110} />
+                    <Mascot art={art} size={110} />
                     <p className="font-display text-card-title font-extrabold">
-                        {t(chamada)}
+                        {t(headline)}
                     </p>
                 </div>
             )}
 
             <main className="flex flex-1 items-start justify-center px-5 py-8 lg:items-center lg:px-8 lg:py-12">
                 <div className="flex w-full max-w-md flex-col gap-6">
-                    <Cabecalho title={title} description={description} />
+                    <AuthHeading title={title} description={description} />
                     {children}
                 </div>
             </main>
@@ -126,12 +126,12 @@ function PainelLayout({
     );
 }
 
-function CartaoLayout({
+function CardLayout({
     title,
     description,
-    arte,
+    art,
     children,
-}: Omit<Props, 'variante'>) {
+}: Omit<Props, 'variant'>) {
     return (
         <div className="flex min-h-svh flex-col bg-bg text-text-primary">
             <header className="border-b border-border">
@@ -141,15 +141,11 @@ function CartaoLayout({
             </header>
             <main className="flex flex-1 items-start justify-center px-4 pt-8 pb-16 sm:px-6 sm:pt-16">
                 <div className="flex w-full max-w-lg flex-col gap-5 sm:rounded-xl sm:border sm:border-border sm:bg-surface sm:px-11 sm:py-10 sm:shadow-md">
-                    {arte && (
-                        <Mascote
-                            arte={arte}
-                            tamanho={170}
-                            className="self-center"
-                        />
+                    {art && (
+                        <Mascot art={art} size={170} className="self-center" />
                     )}
                     <div className="text-center">
-                        <Cabecalho title={title} description={description} />
+                        <AuthHeading title={title} description={description} />
                     </div>
                     {children}
                 </div>

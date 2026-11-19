@@ -108,10 +108,10 @@ export default function Register({ passwordRules }: Props) {
 }
 
 Register.layout = {
-    variante: 'painel',
-    arte: 'pose-acenando',
-    chamada: 'account.register.headline',
-    apoio: 'account.register.support',
+    variant: 'panel',
+    art: 'pose-acenando',
+    headline: 'account.register.headline',
+    support: 'account.register.support',
     title: 'Create an account',
     description: 'Enter your details below to create your account',
 };

@@ -9,7 +9,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-export const tipos = [
+export const types = [
     'feat',
     'fix',
     'refactor',
@@ -23,7 +23,7 @@ export const tipos = [
     'revert',
 ];
 
-export const escopos = [
+export const scopes = [
     'auth',
     'users',
     'profile',
@@ -48,8 +48,8 @@ export const escopos = [
     'config',
 ];
 
-const LIMITE = 72;
-const vagas = [
+const MAX_HEADER_LENGTH = 72;
+const vagueDescriptions = [
     'ajustes',
     'ajuste',
     'melhorias',
@@ -59,123 +59,121 @@ const vagas = [
     'correções',
     'correções diversas',
 ];
-const cabecalho =
-    /^(?<tipo>[a-z]+)(?:\((?<escopo>[a-z0-9-]+)\))?(?<quebra>!)?: (?<descricao>.+)$/;
-const idDoRoadmap = /\b(p\d+-\d+|fase\s+0?\d+)\b/i;
+const header =
+    /^(?<type>[a-z]+)(?:\((?<scope>[a-z0-9-]+)\))?(?<breaking>!)?: (?<description>.+)$/;
+const roadmapReference = /\b(p\d+-\d+|fase\s+0?\d+)\b/i;
 
 /** Mensagens que o git gera sozinho não seguem o formato. */
-const geradaPeloGit = (linha) =>
-    /^(Merge |Revert "|fixup! |squash! )/.test(linha);
+const isGitGenerated = (line) =>
+    /^(Merge |Revert "|fixup! |squash! )/.test(line);
 
-/** Devolve a lista de problemas da mensagem (vazia quando está correta). */
-export function validarMensagem(mensagem) {
-    const linhas = mensagem
+/** Devolve a lista de problems da message (vazia quando está correta). */
+export function validateMessage(message) {
+    const lines = message
         .split('\n')
-        .filter((linha) => !linha.startsWith('#'))
-        .map((linha) => linha.replace(/\s+$/, ''));
+        .filter((line) => !line.startsWith('#'))
+        .map((line) => line.replace(/\s+$/, ''));
 
-    while (linhas.length && linhas[linhas.length - 1] === '') {
-        linhas.pop();
+    while (lines.length && lines[lines.length - 1] === '') {
+        lines.pop();
     }
 
-    const [primeira = '', segunda] = linhas;
+    const [first = '', second] = lines;
 
-    if (geradaPeloGit(primeira)) {
+    if (isGitGenerated(first)) {
         return [];
     }
 
-    const problemas = [];
-    const partes = cabecalho.exec(primeira)?.groups;
+    const problems = [];
+    const parts = header.exec(first)?.groups;
 
-    if (!partes) {
+    if (!parts) {
         return [
             'A primeira linha deve seguir "tipo(escopo): descrição", com o escopo opcional.',
         ];
     }
 
-    if (!tipos.includes(partes.tipo)) {
-        problemas.push(
-            `Tipo "${partes.tipo}" não existe. Use um de: ${tipos.join(', ')}.`,
+    if (!types.includes(parts.type)) {
+        problems.push(
+            `Tipo "${parts.type}" não existe. Use um de: ${types.join(', ')}.`,
         );
     }
 
-    if (partes.escopo && !escopos.includes(partes.escopo)) {
-        problemas.push(
-            `Escopo "${partes.escopo}" não existe. Use um de: ${escopos.join(', ')}, ou omita.`,
+    if (parts.scope && !scopes.includes(parts.scope)) {
+        problems.push(
+            `Escopo "${parts.scope}" não existe. Use um de: ${scopes.join(', ')}, ou omita.`,
         );
     }
 
-    if (primeira.length > LIMITE) {
-        problemas.push(
-            `A primeira linha tem ${primeira.length} caracteres; o limite é ${LIMITE}.`,
+    if (first.length > MAX_HEADER_LENGTH) {
+        problems.push(
+            `A primeira linha tem ${first.length} caracteres; o limite é ${MAX_HEADER_LENGTH}.`,
         );
     }
 
-    const descricao = partes.descricao;
+    const description = parts.description;
 
-    if (/^\p{Lu}/u.test(descricao)) {
-        problemas.push('A descrição começa em minúscula.');
+    if (/^\p{Lu}/u.test(description)) {
+        problems.push('A descrição começa em minúscula.');
     }
 
-    if (descricao.endsWith('.')) {
-        problemas.push('A descrição não termina com ponto final.');
+    if (description.endsWith('.')) {
+        problems.push('A descrição não termina com ponto final.');
     }
 
-    if (vagas.includes(descricao.toLowerCase())) {
-        problemas.push(`"${descricao}" é vago: diga o que mudou.`);
+    if (vagueDescriptions.includes(description.toLowerCase())) {
+        problems.push(`"${description}" é vago: diga o que mudou.`);
     }
 
-    if (idDoRoadmap.test(linhas.join('\n'))) {
-        problemas.push(
+    if (roadmapReference.test(lines.join('\n'))) {
+        problems.push(
             'A mensagem não cita fases nem tarefas do roadmap; descreva a mudança.',
         );
     }
 
-    if (segunda !== undefined && segunda !== '') {
-        problemas.push(
-            'Deixe uma linha em branco entre a descrição e o corpo.',
-        );
+    if (second !== undefined && second !== '') {
+        problems.push('Deixe uma linha em branco entre a descrição e o corpo.');
     }
 
-    return problemas;
+    return problems;
 }
 
-function relatar(rotulo, problemas) {
-    console.error(`✗ ${rotulo}`);
-    problemas.forEach((problema) => console.error(`  - ${problema}`));
+function report(label, problems) {
+    console.error(`✗ ${label}`);
+    problems.forEach((problem) => console.error(`  - ${problem}`));
 }
 
-function principal(argumentos) {
-    if (argumentos[0] === '--range') {
-        const saida = execFileSync(
+function main(args) {
+    if (args[0] === '--range') {
+        const output = execFileSync(
             'git',
-            ['log', '--format=%h%x00%B%x1e', argumentos[1]],
+            ['log', '--format=%h%x00%B%x1e', args[1]],
             { encoding: 'utf8' },
         );
-        let falhas = 0;
+        let failures = 0;
 
-        for (const registro of saida
+        for (const entry of output
             .split('\x1e')
             .map((r) => r.trim())
             .filter(Boolean)) {
-            const [hash, mensagem] = registro.split('\0');
-            const problemas = validarMensagem(mensagem);
+            const [hash, message] = entry.split('\0');
+            const problems = validateMessage(message);
 
-            if (problemas.length) {
-                falhas++;
-                relatar(`${hash} ${mensagem.split('\n')[0]}`, problemas);
+            if (problems.length) {
+                failures++;
+                report(`${hash} ${message.split('\n')[0]}`, problems);
             }
         }
 
-        return falhas ? 1 : 0;
+        return failures ? 1 : 0;
     }
 
-    const problemas = validarMensagem(readFileSync(argumentos[0], 'utf8'));
+    const problems = validateMessage(readFileSync(args[0], 'utf8'));
 
-    if (problemas.length) {
-        relatar(
+    if (problems.length) {
+        report(
             'Mensagem de commit fora do padrão (CONTRIBUTING.md):',
-            problemas,
+            problems,
         );
 
         return 1;
@@ -185,5 +183,5 @@ function principal(argumentos) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-    process.exit(principal(process.argv.slice(2)));
+    process.exit(main(process.argv.slice(2)));
 }

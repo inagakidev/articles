@@ -1,36 +1,36 @@
 import { router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import type { Idioma } from '@/lib/i18n';
-import { idiomas, nomesDosIdiomas, useTraducao } from '@/lib/i18n';
+import type { Locale } from '@/lib/i18n';
+import { locales, localeNames, useTranslation } from '@/lib/i18n';
 import { update } from '@/routes/locale';
 
-function trocarIdioma(locale: Idioma) {
+function changeLocale(locale: Locale) {
     router.put(update().url, { locale }, { preserveScroll: true });
 }
 
 /** Botão do cabeçalho: alterna entre os dois idiomas. */
 export function LanguageToggle() {
-    const { idioma, t } = useTraducao();
-    const proximo = idiomas[(idiomas.indexOf(idioma) + 1) % idiomas.length];
+    const { locale, t } = useTranslation();
+    const next = locales[(locales.indexOf(locale) + 1) % locales.length];
 
     return (
         <Button
             type="button"
             variant="ghost"
             aria-label={t('language.toggle', {
-                current: nomesDosIdiomas[idioma].nome,
-                next: nomesDosIdiomas[proximo].nome,
+                current: localeNames[locale].name,
+                next: localeNames[next].name,
             })}
-            onClick={() => trocarIdioma(proximo)}
+            onClick={() => changeLocale(next)}
         >
-            {nomesDosIdiomas[idioma].sigla}
+            {localeNames[locale].code}
         </Button>
     );
 }
 
 /** Lista do rodapé, com os idiomas pelo nome. */
 export function LanguageSelect() {
-    const { idioma, t } = useTraducao();
+    const { locale, t } = useTranslation();
 
     return (
         <div className="flex flex-col gap-1.5">
@@ -39,17 +39,17 @@ export function LanguageSelect() {
             </label>
             <select
                 id="idioma"
-                value={idioma}
-                onChange={(event) => trocarIdioma(event.target.value as Idioma)}
+                value={locale}
+                onChange={(event) => changeLocale(event.target.value as Locale)}
                 className="h-10 rounded-md border border-border-strong bg-surface px-3 text-meta text-text-primary"
             >
-                {idiomas.map((opcao) => (
+                {locales.map((option) => (
                     <option
-                        key={opcao}
-                        value={opcao}
-                        lang={opcao.replace('_', '-')}
+                        key={option}
+                        value={option}
+                        lang={option.replace('_', '-')}
                     >
-                        {nomesDosIdiomas[opcao].nome}
+                        {localeNames[option].name}
                     </option>
                 ))}
             </select>

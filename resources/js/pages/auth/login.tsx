@@ -99,10 +99,10 @@ export default function Login({ status, canResetPassword }: Props) {
 }
 
 Login.layout = {
-    variante: 'painel',
-    arte: 'pose-acenando',
-    chamada: 'account.login.headline',
-    apoio: 'account.login.support',
+    variant: 'panel',
+    art: 'pose-acenando',
+    headline: 'account.login.headline',
+    support: 'account.login.support',
     title: 'Log in to your account',
     description: 'Enter your email and password below to log in',
 };

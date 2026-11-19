@@ -1,8 +1,8 @@
 import { Head } from '@inertiajs/react';
-import { useTraducao } from '@/lib/i18n';
+import { useTranslation } from '@/lib/i18n';
 
 export default function Welcome() {
-    const { t } = useTraducao();
+    const { t } = useTranslation();
 
     return (
         <>
