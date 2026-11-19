@@ -109,7 +109,7 @@ export default function Register({ passwordRules }: Props) {
 
 Register.layout = {
     variant: 'panel',
-    art: 'pose-acenando',
+    art: 'apresentando',
     headline: 'account.register.headline',
     support: 'account.register.support',
     title: 'Create an account',

@@ -12,7 +12,7 @@ Como o código é organizado e escrito. Os princípios estão no `AGENTS.md`; as
 | Comentários, documentação, mensagens de commit e descrições de teste           | Português                                                                       |
 | Textos da interface e dos e-mails                                              | Arquivos de tradução (`lang/pt_BR.json`, `lang/en.json`), nunca fixos no código |
 
-Exceção: os arquivos de arte do mascote mantêm os nomes do kit de design (`pose-lupa`, `mascote-avatar`), porque são os mesmos usados no `DESIGN.md` §5.3 e nos arquivos de origem em `design/mascote/`.
+Exceção: as ilustrações do mascote têm nomes em português (`procurando`, `rosto`), porque são os mesmos usados no `DESIGN.md` §5.3 e no script `design/mascote/converter.py`.
 
 O domínio usa os termos do `REQUIREMENTS.md` traduzidos de forma estável: artigo `Article`, versão `ArticleVersion`, rascunho `draft`, pendente `pending`, aprovada em vigor `current`, rejeitada `rejected`, substituída `superseded`, lixeira `trashed`, denúncia `Report`, penalidade `Penalty`, contestação `Appeal`.
 

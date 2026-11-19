@@ -23,7 +23,7 @@ export default function SiteLogo({
                 className,
             )}
         >
-            <Mascot art="mascote-avatar" size={size} />
+            <Mascot art="rosto" size={size} />
             <span
                 className={cn(
                     'font-display text-lg font-extrabold tracking-tight',
