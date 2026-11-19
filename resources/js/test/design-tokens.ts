@@ -155,6 +155,43 @@ export function readDocumentedTokens(
     return tokens;
 }
 
+export type AuditRow = {
+    id: string;
+    forbidden: boolean;
+    foreground: string;
+    background: string;
+    documentedRatio: number;
+    /** Mínimo do critério, ou null quando é decorativo ou isento. */
+    minimum: number | null;
+    result: string;
+};
+
+/** Linhas da auditoria de contraste de §2.9. Pares com † documentam usos proibidos. */
+export function readAuditTable(markdown: string): AuditRow[] {
+    const table = section(markdown, '### 2.9', '### 2.10');
+    const number = (text: string) => Number(text.replace(',', '.'));
+
+    return [
+        ...table.matchAll(
+            /^\| ([CE]\d+)( †)?\s*\|[^|]*\|[^|]*\| `(#\w+)`\s*\| `(#\w+)`\s*\|\s*([\d,]+):1\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|/gm,
+        ),
+    ].map(
+        ([, id, dagger, foreground, background, ratio, criterion, result]) => {
+            const minimum = /≥\s*([\d,]+)/.exec(criterion);
+
+            return {
+                id,
+                forbidden: dagger !== undefined,
+                foreground: foreground.toLowerCase(),
+                background: background.toLowerCase(),
+                documentedRatio: number(ratio),
+                minimum: minimum ? number(minimum[1]) : null,
+                result: result.replace(/\*/g, ''),
+            };
+        },
+    );
+}
+
 /** Pares de pastel documentados em §2.7, já com os nomes dos tokens. */
 export function readDocumentedPastels(markdown: string): Tokens {
     const tokens: Tokens = {};
