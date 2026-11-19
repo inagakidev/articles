@@ -1030,7 +1030,9 @@ um novo registro.
 ### 7.11 Efeitos
 
 Efeitos vêm de bibliotecas como código-fonte, nunca como kit de UI
-instalado (D63). Ficam em `components/effects/`, com
+instalado (D63). Só entra o código do componente que uma tela usa, no
+momento em que essa tela é implementada: nada de copiar a biblioteca
+inteira nem deixar componentes sem uso no projeto. Ficam em `components/effects/`, com
 `// fonte: <URL> · licença: <licença>` no topo, e só entram depois de
 conferida a licença de cada um. Seções da página de apresentação ficam
 em `components/blocks/`.
