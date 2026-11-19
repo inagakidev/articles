@@ -40,6 +40,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          # Histórico completo para validar as mensagens dos commits do PR
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
@@ -52,6 +54,11 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
+
+      # O hook commit-msg pode ser pulado com --no-verify; aqui a regra vale para todo PR
+      - name: Check Commit Messages
+        if: github.event_name == 'pull_request'
+        run: node scripts/commit-message.mjs --range "origin/${{ github.base_ref }}..HEAD"
 
       - name: Create Testing Database
         run: >-
