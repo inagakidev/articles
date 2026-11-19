@@ -66,14 +66,32 @@
     /* Fundo de modais e painéis sobrepostos */
     --color-overlay: rgb(41 38 56 / 0.6);
 
-    /* Tags e categorias: pastel + texto escuro nos dois temas (DESIGN §2.7) */
-    --color-tag-lavender: #dccbff;
-    --color-tag-pink: #ffc9d6;
-    --color-tag-yellow: #ffe69a;
-    --color-tag-mint: #bdebd9;
-    --color-tag-blue: #bfe2ff;
-    --color-tag-peach: #ffcbaf;
-    --color-tag-text: #292638;
+    /* Pastéis fixos (DESIGN §2.7): iguais nos dois temas, sempre com o texto do par.
+       Usados em tags, categorias, capas e avatar sem foto. */
+    --color-pastel-lavender: #dccbff;
+    --color-pastel-lavender-fg: #56377f;
+    --color-pastel-lilac: #ede4ff;
+    --color-pastel-lilac-fg: #56377f;
+    --color-pastel-mint: #bdebd9;
+    --color-pastel-mint-fg: #245c48;
+    --color-pastel-yellow: #ffe69a;
+    --color-pastel-yellow-fg: #70520a;
+    --color-pastel-pink: #ffc9d6;
+    --color-pastel-pink-fg: #8b304b;
+    --color-pastel-blue: #bfe2ff;
+    --color-pastel-blue-fg: #24527a;
+    --color-pastel-peach: #ffcbaf;
+    --color-pastel-peach-fg: #292638;
+
+    /* Avisos grandes (DESIGN §2.7): no claro, o par do estado; no escuro, translúcidos */
+    --color-tint-success-bg: #bdebd9;
+    --color-tint-success-fg: #245c48;
+    --color-tint-warning-bg: #ffe69a;
+    --color-tint-warning-fg: #70520a;
+    --color-tint-danger-bg: #ffc9d6;
+    --color-tint-danger-fg: #8b304b;
+    --color-tint-info-bg: #bfe2ff;
+    --color-tint-info-fg: #24527a;
 
     /* Paleta do editor (DESIGN §2.11): o artigo guarda só o nome da cor */
     --color-editor-text-lavanda: #56377f;
@@ -123,11 +141,13 @@
     --text-caption: 0.8125rem;
     --text-caption--line-height: 1.125rem;
     --text-caption--letter-spacing: 0.01em;
+    --text-badge: 0.75rem;
+    --text-badge--line-height: 1.125rem;
 
     /* Larguras de layout (DESIGN §11) */
     --container-reading: 42.5rem;
     --container-cover: 55rem;
-    --container-page: 75rem;
+    --container-page: 79rem;
 
     /* Raios (DESIGN §4.1) */
     --radius-sm: 0.375rem;
@@ -144,6 +164,7 @@
     /* Movimento (DESIGN §9.2) */
     --ease-standard: ease-in-out;
     --ease-emphasized: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-spring: cubic-bezier(0.3, 1.4, 0.5, 1);
 }
 
 /*
@@ -210,6 +231,15 @@
     --color-disabled-text: #8f84a0;
 
     --color-overlay: rgb(15 13 22 / 0.7);
+
+    --color-tint-success-bg: rgb(189 235 217 / 0.16);
+    --color-tint-success-fg: #bdebd9;
+    --color-tint-warning-bg: rgb(255 230 154 / 0.16);
+    --color-tint-warning-fg: #ffe69a;
+    --color-tint-danger-bg: rgb(255 201 214 / 0.16);
+    --color-tint-danger-fg: #ffc9d6;
+    --color-tint-info-bg: rgb(191 226 255 / 0.16);
+    --color-tint-info-fg: #bfe2ff;
 
     --color-editor-text-lavanda: #dccbff;
     --color-editor-text-rosa: #ffc9d6;
