@@ -40,6 +40,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
 }
 
 VerifyEmail.layout = {
+    arte: 'pose-segurando-folha',
     title: 'Email verification',
     description:
         'Please verify your email address by clicking on the link we just emailed to you.',

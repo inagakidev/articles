@@ -78,7 +78,10 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'pt_BR'),
+
+    // Idiomas da interface (RF-008); o primeiro é o padrão.
+    'locales' => ['pt_BR', 'en'],
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 

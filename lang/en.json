@@ -1,0 +1,20 @@
+{
+    "account.login.headline": "Good to see you here.",
+    "account.login.support": "Your drafts are saved and waiting for you.",
+    "account.register.headline": "Write for the He4rt community.",
+    "account.register.support": "Draft, review and publish, in a place the community reads.",
+    "home.headline": "Technical articles from the He4rt community",
+    "home.tagline": "Write, submit for review, publish.",
+    "home.title": "Home",
+    "language.label": "Language",
+    "language.toggle": "Language: :current. Switch to :next",
+    "site.footer.about": "The He4rt community's home for technical articles. Every article is reviewed before it goes live.",
+    "site.nav.login": "Log in",
+    "site.nav.my_articles": "My articles",
+    "site.nav.register": "Sign up",
+    "theme.dark": "Dark",
+    "theme.label": "Theme",
+    "theme.light": "Light",
+    "theme.system": "Match device",
+    "theme.toggle": "Theme: :current. Switch to :next"
+}
