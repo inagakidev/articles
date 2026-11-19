@@ -27,6 +27,7 @@
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.9.3",
         "pestphp/pest": "^5.3",
+        "pestphp/pest-plugin-browser": "^5.2",
         "pestphp/pest-plugin-drift": "^5.0",
         "pestphp/pest-plugin-laravel": "^5.0"
     },
@@ -49,7 +50,8 @@
             "@php artisan key:generate",
             "@php artisan migrate --force",
             "npm install",
-            "npm run build"
+            "npm run build",
+            "git config core.hooksPath .githooks"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",

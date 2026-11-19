@@ -14,7 +14,8 @@ Os commits seguem o [Conventional Commits](https://www.conventionalcommits.org/p
 <rodapé opcional>
 ```
 
-- **Descrição:** em português, no imperativo ("adiciona", "corrige", "remove"), começando em minúscula, sem ponto final, com até 72 caracteres.
+- **Descrição:** em português, no imperativo ("adiciona", "corrige", "remove"), começando em minúscula e sem ponto final.
+- **Primeira linha:** tipo, escopo e descrição juntos têm até 72 caracteres.
 - **Corpo:** explica o motivo e o contexto quando a descrição não basta. Separado da descrição por uma linha em branco.
 - **Rodapé:** `BREAKING CHANGE: <o que quebra>` e referências a decisões (`Refs: A16`), quando houver.
 
@@ -67,4 +68,12 @@ Fotos tiradas no celular carregam localização GPS e modelo do
 aparelho. Os metadados são descartados antes de salvar o arquivo.
 
 Refs: A16
+```
+
+### Verificação automática
+
+O hook `commit-msg` (em `.githooks/`, ativado pelo `composer setup`) recusa a mensagem fora do padrão antes de criar o commit. Em cada PR, o CI faz a mesma verificação em todos os commits, porque o hook pode ser pulado com `--no-verify`. Para ativar o hook num clone que já existe:
+
+```bash
+git config core.hooksPath .githooks
 ```

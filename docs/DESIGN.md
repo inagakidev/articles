@@ -490,8 +490,11 @@ teste confere que as tabelas de §2.6.1, §2.6.2 e §2.11 têm os mesmos
 valores do CSS. `npm run test:contrast` lista cada par com a razão
 calculada; a execução no CI é a evidência de cada versão.
 
-A tabela abaixo continua sendo a referência humana, inclusive dos usos
-proibidos (†), que o teste não cobre.
+A tabela abaixo também é conferida: cada razão escrita é recalculada a
+partir das cores da linha, todo par "Aprovado" precisa passar no
+critério, e todo uso proibido (†) precisa continuar reprovando. Se um
+ajuste de cor fizer um uso proibido passar, o teste avisa que a
+restrição deve ser revista.
 
 Legenda: **Aprovado** = atende ao critério do uso; **Só texto grande / UI** = passa 3:1 mas não 4,5:1, portanto proibido para texto normal; **Reprovado** = não atende nem a 3:1; **Decorativo** e **Isento** = sem mínimo aplicável no uso previsto.
 

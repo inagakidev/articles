@@ -3,17 +3,17 @@ import { Button } from '@/components/ui/button';
 import { LanguageToggle } from '@/components/site/language-switch';
 import SiteLogo from '@/components/site/site-logo';
 import { ThemeToggle } from '@/components/site/theme-toggle';
-import { useTraducao } from '@/lib/i18n';
+import { useTranslation } from '@/lib/i18n';
 import { dashboard, login, register } from '@/routes';
 
 export default function SiteHeader() {
     const { auth } = usePage().props;
-    const { t } = useTraducao();
+    const { t } = useTranslation();
 
     return (
         <header className="border-b border-border bg-bg">
             <div className="mx-auto flex h-18 max-w-page items-center gap-4 px-4 sm:px-8">
-                <SiteLogo nomeSoNoDesktop />
+                <SiteLogo nameOnlyOnDesktop />
                 <div className="ml-auto flex items-center gap-1 sm:gap-2">
                     <ThemeToggle />
                     <LanguageToggle />

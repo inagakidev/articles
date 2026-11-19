@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vite-plus/test';
 import en from '../../../lang/en.json';
 import ptBR from '../../../lang/pt_BR.json';
-import { traduzir } from '@/lib/i18n';
+import { translate } from '@/lib/i18n';
 
-const placeholders = (texto: string) =>
-    [...texto.matchAll(/:(\w+)/g)].map(([, nome]) => nome).sort();
+const placeholders = (text: string) =>
+    [...text.matchAll(/:(\w+)/g)].map(([, name]) => name).sort();
 
 describe('traduções', () => {
     it('português e inglês têm as mesmas chaves', () => {
@@ -13,19 +13,19 @@ describe('traduções', () => {
 
     it.each(Object.keys(ptBR) as (keyof typeof ptBR)[])(
         '"%s" tem texto e os mesmos valores nos dois idiomas',
-        (chave) => {
-            expect(ptBR[chave].trim()).not.toBe('');
-            expect(en[chave].trim()).not.toBe('');
-            expect(placeholders(en[chave])).toEqual(placeholders(ptBR[chave]));
+        (key) => {
+            expect(ptBR[key].trim()).not.toBe('');
+            expect(en[key].trim()).not.toBe('');
+            expect(placeholders(en[key])).toEqual(placeholders(ptBR[key]));
         },
     );
 
     it('usa o idioma pedido e substitui os valores', () => {
         expect(
-            traduzir('en', 'theme.toggle', { current: 'light', next: 'dark' }),
+            translate('en', 'theme.toggle', { current: 'light', next: 'dark' }),
         ).toBe('Theme: light. Switch to dark');
         expect(
-            traduzir('pt_BR', 'theme.toggle', {
+            translate('pt_BR', 'theme.toggle', {
                 current: 'claro',
                 next: 'escuro',
             }),

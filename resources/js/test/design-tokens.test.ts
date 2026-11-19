@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vite-plus/test';
 import type { Theme } from './design-tokens';
 import {
     contrastRatio,
+    readAuditTable,
     readDocumentedEditorPalette,
     readDocumentedPastels,
     readDocumentedTokens,
@@ -234,4 +235,39 @@ describe('DESIGN.md e CSS têm os mesmos valores', () => {
         expect(light?.[1].toLowerCase()).toBe(tokens.claro.bg);
         expect(dark?.[1].toLowerCase()).toBe(tokens.escuro.bg);
     });
+});
+
+describe('auditoria de contraste do DESIGN.md (§2.9)', () => {
+    const rows = readAuditTable(design);
+
+    it('lê todas as linhas da tabela', () => {
+        expect(rows.length).toBeGreaterThanOrEqual(90);
+    });
+
+    it.each(rows)('$id: a razão escrita bate com as cores da linha', (row) => {
+        expect(contrastRatio(row.foreground, row.background).toFixed(2)).toBe(
+            row.documentedRatio.toFixed(2),
+        );
+    });
+
+    it.each(rows.filter((row) => row.result === 'Aprovado'))(
+        '$id: o par aprovado passa no critério',
+        (row) => {
+            expect(row.minimum).not.toBeNull();
+            expect(
+                contrastRatio(row.foreground, row.background),
+            ).toBeGreaterThanOrEqual(row.minimum!);
+        },
+    );
+
+    // Se uma cor mudar e o uso proibido passar a ser aceitável, a restrição precisa ser revista no DESIGN.md
+    it.each(rows.filter((row) => row.forbidden))(
+        '$id †: o uso proibido continua abaixo do critério',
+        (row) => {
+            expect(row.minimum).not.toBeNull();
+            expect(contrastRatio(row.foreground, row.background)).toBeLessThan(
+                row.minimum!,
+            );
+        },
+    );
 });

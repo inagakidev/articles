@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vite-plus/test';
-import { paginaDeTeste } from '@/test/inertia';
+import { testPage } from '@/test/inertia';
 import SiteHeader from '@/components/site/site-header';
 
 vi.mock('@/hooks/use-appearance', () => ({
     useAppearance: () => ({ appearance: 'system', updateAppearance: vi.fn() }),
 }));
 
-function renderEm(locale: 'pt_BR' | 'en', user: object | null = null) {
-    Object.assign(paginaDeTeste.props, {
+function renderIn(locale: 'pt_BR' | 'en', user: object | null = null) {
+    Object.assign(testPage.props, {
         locale,
         name: 'Plataforma de Artigos',
         auth: { user },
@@ -19,7 +19,7 @@ function renderEm(locale: 'pt_BR' | 'en', user: object | null = null) {
 
 describe('cabeçalho do site', () => {
     it('mostra as ações de conta no idioma da página', () => {
-        renderEm('pt_BR');
+        renderIn('pt_BR');
         expect(
             screen.getByRole('link', { name: 'Entrar' }),
         ).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe('cabeçalho do site', () => {
     });
 
     it('troca os textos quando o idioma é inglês', () => {
-        renderEm('en');
+        renderIn('en');
         expect(
             screen.getByRole('link', { name: 'Log in' }),
         ).toBeInTheDocument();
@@ -41,7 +41,7 @@ describe('cabeçalho do site', () => {
     });
 
     it('mostra Meus artigos para quem está logado', () => {
-        renderEm('pt_BR', { id: 1 });
+        renderIn('pt_BR', { id: 1 });
         expect(
             screen.getByRole('link', { name: 'Meus artigos' }),
         ).toBeInTheDocument();

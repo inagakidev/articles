@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
  * Artes do kit do mascote (resources/images/mascote), pelo nome do arquivo.
  * Onde cada uma é usada está em docs/DESIGN.md §5.3.
  */
-export const artesDoMascote = [
+export const mascotArts = [
     'mascote-principal',
     'mascote-avatar',
     'pose-acenando',
@@ -29,29 +29,29 @@ export const artesDoMascote = [
     'expressao-triste',
 ] as const;
 
-export type ArteDoMascote = (typeof artesDoMascote)[number];
+export type MascotArt = (typeof mascotArts)[number];
 
-const arquivos = import.meta.glob<string>('../../images/mascote/**/*.svg', {
+const files = import.meta.glob<string>('../../images/mascote/**/*.svg', {
     eager: true,
     query: '?url',
     import: 'default',
 });
 
-export const urlsDoMascote: Record<string, string> = Object.fromEntries(
-    Object.entries(arquivos).map(([caminho, url]) => [
-        caminho.split('/').pop()!.replace('.svg', ''),
+export const mascotUrls: Record<string, string> = Object.fromEntries(
+    Object.entries(files).map(([path, url]) => [
+        path.split('/').pop()!.replace('.svg', ''),
         url,
     ]),
 );
 
 /** Tamanhos mínimos do guia de identidade (design/mascote). */
-const CORPO_INTEIRO = 96;
-const AVATAR = 24;
+const FULL_BODY = 96;
+const AVATAR_MIN = 24;
 
 type Props = {
-    arte: ArteDoMascote;
+    art: MascotArt;
     /** Largura em pixels. */
-    tamanho: number;
+    size: number;
     className?: string;
 };
 
@@ -59,39 +59,39 @@ type Props = {
  * O mascote é sempre decorativo: o texto ao lado comunica a mensagem.
  * Abaixo de 96 px usa o avatar; abaixo de 24 px, só o marcador.
  */
-export default function Mascote({ arte, tamanho, className }: Props) {
-    if (tamanho < AVATAR) {
-        return <Marcador tamanho={tamanho} className={className} />;
+export default function Mascot({ art, size, className }: Props) {
+    if (size < AVATAR_MIN) {
+        return <Bookmark size={size} className={className} />;
     }
 
-    const nome = tamanho < CORPO_INTEIRO ? 'mascote-avatar' : arte;
+    const name = size < FULL_BODY ? 'mascote-avatar' : art;
 
     return (
         <img
-            src={urlsDoMascote[nome]}
+            src={mascotUrls[name]}
             alt=""
             aria-hidden="true"
-            width={tamanho}
+            width={size}
             className={cn('block h-auto shrink-0 select-none', className)}
-            style={{ width: tamanho }}
+            style={{ width: size }}
             draggable={false}
         />
     );
 }
 
 /** O marcador roxo do topo do mascote, para ícones menores que 24 px. */
-export function Marcador({
-    tamanho,
+export function Bookmark({
+    size,
     className,
 }: {
-    tamanho: number;
+    size: number;
     className?: string;
 }) {
     return (
         <svg
             viewBox="0 0 24 24"
-            width={tamanho}
-            height={tamanho}
+            width={size}
+            height={size}
             aria-hidden="true"
             className={cn('block shrink-0', className)}
         >
