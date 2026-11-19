@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi } from 'vite-plus/test';
 import type { Locale } from '@/lib/i18n';
 
 /** Props compartilhadas pelo servidor, para testar componentes fora do Inertia. */

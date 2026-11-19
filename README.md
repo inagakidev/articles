@@ -25,8 +25,8 @@ Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24 e MariaDB 11.
 1. Crie os bancos e o usuário da aplicação (troque `SENHA` por uma senha local):
 
     ```sql
-    CREATE DATABASE articles CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    CREATE DATABASE articles_testing CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CREATE DATABASE articles CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci;
+    CREATE DATABASE articles_testing CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci;
     CREATE USER 'articles'@'localhost' IDENTIFIED BY 'SENHA';
     CREATE USER 'articles'@'127.0.0.1' IDENTIFIED BY 'SENHA';
     GRANT ALL PRIVILEGES ON articles.* TO 'articles'@'localhost';

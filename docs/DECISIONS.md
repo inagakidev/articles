@@ -312,6 +312,20 @@ Esta lista é conceitual e não representa o modelo definitivo do banco de dados
 
 Editor, imagens, busca, backup e identificação do administrador foram decididos em D51 a D56.
 
+### 3.6. Convenções do banco de dados
+
+Aprovadas em 18/11/2026, depois de uma auditoria das migrations.
+
+| Convenção                                              | Motivo                                                                                                                                                                              |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Conexão sempre em UTC (`time_zone = '+00:00'`)         | Com o fuso do servidor, valores padrão do banco ficavam 3 horas atrás da aplicação, e todas as datas andavam 3 horas ao mudar de servidor ou restaurar um backup. Coberto por teste |
+| Collation `utf8mb4_uca1400_ai_ci`                      | A `utf8mb4_unicode_ci` trata todos os emojis como iguais e quebraria campos únicos, como tags. A nova continua sem diferenciar maiúsculas e acentos. Coberto por teste              |
+| Datas em inteiro (Unix) sempre sem sinal               | Inteiros com sinal param em janeiro de 2038                                                                                                                                         |
+| Toda migration desfaz o que faz                        | O CI desfaz e refaz todas as migrations em cada execução                                                                                                                            |
+| Migrations já aplicadas em produção nunca são editadas | Até o primeiro deploy, as migrations iniciais ainda podem ser corrigidas, porque não há dados a preservar; depois, toda mudança é uma migration nova                                |
+
+As convenções de modelagem (chaves estrangeiras, estados, índices e anonimização de contas) serão definidas no `DATABASE.md`, na modelagem de usuários.
+
 ---
 
 ## 4. Decisões durante a implementação

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vite-plus/test';
 import { testPage } from '@/test/inertia';
 import SiteHeader from '@/components/site/site-header';
 
