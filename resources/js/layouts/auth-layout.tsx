@@ -58,7 +58,7 @@ function Rabiscos() {
                 fill="none"
                 strokeWidth="6"
                 strokeLinecap="round"
-                className="stroke-tag-lavender"
+                className="stroke-pastel-lavender"
             />
             <circle
                 cx="520"
@@ -66,9 +66,9 @@ function Rabiscos() {
                 r="14"
                 fill="none"
                 strokeWidth="5"
-                className="stroke-tag-lavender"
+                className="stroke-pastel-lavender"
             />
-            <circle cx="90" cy="220" r="8" className="fill-tag-lavender" />
+            <circle cx="90" cy="220" r="8" className="fill-pastel-lavender" />
         </svg>
     );
 }
