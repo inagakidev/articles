@@ -1,7 +1,7 @@
 # REQUIREMENTS — Plataforma de Artigos
 
-**Versão:** 1.4 — Retenção dos backups (D55)
-**Data:** 14/11/2026
+**Versão:** 1.5 — Decisões do handoff de design (D63)
+**Data:** 19/11/2026
 **Status:** Requisitos de produto da P1 consolidados e aguardando validação final. As escolhas técnicas da seção 10.1 foram decididas em `DECISIONS.md` (D51 a D56).
 
 Este documento reúne os requisitos funcionais, perfis de acesso, regras de publicação, estados, fluxos, interações e escopo do MVP. A visão estratégica do produto está em `PRODUCT.md`. As decisões e suas justificativas estão em `DECISIONS.md`.
@@ -219,7 +219,7 @@ Regras:
 - **RF-105** Se o autor retirar a versão enquanto o administrador a analisa, a retirada prevalece. A decisão sobre uma versão retirada é recusada, com aviso ao administrador. **[A01]**
 - **RF-106** Edição de artigo publicado gera uma nova versão pendente. A versão aprovada em vigor permanece pública durante a revisão.
 - **RF-107** Rejeição exige justificativa obrigatória e indica o item da Política de conteúdo violado. **[A12]**
-- **RF-108** A versão rejeitada permanece disponível ao autor, que pode corrigir e reenviar **24 horas depois de cada rejeição**. **[P06]**
+- **RF-108** A versão rejeitada permanece disponível ao autor, que pode corrigir e reenviar **a qualquer momento, sem espera**. **[P06] [D63]**
 - **RF-109** O administrador não edita o artigo durante a análise: apenas aprova ou rejeita. **[P05]**
 - **RF-110** Se uma edição for rejeitada, a versão anterior permanece publicada.
 - **RF-111** O administrador pode **despublicar** um artigo publicado, com justificativa obrigatória e indicação do item da Política de conteúdo violado. **[A12]** O artigo volta a não publicado e a versão em vigor passa a rejeitada, com essa justificativa. O autor corrige e reenvia pelo fluxo normal. **[A07]**
@@ -232,6 +232,11 @@ Cada artigo aparece em uma única seção:
 - **RF-113** **Rascunhos:** artigos nunca publicados cuja versão mais recente é um rascunho.
 - **RF-114** **Aguardando aprovação:** artigos nunca publicados cuja versão mais recente está pendente.
 - **RF-115** **Rejeitados:** artigos não publicados cuja versão mais recente foi rejeitada, incluindo os despublicados.
+
+**Estimativa de revisão** **[D63]**
+
+- **RF-377** Ao enviar uma versão, o autor vê uma **estimativa** do tempo de revisão ("costuma levar até 6 horas"). A mesma estimativa aparece nas versões que aguardam revisão em "Meus artigos" e nas perguntas frequentes da página de apresentação. É uma estimativa, não um prazo garantido.
+- **RF-378** Na fila de aprovação, o administrador vê há quanto tempo cada versão espera. Versões com mais de 6 horas são marcadas como atrasadas e aparecem no dashboard.
 
 **Exclusão de artigos**
 
@@ -320,7 +325,7 @@ As curtidas em comentários voltam ao escopo, com as mesmas regras das curtidas 
 
 - **RF-159** Apenas usuários autenticados e verificados podem favoritar.
 - **RF-160** Lista individual de favoritos é privada.
-- **RF-161** Quantidade agregada de favoritos é pública e aparece na página de leitura e nas listagens.
+- **RF-161** Quantidade agregada de favoritos é pública e aparece na página de leitura. As listagens (cards de artigo) não mostram contagens de curtidas nem de favoritos no MVP. **[D63]**
 - **RF-162** Não existe ordenação pública por favoritos.
 
 ### 2.13. Compartilhamento
@@ -447,8 +452,8 @@ No banimento definitivo:
 Contestação aceita de suspensão:
 
 - **RF-235** A penalidade é anulada.
-- **RF-236** Um administrador autoriza a reativação, com justificativa registrada. **[A06]**
-- **RF-237** Se nenhuma autorização ocorrer antes do fim do prazo, a reativação automática da suspensão acontece normalmente. **[A06]**
+- **RF-236** A conta é reativada na hora, e o usuário recebe aviso por e-mail. **[A06] [D63]**
+- **RF-237** _Revogado pela D63:_ com a reativação imediata, não há autorização pendente nem espera pelo fim do prazo.
 
 Contestação aceita de banimento:
 
@@ -461,7 +466,7 @@ Contestação rejeitada:
 
 **Auditoria das contestações**
 
-**RF-241** Registrar: penalidade original, contestação, justificativa do usuário, administrador responsável pela análise, decisão, justificativa administrativa, administrador responsável pela eventual reativação, datas das ações e eventual anulação.
+**RF-241** Registrar: penalidade original, contestação, justificativa do usuário, administrador responsável pela análise, decisão, justificativa administrativa, data da reativação (registrada como evento do sistema), datas das ações e eventual anulação.
 
 **RF-242** O histórico completo é preservado, sem apagar ou sobrescrever eventos anteriores. Todos os administradores podem consultar o histórico. O usuário não tem página própria para consultar o histórico de penalidades.
 
@@ -498,7 +503,7 @@ Contestação rejeitada:
 
 **MVP (básico)** **[A09]**
 
-- **RF-262** Contagens de usuários cadastrados, artigos publicados, artigos aguardando aprovação e denúncias abertas.
+- **RF-262** Contagens de usuários cadastrados, artigos publicados, artigos aguardando aprovação, versões atrasadas (RF-378) e denúncias abertas.
 
 **Depois do MVP** **[A09]**:
 
@@ -575,6 +580,14 @@ Contestação rejeitada:
 - **RF-292** Registros de contas ativas são mantidos enquanto a conta existir. Na exclusão da conta, são anonimizados e apagados 12 meses depois.
 - **RF-293** São auditadas todas as ações administrativas, incluindo a exclusão permanente de artigos (sem conteúdo).
 - **RF-294** Das ações de autores, apenas os eventos de segurança da conta (2.2).
+
+### 2.25. Página de apresentação **[D63]**
+
+- **RF-379** A página de apresentação fica em `/` e é pública. A listagem de artigos (RF-002) passa para `/artigos`.
+- **RF-380** A página apresenta a plataforma, explica em três passos como funciona a publicação (rascunho, revisão, publicado), mostra artigos publicados recentes e responde perguntas frequentes, incluindo a estimativa de revisão (RF-377).
+- **RF-381** Os artigos mostrados seguem a regra única de visibilidade pública (seção 5.3).
+- **RF-382** A seção da comunidade mostra apenas autores com artigo publicado e só os dados do perfil público (nome e foto). A Política de privacidade informa esse uso.
+- **RF-383** Animações contínuas da página podem ser pausadas por um botão "Pausar animações", e a escolha fica guardada no navegador da pessoa. Com "reduzir movimento" ativo no sistema, nada se move.
 
 ---
 
@@ -805,7 +818,7 @@ Essa regra vale para listagem, busca, filtros, perfil e página de leitura.
 2. Tem sete dias para contestar pelo link, sem login.
 3. Qualquer administrador pode analisar.
 4. Rejeitada: o usuário recebe e-mail e notificação interna com a justificativa.
-5. Aceita, para suspensão: a penalidade é anulada e um administrador autoriza a reativação com justificativa; sem autorização, vale a reativação automática no fim do prazo.
+5. Aceita, para suspensão: a penalidade é anulada, a conta é reativada na hora e o usuário recebe aviso por e-mail.
 6. Aceita, para banimento: conta e perfil retidos são restaurados; conteúdos não voltam.
 
 Se o prazo expirar, um administrador pode reabri-lo por mais sete dias, somente enquanto conta e perfil estiverem retidos.
@@ -844,7 +857,7 @@ Se o prazo expirar, um administrador pode reabri-lo por mais sete dias, somente 
 ### 7.3. Favoritos
 
 - **RF-367** Exigem autenticação e e-mail verificado.
-- **RF-368** Lista individual privada; quantidade agregada pública, exibida na leitura e nas listagens.
+- **RF-368** Lista individual privada; quantidade agregada pública, exibida na página de leitura (RF-161).
 - **RF-369** Removidos na exclusão definitiva da conta, com atualização das contagens.
 
 ### 7.4. Denúncias
@@ -888,6 +901,7 @@ Classificação aprovada em 12/11/2026.
 
 **Leitura e descoberta**
 
+- Página de apresentação em `/`, com a listagem em `/artigos`. **[D63]**
 - Listagem paginada e página de leitura.
 - Pesquisa, filtros e ordenação.
 - Compartilhamento.
@@ -999,7 +1013,7 @@ Decididas em 14/11/2026 e registradas em `DECISIONS.md`:
 | Exclusão de artigo e denúncias                       | Encerradas como "conteúdo removido" [P03]                                      |
 | Versões pendentes na exclusão de conta               | Seção 2.4 [P04]                                                                |
 | Edição pelo administrador durante a análise          | Não permitida [P05]                                                            |
-| Reenvio de artigos rejeitados                        | Espera de 24 horas após cada rejeição [P06]                                    |
+| Reenvio de artigos rejeitados                        | Sem espera; antes eram 24 horas [P06] [D63]                                    |
 | Limite de tamanho do artigo                          | 150 caracteres no título, 50.000 no conteúdo [P07]                             |
 | Limites dos comentários                              | 2.000 caracteres, um a cada 30 segundos, até 3 níveis [P08]                    |
 | Autor do artigo denunciando comentários              | Permitido [P09]                                                                |

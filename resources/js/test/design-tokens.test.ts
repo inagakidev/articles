@@ -3,9 +3,11 @@ import type { Theme } from './design-tokens';
 import {
     contrastRatio,
     readDocumentedEditorPalette,
+    readDocumentedPastels,
     readDocumentedTokens,
     readProjectFile,
     readThemeTokens,
+    solidOver,
 } from './design-tokens';
 
 const css = readProjectFile('resources/css/app.css');
@@ -17,7 +19,13 @@ const themes: Theme[] = ['claro', 'escuro'];
 const TEXT = 4.5;
 const UI = 3;
 
-type Pair = { foreground: string; backgrounds: string[]; minimum: number };
+type Pair = {
+    foreground: string;
+    backgrounds: string[];
+    minimum: number;
+    /** Fundo translúcido: o contraste é medido sobre cada uma destas superfícies. */
+    over?: string[];
+};
 
 const surfaces = [
     'bg',
@@ -28,7 +36,15 @@ const surfaces = [
     'surface-selected',
 ];
 const editorColors = ['lavanda', 'rosa', 'amarelo', 'menta', 'azul', 'pessego'];
-const tags = ['lavender', 'pink', 'yellow', 'mint', 'blue', 'peach'];
+const pastels = [
+    'lavender',
+    'lilac',
+    'mint',
+    'yellow',
+    'pink',
+    'blue',
+    'peach',
+];
 const states = ['success', 'warning', 'danger', 'info'];
 
 /** Pares de uso permitidos pelo DESIGN.md (§2.7, §2.8 e §2.11). */
@@ -69,11 +85,19 @@ function usagePairs(theme: Theme): Pair[] {
                 minimum: TEXT,
             },
         ]),
-        {
-            foreground: 'tag-text',
-            backgrounds: tags.map((tag) => `tag-${tag}`),
+        // Tags, categorias e capas: cada pastel com o texto do seu par (D63)
+        ...pastels.map((pastel) => ({
+            foreground: `pastel-${pastel}-fg`,
+            backgrounds: [`pastel-${pastel}`],
             minimum: TEXT,
-        },
+        })),
+        // Avisos grandes: translúcidos no escuro, medidos sobre as superfícies em que aparecem
+        ...states.map((state) => ({
+            foreground: `tint-${state}-fg`,
+            backgrounds: [`tint-${state}-bg`],
+            minimum: TEXT,
+            over: ['bg', 'surface', 'surface-elevated'],
+        })),
         {
             foreground: 'border-strong',
             backgrounds: ['bg', 'surface', 'surface-elevated', 'surface-muted'],
@@ -119,25 +143,33 @@ function usagePairs(theme: Theme): Pair[] {
 }
 
 function cases(theme: Theme) {
-    return usagePairs(theme).flatMap(({ foreground, backgrounds, minimum }) =>
-        backgrounds.map((background) => {
-            const fg = tokens[theme][foreground];
-            const bg = tokens[theme][background];
+    const token = (name: string) => {
+        const value = tokens[theme][name];
 
-            if (!fg || !bg) {
-                throw new Error(
-                    `Token ausente no tema ${theme}: ${fg ? background : foreground}`,
-                );
-            }
+        if (!value) {
+            throw new Error(`Token ausente no tema ${theme}: ${name}`);
+        }
 
-            const ratio = contrastRatio(fg, bg);
+        return value;
+    };
 
-            return {
-                name: `${foreground} sobre ${background}: ${ratio.toFixed(2)}:1 (mínimo ${minimum}:1)`,
-                ratio,
-                minimum,
-            };
-        }),
+    return usagePairs(theme).flatMap(
+        ({ foreground, backgrounds, minimum, over = [undefined] }) =>
+            backgrounds.flatMap((background) =>
+                over.map((base) => {
+                    const bg = base
+                        ? solidOver(token(background), token(base))
+                        : token(background);
+                    const ratio = contrastRatio(token(foreground), bg);
+                    const where = base ? ` (sobre ${base})` : '';
+
+                    return {
+                        name: `${foreground} sobre ${background}${where}: ${ratio.toFixed(2)}:1 (mínimo ${minimum}:1)`,
+                        ratio,
+                        minimum,
+                    };
+                }),
+            ),
     );
 }
 
@@ -173,6 +205,22 @@ describe('DESIGN.md e CSS têm os mesmos valores', () => {
                 name,
                 value,
             });
+        }
+    });
+
+    it('pares de pastel (§2.7), iguais nos dois temas', () => {
+        const documented = readDocumentedPastels(design);
+
+        expect(Object.keys(documented)).toHaveLength(pastels.length * 2);
+
+        for (const [name, value] of Object.entries(documented)) {
+            for (const theme of themes) {
+                expect({ theme, name, value: tokens[theme][name] }).toEqual({
+                    theme,
+                    name,
+                    value,
+                });
+            }
         }
     });
 

@@ -1,6 +1,6 @@
 # DECISIONS — Plataforma de Artigos
 
-**Atualizado em:** 17/11/2026
+**Atualizado em:** 19/11/2026
 
 Registro das decisões de produto e de arquitetura, com contexto, alternativas consideradas e impacto. Os requisitos resultantes estão em `REQUIREMENTS.md`; a visão do produto está em `PRODUCT.md`.
 
@@ -56,7 +56,7 @@ Cada decisão tem um destes status:
 
 ### A06 — Término da suspensão e reativação após contestação
 
-- **Status:** Aprovada (12/11/2026).
+- **Status:** Aprovada (12/11/2026); a reativação após contestação aceita foi alterada pela D63 (19/11/2026): passa a ser imediata, sem autorização.
 - **Decisão:** a suspensão termina automaticamente no fim do prazo, com aviso por e-mail. Com contestação de suspensão aceita, a penalidade é anulada e um administrador autoriza a reativação, com justificativa registrada. A contestação é feita pelo link do e-mail da penalidade, sem login.
 - **Alternativas descartadas:** reativação sempre manual; reativação imediata ao aceitar a contestação.
 - **Impacto:** elimina a dependência de ação manual no fim da suspensão; resolve o acesso ao formulário de contestação com a conta inacessível.
@@ -200,7 +200,7 @@ Cada decisão tem um destes status:
 | P03    | Exclusão de artigo e denúncias              | Denúncias abertas encerradas como "conteúdo removido"                                                                        |
 | P04    | Versões pendentes na exclusão de conta      | Voltam a rascunho no pedido; na exclusão definitiva, publicados ficam só com a versão em vigor e não publicados são apagados |
 | P05    | Edição pelo administrador durante a análise | Não permitida; o administrador aprova ou rejeita                                                                             |
-| P06    | Reenvio de artigos rejeitados               | Espera de 24 horas após cada rejeição                                                                                        |
+| P06    | Reenvio de artigos rejeitados               | Sem espera (alterada pela D63; antes, 24 horas após cada rejeição)                                                           |
 | P07    | Limite de tamanho do artigo                 | Título até 150 caracteres; conteúdo até 50.000                                                                               |
 | P08    | Limites dos comentários                     | Até 2.000 caracteres, um a cada 30 segundos, respostas até 3 níveis                                                          |
 | P09    | Autor do artigo denunciando comentários     | Permitido                                                                                                                    |
@@ -237,7 +237,7 @@ Propostas como consequência das decisões acima e confirmadas explicitamente em
 | R08   | A02    | Artigos anonimizados não podem ser editados; o administrador pode despublicar ou excluir.                                                  |
 | R09   | A02    | Comentários e curtidas de outros usuários em artigos anonimizados permanecem.                                                              |
 | R10   | A02    | Denúncias contra artigos que permanecem no ar continuam abertas após a exclusão da conta do autor.                                         |
-| R11   | A06    | Se a reativação após contestação aceita não for autorizada antes do fim do prazo, a reativação automática acontece normalmente.            |
+| R11   | A06    | _Revogada pela D63:_ a reativação após contestação aceita é imediata.                                                                      |
 | R12   | A07    | Desfechos de denúncia de perfil: redefinir foto e bio para o padrão; exigir troca de username no próximo acesso; casos graves, penalidade. |
 | R13   | A07    | Lista inicial de motivos: spam, ofensa ou assédio, plágio, informação enganosa, outro.                                                     |
 | R14   | A08    | Reset do 2FA do administrador por comando no servidor, como último recurso.                                                                |
@@ -424,7 +424,7 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - A paleta do editor continua a da D58; as telas foram corrigidas.
     - O mascote passa a aparecer também no editor vazio, no fim do artigo, no envio para revisão e na busca carregando, mas não no artigo não aprovado nem no despublicado (atualiza a D57; mapa completo em `DESIGN.md` §5.3).
     - A seção "Em destaque" do perfil sai do MVP (D59), e a busca vazia não sugere grafia, porque o FULLTEXT do MariaDB não faz isso (D54).
-    - As contagens de favoritos, que faltavam nas telas, entram na leitura e nos cards (RF-137, RF-161).
+    - As contagens de favoritos, que faltavam nas telas, entram na leitura e nos cards (RF-137, RF-161). Os cards voltaram a ficar sem contagens pela D63.
     - A interface usa "Aguardando revisão" e "Não aprovado" para os estados pendente e rejeitado (`DESIGN.md` §8.13).
 - **Alternativas descartadas:** a paleta da prancha (reaproveitava cores de estado como texto e, no tema escuro, texto colorido sobre destaque ficava perto de 1:1); mascote também na rejeição, com pose neutra.
 - **Pendente:** o nome do produto (`[NOME]` nas telas) e as telas no tema escuro.
@@ -440,3 +440,29 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - As mensagens de validação em português foram copiadas uma vez de laravel-lang/lang 15.39.0 (MIT, com a licença em `lang/pt_BR`), sem dependência no projeto.
 - **Alternativas descartadas:** i18next e react-i18next (biblioteca maior e traduções separadas das do Laravel); enviar as traduções pelo servidor a cada página (respostas maiores); o texto em inglês como chave, padrão do Laravel (impede detectar texto fixo esquecido); instalar o laravel-lang/publisher (exige a extensão `bcmath`).
 - **Pendente:** revisar o tom das mensagens de validação herdadas do pacote, que são formais demais para o PRODUCT.
+
+### D63 — Handoff de design
+
+- **Status:** Aprovada (19/11/2026).
+- **Contexto:** o handoff de design consolidou as telas de referência em especificação de tokens, componentes, estados, movimento e acessibilidade, e trouxe três decisões de produto. Alguns pontos contrariavam decisões anteriores.
+- **Decisões de produto:**
+    - Depois de uma rejeição, o autor corrige e reenvia na hora, sem a espera de 24 horas (altera a P06 e o RF-108).
+    - Quando o administrador aceita a contestação de uma suspensão, a conta volta na hora, sem passo de autorização, e o usuário recebe o aviso por e-mail (altera a A06, o RF-236, o RF-241 e revoga o RF-237 e a R11). A auditoria registra quem aceitou; a reativação fica registrada como evento do sistema.
+    - A revisão tem uma **estimativa** de 6 horas, mostrada ao autor como estimativa e não como prazo garantido, porque o MVP tem uma única administradora (A08). No admin, versões com mais de 6 horas ficam marcadas como atrasadas (RF-377, RF-378).
+    - A página de apresentação entra no MVP, em `/`; a listagem de artigos passa para `/artigos` (RF-379 a RF-383).
+    - Os cards de artigo não mostram contagens no MVP; curtidas e favoritos aparecem na página de leitura (altera o RF-161 e o RF-368).
+- **Decisões de design:**
+    - Tags e categorias usam pares de pastel com texto escuro do mesmo tom (lavanda `#56377F`, menta `#245C48`, amarelo `#70520A`, rosa `#8B304B`, azul `#24527A`, pêssego `#292638`). Para não confundir com estados, que usam as mesmas cores, categoria é pill sem ícone e estado é etiqueta retangular com ícone.
+    - Capas de artigo usam só pastéis fixos, iguais nos dois temas, incluindo o lilás `#EDE4FF`, nunca um token de superfície.
+    - Raios: 16 px em blocos internos e 24 px em cards e diálogos.
+    - Avisos grandes no tema escuro usam fundo translúcido do pastel com texto pastel; o contraste é verificado sobre a superfície em que aparecem.
+    - O mascote não aparece na exclusão de conta nem no painel administrativo, nem no logo do admin.
+- **Mantido, apesar do handoff:**
+    - O tema escuro continua na classe `.dark` (D60), e não no atributo `data-theme`: o próprio handoff diz que o `DESIGN.md` prevalece.
+    - O mascote continua sempre decorativo (`alt=""`), inclusive quando é o personagem da tela: o texto ao lado já comunica a mensagem.
+- **Técnicas:**
+    - Componentes de efeito vindos de Magic UI, Aceternity, Animate UI e React Bits entram como código-fonte em `components/effects/`, com `// fonte: <URL> · licença: <licença>` no topo, e só depois de conferida a licença de cada um. Nenhum kit de UI como dependência.
+    - As abas deslizantes começam em CSS, com os atributos do Radix; `motion` só entra se o CSS não bastar, e nunca na primeira carga da Home.
+    - Acessibilidade automatizada com o plugin de navegador do Pest e axe a cada PR, sem nenhuma violação "serious" ou "critical".
+- **Alternativas descartadas:** prazo de 6 horas como garantia (inviável com uma administradora); manter a espera de 24 horas; tags com texto `#292638` em todos os pastéis; mascote com descrição para leitor de tela; axe no Vitest (o jsdom não calcula layout nem contraste).
+- **Riscos:** sem espera entre reenvios, a única administradora pode receber versões em sequência do mesmo artigo; o limite de uma versão pendente por artigo (RF-102) continua valendo.

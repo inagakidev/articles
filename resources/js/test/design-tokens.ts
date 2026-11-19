@@ -18,7 +18,7 @@ function readColorVariables(block: string): Tokens {
     const tokens: Tokens = {};
 
     for (const [, name, value] of block.matchAll(
-        /--color-([\w-]+):\s*(#[0-9a-f]{6})\s*;/gi,
+        /--color-([\w-]+):\s*(#[0-9a-f]{6}|rgb\([^)]*\))\s*;/gi,
     )) {
         tokens[name] = value.toLowerCase();
     }
@@ -41,6 +41,45 @@ export function readThemeTokens(css: string): Record<Theme, Tokens> {
         claro,
         escuro: { ...claro, ...readColorVariables(dark[1]) },
     };
+}
+
+type Rgba = { r: number; g: number; b: number; a: number };
+
+function parseColor(color: string): Rgba {
+    if (color.startsWith('#')) {
+        const [r, g, b] = [1, 3, 5].map((i) =>
+            parseInt(color.slice(i, i + 2), 16),
+        );
+
+        return { r, g, b, a: 1 };
+    }
+
+    const [r, g, b, a = '1'] = color
+        .replace(/rgb\(|\)/g, '')
+        .split(/[\s/]+/)
+        .filter(Boolean);
+
+    return { r: Number(r), g: Number(g), b: Number(b), a: Number(a) };
+}
+
+const toHex = ({ r, g, b }: Rgba): string =>
+    '#' +
+    [r, g, b]
+        .map((channel) => Math.round(channel).toString(16).padStart(2, '0'))
+        .join('');
+
+/** Cor resultante de uma cor (talvez translúcida) pintada sobre um fundo opaco. */
+export function solidOver(color: string, base: string): string {
+    const top = parseColor(color);
+    const bottom = parseColor(base);
+    const mix = (a: number, b: number) => a * top.a + b * (1 - top.a);
+
+    return toHex({
+        r: mix(top.r, bottom.r),
+        g: mix(top.g, bottom.g),
+        b: mix(top.b, bottom.b),
+        a: 1,
+    });
 }
 
 function relativeLuminance(hex: string): number {
@@ -111,6 +150,25 @@ export function readDocumentedTokens(
         expanded.forEach((name, index) => {
             tokens[name.replace('--color-', '')] = values[index].toLowerCase();
         });
+    }
+
+    return tokens;
+}
+
+/** Pares de pastel documentados em §2.7, já com os nomes dos tokens. */
+export function readDocumentedPastels(markdown: string): Tokens {
+    const tokens: Tokens = {};
+    const table = section(
+        markdown,
+        '**Tags e categorias (pills)**',
+        '**Avisos grandes**',
+    );
+
+    for (const [, name, background, text] of table.matchAll(
+        /^\s*\| `(\w+)`\s*\| `(#\w+)`\s*\| `(#\w+)`/gm,
+    )) {
+        tokens[`pastel-${name}`] = background.toLowerCase();
+        tokens[`pastel-${name}-fg`] = text.toLowerCase();
     }
 
     return tokens;
