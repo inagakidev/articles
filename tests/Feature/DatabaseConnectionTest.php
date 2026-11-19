@@ -1,26 +1,18 @@
 <?php
 
-namespace Tests\Feature;
-
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Tests\TestCase;
 
-class DatabaseConnectionTest extends TestCase
-{
-    public function test_database_clock_uses_the_application_timezone()
-    {
-        $databaseNow = Carbon::parse(DB::selectOne('select now() as agora')->agora, 'UTC');
+test('o relógio do banco usa o fuso da aplicação', function () {
+    $databaseNow = Carbon::parse(DB::selectOne('select now() as now')->now, 'UTC');
 
-        $this->assertLessThan(60, abs($databaseNow->diffInSeconds(now())));
-    }
+    expect(abs($databaseNow->diffInSeconds(now())))->toBeLessThan(60);
+});
 
-    public function test_text_comparison_ignores_case_and_accents_but_distinguishes_emoji()
-    {
-        $equal = fn (string $a, string $b): bool => (bool) DB::selectOne('select ? = ? as igual', [$a, $b])->igual;
+test('a comparação de texto ignora maiúsculas e acentos, mas distingue emojis', function () {
+    $equal = fn (string $a, string $b): bool => (bool) DB::selectOne('select ? = ? as equal', [$a, $b])->equal;
 
-        $this->assertTrue($equal('Laravel', 'laravel'));
-        $this->assertTrue($equal('café', 'cafe'));
-        $this->assertFalse($equal('🔥', '🎉'));
-    }
-}
+    expect($equal('Laravel', 'laravel'))->toBeTrue()
+        ->and($equal('café', 'cafe'))->toBeTrue()
+        ->and($equal('🔥', '🎉'))->toBeFalse();
+});
