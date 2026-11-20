@@ -4,8 +4,10 @@ import Mascot from '@/components/ui/mascot';
 import MascotOrbit from '@/components/ui/mascot-orbit';
 import MotionToggle from '@/components/ui/motion-toggle';
 import SiteLogo from '@/components/site/site-logo';
+import TextLink from '@/components/ui/text-link';
 import type { TranslationKey } from '@/lib/i18n';
 import { useTranslation } from '@/lib/i18n';
+import { privacy, terms } from '@/routes/policies';
 
 /** Mascote ao lado do formulário (entrar, criar conta). Textos por chave de tradução. */
 type PanelProps = {
@@ -74,8 +76,13 @@ function PanelLayout({
                         </p>
                     )}
                 </div>
-                {/* Termos de uso e Privacidade entram aqui com as páginas (fatia 4) */}
-                <MotionToggle className="relative -ml-3 self-start" />
+                <div className="relative flex flex-wrap items-center gap-4 text-meta font-semibold">
+                    <TextLink href={terms()}>{t('policies.terms')}</TextLink>
+                    <TextLink href={privacy()}>
+                        {t('policies.privacy')}
+                    </TextLink>
+                    <MotionToggle className="ml-auto" />
+                </div>
             </aside>
 
             {/* Celular: palco com o mascote e o formulário numa folha por cima */}

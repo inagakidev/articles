@@ -4,17 +4,22 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Http\Responses\EmailVerifiedResponse;
 use App\Http\Responses\LoginLockoutResponse;
 use App\Http\Responses\PasswordResetLinkResponse;
+use App\Http\Responses\VerificationLinkResponse;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use Laravel\Fortify\Contracts\EmailVerificationNotificationSentResponse;
 use Laravel\Fortify\Contracts\FailedPasswordResetLinkRequestResponse;
 use Laravel\Fortify\Contracts\LockoutResponse;
+use Laravel\Fortify\Contracts\RegisterResponse;
 use Laravel\Fortify\Contracts\SuccessfulPasswordResetLinkRequestResponse;
+use Laravel\Fortify\Contracts\VerifyEmailResponse;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 
@@ -28,6 +33,9 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->singleton(LockoutResponse::class, LoginLockoutResponse::class);
         $this->app->bind(SuccessfulPasswordResetLinkRequestResponse::class, PasswordResetLinkResponse::class);
         $this->app->bind(FailedPasswordResetLinkRequestResponse::class, PasswordResetLinkResponse::class);
+        $this->app->bind(RegisterResponse::class, VerificationLinkResponse::class);
+        $this->app->bind(EmailVerificationNotificationSentResponse::class, VerificationLinkResponse::class);
+        $this->app->bind(VerifyEmailResponse::class, EmailVerifiedResponse::class);
     }
 
     /**
@@ -74,7 +82,9 @@ class FortifyServiceProvider extends ServiceProvider
         ]));
 
         Fortify::verifyEmailView(fn (Request $request) => Inertia::render('auth/verify-email', [
-            'status' => $request->session()->get('status'),
+            'email' => $request->user()->email,
+            // Segundos até poder reenviar o link; contados do último envio.
+            'resendAfter' => $request->session()->get('resendAfter'),
         ]));
 
         Fortify::registerView(fn () => Inertia::render('auth/register', [

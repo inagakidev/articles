@@ -28,6 +28,10 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return $this->profileRules($this->user()->id);
+        // A troca de username nas configurações entra com elas (fatia 6).
+        return [
+            'name' => $this->nameRules(),
+            'email' => $this->emailRules($this->user()->id),
+        ];
     }
 }

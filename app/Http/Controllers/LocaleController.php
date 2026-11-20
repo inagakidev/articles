@@ -18,6 +18,9 @@ class LocaleController extends Controller
             'locale' => ['required', 'string', Rule::in(config('app.locales'))],
         ]);
 
+        // Com a conta aberta, a escolha também vale para os e-mails (D62).
+        $request->user()?->forceFill(['locale' => $validated['locale']])->save();
+
         return back()->withCookie(cookie(SetLocale::COOKIE, $validated['locale'], 60 * 24 * 365));
     }
 }
