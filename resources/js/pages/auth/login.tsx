@@ -53,9 +53,6 @@ export default function Login({ status, canResetPassword, retryAfter }: Props) {
             >
                 {({ processing, errors }) => (
                     <>
-                        {/* A sessão é sempre lembrada (D68) */}
-                        <input type="hidden" name="remember" value="1" />
-
                         <FormField
                             id="email"
                             label={t('account.email')}

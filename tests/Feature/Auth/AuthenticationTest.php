@@ -16,13 +16,17 @@ test('usuários entram pela tela de entrar', function () {
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
         'password' => 'password',
-        'remember' => '1',
     ]);
 
     $this->assertAuthenticated();
-    // A tela sempre pede para lembrar a sessão (D68).
-    $response->assertCookie(Auth::guard()->getRecallerName());
+    // A sessão dura enquanto há uso, sem cookie de "lembrar de mim" (D73).
+    $response->assertCookieMissing(Auth::guard()->getRecallerName());
     $response->assertRedirect(route('dashboard', absolute: false));
+});
+
+test('a sessão cai depois de 14 dias sem uso', function () {
+    expect(config('session.lifetime'))->toBe(14 * 24 * 60)
+        ->and(config('session.expire_on_close'))->toBeFalse();
 });
 
 test('usuários com 2FA ativado vão para o desafio de 2FA', function () {

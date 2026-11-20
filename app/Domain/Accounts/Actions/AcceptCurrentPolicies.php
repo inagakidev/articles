@@ -13,7 +13,7 @@ class AcceptCurrentPolicies
 
     public function handle(User $user): void
     {
-        foreach ($this->versions->all() as $version) {
+        foreach ($this->versions->accepted() as $version) {
             PolicyAcceptance::firstOrCreate(
                 ['user_id' => $user->id, 'policy_version_id' => $version->id],
                 ['accepted_at' => now()],

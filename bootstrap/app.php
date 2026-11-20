@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsurePoliciesAccepted;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetLocale;
@@ -26,6 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
             // Depois do SetLocale, para a mensagem sair no idioma da pessoa.
             ThrottleAuthByIp::class,
+            // Versão nova dos Termos ou da Privacidade: aceite antes de continuar (D73).
+            EnsurePoliciesAccepted::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -1,0 +1,124 @@
+{
+    "title": "Terms of use",
+    "description": "The rules for using he4rt ink: who can have an account, how review works and what happens to what you publish.",
+    "summary": [
+        {
+            "icon": "user-round",
+            "title": "Accounts from age 16",
+            "text": "Reading is free; to write and comment, confirm your email."
+        },
+        {
+            "icon": "clock",
+            "title": "Every article is reviewed",
+            "text": "Review takes up to 6 hours. You can resubmit whenever you want."
+        },
+        {
+            "icon": "pen-line",
+            "title": "Your text stays yours",
+            "text": "You allow us to show it here while it's published."
+        },
+        {
+            "icon": "scale",
+            "title": "Rules apply to everyone",
+            "text": "Anyone who breaks the Content policy may be suspended or banned."
+        }
+    ],
+    "sections": [
+        {
+            "id": "aceite",
+            "title": "Acceptance and minimum age",
+            "blocks": [
+                {
+                    "p": "When you create an account, you accept these Terms and the [Privacy policy](route:policies.privacy). We record the date and the versions accepted."
+                },
+                {
+                    "p": "You declare you are 16 or older. You don't need an account to read."
+                }
+            ]
+        },
+        {
+            "id": "conta",
+            "title": "Your account",
+            "blocks": [
+                {
+                    "list": [
+                        "Use an email that is yours and confirm it within 7 days; unconfirmed accounts are deleted.",
+                        "Without confirmation you can read and write drafts, but you can't submit for review, like or comment.",
+                        "You are responsible for your password and for what is done with your account.",
+                        "A username may be refused if it breaks the [Content policy](route:policies.content)."
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "revisao",
+            "title": "Review and publishing",
+            "blocks": [
+                {
+                    "list": [
+                        "Every submitted article is reviewed before it goes live. Review takes up to 6 hours.",
+                        "The submitted version is frozen while it's in the queue. You can withdraw it and edit.",
+                        "If the article isn't approved, you get the reason and the Content policy item. You can fix it and resubmit with no limit on attempts.",
+                        "A published article may be unpublished if it breaks the Content policy, always with a reason."
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "conteudo",
+            "title": "Rights over what you publish",
+            "blocks": [
+                {
+                    "p": "What you write stays yours. By publishing, you allow he4rt ink to display, store and share the content on the platform, without payment and without exclusivity."
+                },
+                {
+                    "p": "You guarantee you have the right to publish the texts, code and images you send, and you credit the sources of what isn't yours."
+                }
+            ]
+        },
+        {
+            "id": "moderacao",
+            "title": "Moderation and penalties",
+            "blocks": [
+                {
+                    "list": [
+                        "Penalties are: rejecting or unpublishing the article, temporary suspension and ban.",
+                        "Every decision states the Content policy item that was broken.",
+                        "You can appeal a suspension or ban. If the appeal is accepted, the account comes back right away."
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "exclusao",
+            "title": "Deleting the account",
+            "blocks": [
+                {
+                    "p": "You can delete your account in Settings. It stays in a 20-day grace period: logging in during that time lets you cancel. After that, deletion is permanent and your published articles become anonymous."
+                }
+            ]
+        },
+        {
+            "id": "limites",
+            "title": "Limits of liability",
+            "blocks": [
+                {
+                    "p": "Articles express the opinion of whoever wrote them. Review checks the Content policy; it doesn't guarantee that every piece of code or information is right for your case."
+                },
+                {
+                    "p": "We may change or stop parts of the platform, giving notice in advance whenever possible."
+                }
+            ]
+        },
+        {
+            "id": "mudancas-t",
+            "title": "Changes to the Terms",
+            "blocks": [
+                {
+                    "p": "When the Terms change, we tell you by email and ask for a new acceptance at your next login. Questions: [{contact_email}](mailto:{contact_email})."
+                }
+            ]
+        }
+    ],
+    "changes": ["First version."]
+}

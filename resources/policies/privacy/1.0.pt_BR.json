@@ -1,0 +1,276 @@
+{
+    "title": "Política de privacidade",
+    "description": "Como o he4rt ink coleta, usa, guarda e protege os seus dados, e como você pede acesso, correção ou exclusão.",
+    "summary": [
+        {
+            "icon": "user-round",
+            "title": "Pedimos só o necessário",
+            "text": "Nome, username, e-mail e senha. Não guardamos sua data de nascimento."
+        },
+        {
+            "icon": "globe",
+            "title": "Artigos e comentários são públicos",
+            "text": "Aparecem com seu nome e podem ser encontrados por buscadores."
+        },
+        {
+            "icon": "shield-check",
+            "title": "Sem anúncios e sem rastreamento",
+            "text": "Usamos só cookies essenciais: sessão, tema e idioma."
+        },
+        {
+            "icon": "log-out",
+            "title": "Você pode sair quando quiser",
+            "text": "Excluir a conta leva 20 dias; os backups expiram em até 5 semanas."
+        }
+    ],
+    "sections": [
+        {
+            "id": "quem-somos",
+            "title": "Quem somos e como falar com a gente",
+            "blocks": [
+                {
+                    "p": "O he4rt ink é a plataforma de artigos técnicos da comunidade He4rt. Somos a controladora dos dados tratados aqui, conforme a Lei Geral de Proteção de Dados (LGPD)."
+                },
+                {
+                    "p": "Para qualquer assunto de privacidade, escreva para [{privacy_email}](mailto:{privacy_email}). É o mesmo canal do nosso encarregado de dados."
+                }
+            ]
+        },
+        {
+            "id": "dados",
+            "title": "Quais dados coletamos",
+            "blocks": [
+                {
+                    "table": {
+                        "caption": "Dados que coletamos, quando e para quê",
+                        "columns": ["Dado", "Quando", "Para quê"],
+                        "rows": [
+                            [
+                                "Nome, username, e-mail e senha",
+                                "No cadastro",
+                                "Criar e proteger sua conta. A senha fica guardada só de forma cifrada."
+                            ],
+                            [
+                                "Declaração de 16 anos ou mais",
+                                "No cadastro",
+                                "Cumprir a idade mínima. Não pedimos a data de nascimento."
+                            ],
+                            [
+                                "Aceite dos Termos e desta política",
+                                "No cadastro e a cada nova versão",
+                                "Registrar a data e a versão que você aceitou."
+                            ],
+                            [
+                                "Bio, links e foto do perfil",
+                                "Quando você preenche",
+                                "Mostrar seu perfil público."
+                            ],
+                            [
+                                "Artigos, versões, imagens e comentários",
+                                "Quando você escreve",
+                                "Revisar, publicar e exibir o seu conteúdo."
+                            ],
+                            [
+                                "Curtidas e favoritos",
+                                "Quando você usa",
+                                "Guardar o que você salvou para ler depois."
+                            ],
+                            [
+                                "Denúncias e contestações",
+                                "Quando você envia",
+                                "Moderar a plataforma e responder ao seu pedido."
+                            ],
+                            [
+                                "Endereço IP e data de tentativas suspeitas de login",
+                                "Quando algo parece um ataque",
+                                "Proteger a sua conta."
+                            ],
+                            [
+                                "Tema e idioma",
+                                "Quando você escolhe",
+                                "Lembrar suas preferências."
+                            ]
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id": "publico",
+            "title": "O que fica público",
+            "blocks": [
+                {
+                    "list": [
+                        "**Público:** artigos publicados, seu perfil (nome, username, bio, links e foto) e seus comentários. Comentários aparecem com o seu nome para qualquer visitante e podem ser indexados por buscadores.",
+                        "**Só você vê:** rascunhos, artigos em revisão ou não aprovados, favoritos, notificações e seu e-mail.",
+                        "**Só a moderação vê:** denúncias, contestações e o histórico de decisões sobre a sua conta."
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "bases",
+            "title": "Para que usamos e com qual base legal",
+            "blocks": [
+                {
+                    "list": [
+                        "**Executar o contrato com você** (LGPD, art. 7º, V): manter sua conta, revisar e publicar seus artigos, enviar e-mails de conta.",
+                        "**Legítimo interesse** (art. 7º, IX): segurança, prevenção de abuso e moderação. Fazemos isso com o mínimo de dados possível.",
+                        "**Cumprir obrigação legal** (art. 7º, II): guardar registros quando a lei exige e responder a autoridades."
+                    ]
+                },
+                { "p": "Não vendemos dados e não mostramos anúncios." }
+            ]
+        },
+        {
+            "id": "cookies",
+            "title": "Cookies",
+            "blocks": [
+                {
+                    "p": "Usamos apenas cookies essenciais, sem os quais o site não funciona. Por isso não mostramos um banner pedindo consentimento."
+                },
+                {
+                    "table": {
+                        "caption": "Cookies essenciais usados no he4rt ink",
+                        "columns": ["Cookie", "Para quê", "Duração"],
+                        "rows": [
+                            [
+                                "Sessão",
+                                "Manter a sua sessão aberta com segurança",
+                                "Até sair ou 2 semanas sem uso"
+                            ],
+                            [
+                                "Tema",
+                                "Lembrar claro, escuro ou do dispositivo",
+                                "1 ano"
+                            ],
+                            ["Idioma", "Lembrar o idioma escolhido", "1 ano"]
+                        ]
+                    }
+                },
+                {
+                    "note": "Se um dia contarmos visitas, isso terá um aviso próprio antes de começar."
+                }
+            ]
+        },
+        {
+            "id": "compartilhamento",
+            "title": "Com quem compartilhamos",
+            "blocks": [
+                {
+                    "p": "Só com empresas que operam a plataforma para nós, sob contrato e apenas para essa finalidade:"
+                },
+                {
+                    "list": [
+                        "Hospedagem do site e do banco de dados.",
+                        "Cloudflare R2, para imagens e backups, em contas separadas.",
+                        "Serviço de envio de e-mails de conta e de avisos."
+                    ]
+                },
+                {
+                    "p": "Também podemos entregar dados a autoridades quando houver ordem judicial ou obrigação legal."
+                }
+            ]
+        },
+        {
+            "id": "retencao",
+            "title": "Por quanto tempo guardamos",
+            "blocks": [
+                {
+                    "table": {
+                        "caption": "Prazos de guarda dos dados",
+                        "columns": ["Dado", "Prazo", "Depois do prazo"],
+                        "rows": [
+                            [
+                                "Conta com exclusão pedida",
+                                "20 dias de carência",
+                                "Exclusão definitiva; seus artigos ficam anônimos"
+                            ],
+                            ["Conta nunca confirmada", "7 dias", "Exclusão"],
+                            [
+                                "Artigo na lixeira",
+                                "7 dias",
+                                "Exclusão permanente"
+                            ],
+                            ["Notificações", "90 dias", "Exclusão"],
+                            [
+                                "Tentativas suspeitas de login",
+                                "90 dias",
+                                "Exclusão"
+                            ],
+                            ["Denúncias encerradas", "12 meses", "Exclusão"],
+                            [
+                                "Registros de moderação de conta excluída",
+                                "12 meses, sem identificar você",
+                                "Exclusão"
+                            ],
+                            [
+                                "Backups",
+                                "Até cerca de 5 semanas",
+                                "A cópia expirada é apagada"
+                            ]
+                        ]
+                    }
+                },
+                {
+                    "p": "Dados excluídos continuam nos backups até a cópia expirar, no máximo cerca de 5 semanas. Se um backup for restaurado, as rotinas de exclusão rodam de novo."
+                }
+            ]
+        },
+        {
+            "id": "direitos",
+            "title": "Seus direitos",
+            "blocks": [
+                { "p": "Pela LGPD (art. 18), você pode pedir:" },
+                {
+                    "list": [
+                        "Confirmação de que tratamos seus dados e acesso a eles.",
+                        "Correção de dados incompletos ou errados.",
+                        "Anonimização, bloqueio ou exclusão de dados desnecessários.",
+                        "Uma cópia dos seus dados para levar a outro serviço.",
+                        "Informação sobre com quem compartilhamos.",
+                        "Revisão de decisões tomadas sobre você."
+                    ]
+                },
+                {
+                    "p": "Nome, username, e-mail e senha você muda em Configurações, e a conta você exclui lá mesmo. Para o resto, escreva para [{privacy_email}](mailto:{privacy_email}): respondemos em até 15 dias."
+                }
+            ]
+        },
+        {
+            "id": "idade",
+            "title": "Idade mínima",
+            "blocks": [
+                {
+                    "p": "O he4rt ink é para pessoas com 16 anos ou mais. A idade é declarada no cadastro e não guardamos a data de nascimento. Se soubermos de uma conta de alguém mais novo, ela é excluída."
+                }
+            ]
+        },
+        {
+            "id": "seguranca",
+            "title": "Como protegemos seus dados",
+            "blocks": [
+                {
+                    "list": [
+                        "Conexão sempre cifrada (HTTPS) e senhas guardadas de forma cifrada.",
+                        "Backups diários em uma conta separada da que guarda as imagens.",
+                        "Acesso da moderação limitado ao necessário, com registro de cada ação."
+                    ]
+                },
+                {
+                    "p": "Se houver um incidente que possa trazer risco a você, avisamos por e-mail e comunicamos a Autoridade Nacional de Proteção de Dados (ANPD)."
+                }
+            ]
+        },
+        {
+            "id": "mudancas",
+            "title": "Mudanças nesta política",
+            "blocks": [
+                {
+                    "p": "Quando mudarmos algo importante, avisamos por e-mail e pedimos que você aceite a nova versão no próximo login. Cada versão fica no histórico abaixo."
+                }
+            ]
+        }
+    ],
+    "changes": ["Primeira versão."]
+}

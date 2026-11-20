@@ -523,7 +523,7 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
 
 ### D68 — Entrar: sessão, limite de tentativas e eventos de segurança
 
-- **Status:** Aprovada (19/11/2026).
+- **Status:** Aprovada (19/11/2026). A sessão sempre lembrada foi substituída pela sessão de 14 dias sem uso (D73).
 - **Decisão:**
     - A tela de entrar não tem "Lembrar de mim", como a prancha: a sessão é sempre lembrada, e a pessoa continua conectada até sair. Quem escreve volta ao rascunho sem entrar de novo.
     - O limite de tentativas é o do próprio Fortify: 5 senhas erradas por minuto para o mesmo e-mail e IP. O login fica pausado até o prazo acabar, mesmo com a senha certa, e a tela mostra o aviso da prancha com os segundos que faltam. O limitador nomeado do starter kit foi retirado, porque contava também os logins certos e respondia com erro 429, sem disparar o evento `Lockout`.
@@ -590,3 +590,19 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - Contas não confirmadas são excluídas no 8º dia pelo `model:prune` diário.
     - A variante "Criar conta vindo de Escrever", os passos 1-2-3 e o "Começar meu primeiro artigo" entram com o editor (fatia 8); até lá, "E-mail confirmado" leva à página inicial.
     - A tabela de perfil (bio e foto) entra na fatia 6, quando for usada.
+
+### D73 — Termos e políticas
+
+- **Status:** Aprovada (20/11/2026).
+- **Contexto:** o canvas ganhou as pranchas "Políticas e privacidade": as três páginas com o texto jurídico completo (versão 1.0), o novo aceite e um formulário de pedido de dados.
+- **Decisão:**
+    - **Três páginas** (RF-272): `/terms`, `/privacy` e `/content-policy`, no desenho das pranchas: abas entre os documentos, índice "Nesta página" que acompanha a leitura, resumo em cartões, seções numeradas com tabelas, histórico de versões e o quadro "Ficou com alguma dúvida?". O cabeçalho continua o atual: "Artigos", "Categorias", "Buscar" e "Escrever" entram com as fatias deles.
+    - **Texto:** o das pranchas, publicado como versão 1.0 **provisória** (`policy_versions.draft`) até a validação jurídica (RF-276, p8-07). Cada versão fica em `resources/policies/<tipo>/<versão>.<idioma>.json`, em PT e EN, com resumo, seções e "o que mudou". O formato estruturado, em vez de Markdown, permite as tabelas e os cartões do desenho e deixa os itens da Política de conteúdo endereçáveis pelo número, como a moderação vai precisar (RF-107). O texto é montado como elementos React, sem HTML: só negrito e links internos ou de e-mail.
+    - **Contatos** (`privacidade@he4rt.ink`, `contato@he4rt.ink`) ficam em `config/app.php` (`contacts`), trocáveis sem mexer nos textos.
+    - **Política de conteúdo:** itens numerados com exemplo do que não pode e do que pode. O link `?item=4.2` destaca o item e mostra um aviso no topo. A prancha pulava do 3.1 para o 3.4; o item de imagens virou 3.2, porque a moderação vai citar esses números. Ela não tem aceite próprio: vale pelos Termos.
+    - **Novo aceite** (RF-013): quando entra em vigor uma versão nova dos Termos ou da Privacidade, o middleware `EnsurePoliciesAccepted` leva a pessoa à tela "Atualizamos…", que mostra o que mudou e a versão aceita antes. Um aceite vale para os documentos pendentes. Ler as políticas, trocar o idioma e sair continuam livres; depois do aceite, a pessoa volta para onde ia.
+    - **Sessão:** dura enquanto há uso e cai depois de 14 dias parada (`SESSION_LIFETIME=20160`), sem o "lembrar de mim". Atualiza a D68 e é o que a Política de privacidade descreve.
+    - **"Baixar PDF"** virou "Imprimir ou salvar em PDF": a página tem versão de impressão limpa e o botão abre a impressão do navegador, sem biblioteca nova.
+    - **Pedido de dados (LGPD):** entra como fatia própria (24), depois da moderação, porque alguém precisa atender os pedidos (RF-384 a RF-389). Até lá, "Ficou com alguma dúvida?" leva ao e-mail de privacidade.
+- **Alternativas descartadas:** texto em Markdown (não representa as tabelas e os cartões e não endereça os itens); publicar o texto como final sem a validação jurídica; gerar PDF no servidor (dependência nova); manter a sessão lembrada para sempre (o texto da política já previa 14 dias e é mais seguro); fazer o pedido de dados agora sem ninguém para atender.
+- **Pendente:** validação jurídica dos textos (RF-276) e publicação da versão final (p8-07); o domínio `he4rt.ink` dos contatos.

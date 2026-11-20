@@ -19,6 +19,7 @@ $telas = [
     'nova senha' => '/reset-password/token?email=lia%40exemplo.dev',
     'termos de uso' => '/terms',
     'política de privacidade' => '/privacy',
+    'política de conteúdo com item destacado' => '/content-policy?item=4.2',
 ];
 
 it('não tem problemas de acessibilidade no tema claro', function (string $url) {
@@ -47,3 +48,10 @@ it('não tem problemas de acessibilidade nas telas de confirmação de e-mail', 
     'confira seu e-mail' => [false, '/email/verify'],
     'e-mail confirmado' => [true, '/email/confirmed'],
 ]);
+
+it('não tem problemas de acessibilidade no novo aceite das políticas', function () {
+    $this->actingAs(User::factory()->withoutAcceptedPolicies()->create());
+
+    visit('/policies/accept')->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    visit('/policies/accept')->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+});

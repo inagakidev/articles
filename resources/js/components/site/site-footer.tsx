@@ -1,7 +1,9 @@
 import { LanguageSelect } from '@/components/site/language-switch';
 import SiteLogo from '@/components/site/site-logo';
 import { ThemeSelect } from '@/components/site/theme-toggle';
+import TextLink from '@/components/ui/text-link';
 import { useTranslation } from '@/lib/i18n';
+import { content, privacy, terms } from '@/routes/policies';
 
 export default function SiteFooter() {
     const { t } = useTranslation();
@@ -15,6 +17,18 @@ export default function SiteFooter() {
                         {t('site.footer.about')}
                     </p>
                 </div>
+                <nav
+                    aria-label={t('policies.breadcrumb.policies')}
+                    className="flex flex-col gap-2 text-meta font-semibold"
+                >
+                    <TextLink href={terms()}>{t('policies.terms')}</TextLink>
+                    <TextLink href={content()}>
+                        {t('policies.content')}
+                    </TextLink>
+                    <TextLink href={privacy()}>
+                        {t('policies.privacy')}
+                    </TextLink>
+                </nav>
                 <div className="flex gap-3">
                     <LanguageSelect />
                     <ThemeSelect />

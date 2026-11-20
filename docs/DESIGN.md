@@ -820,6 +820,8 @@ compete com o texto, nunca carrega informação sozinho.
 | Recuperar senha                                                      | Sim                          | `pensativo`    |
 | E-mail confirmado                                                    | Sim                          | `comemorando`  |
 | Troca obrigatória de username                                        | Sim                          | `pensativo`    |
+| Resumo das páginas de políticas                                      | Sim, pequeno                 | `lendo`        |
+| "Ficou com alguma dúvida?" nas políticas                             | Sim, pequeno                 | `esperando`    |
 | Novo aceite dos Termos                                               | Sim                          | `lendo`        |
 | Editor vazio                                                         | Sim, pequeno                 | `escrevendo`   |
 | Artigo enviado para revisão                                          | Sim, discreto                | `esperando`    |

@@ -2,7 +2,7 @@
 
 **Atualizado em:** 19/11/2026  
 **Escopo:** MVP aprovado (`REQUIREMENTS.md`, seção 8)  
-**Tarefas:** 94 em 8 fases
+**Tarefas:** 95 em 8 fases
 
 Este documento descreve o plano: fases, dependências, entregáveis, critérios de conclusão e tarefas. O andamento real (status de cada tarefa, bloqueios e histórico) fica no workspace de acompanhamento do projeto. Requisitos estão em `REQUIREMENTS.md` e decisões em `DECISIONS.md`.
 
@@ -331,6 +331,7 @@ A fase está concluída quando todas as tarefas estão concluídas e todos os cr
 | p6-15 | Painel administrativo e dashboard básico       | FE   | Média      | p6-06, p6-08, p4-03               | Painel acessível só ao admin com 2FA.                                                                                                                                     |
 | p6-16 | Testar interações e moderação                  | TS   | Alta       | p6-02, p6-12, p6-13               | Testes Pest executados e passando.                                                                                                                                        |
 | p6-17 | Bounces e reclamações de e-mail                | BE   | Alta       | p6-05                             | Webhook do provedor vira evento próprio (`EmailBounced`, `EmailComplained`); endereço que voltou deixa de receber e-mails (D71).                                          |
+| p6-18 | Pedido de dados pessoais (LGPD)                | BE   | Alta       | p6-09, p2-07                      | Pedido sem login confirmado por e-mail em 24 h, com protocolo e atendimento pelo admin (RF-384 a RF-389).                                                                 |
 
 ---
 
@@ -462,6 +463,7 @@ As tarefas acima são implementadas em **fatias**: cada fatia entrega uma funcio
 | 21. Penalidades e contestação         | p6-10, p6-11, p6-12                                      | Admin · Usuário e penalidade, Contestações, Conta suspensa, Contestar suspensão                      |
 | 22. Exclusão de conta                 | p6-13                                                    | Excluir conta, Exclusão solicitada, Cancelar exclusão                                                |
 | 23. Username obrigatório e retenção   | p6-14, p6-16                                             | Trocar username obrigatório                                                                          |
+| 24. Pedido de dados (LGPD)            | p6-18                                                    | Pedido de dados, Pedido · erros, Pedido recebido (desktop e mobile)                                  |
 
 As pranchas "Escuro" do canvas servem de conferência: no código, o tema é uma variável, não uma tela.
 

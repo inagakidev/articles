@@ -52,12 +52,10 @@ describe('tela de entrar', () => {
         ).toBeInTheDocument();
     });
 
-    it('sempre pede para lembrar a sessão', () => {
+    it('não pede para lembrar a sessão: ela dura 14 dias sem uso', () => {
         const { container } = renderLogin();
 
-        expect(
-            container.querySelector('input[type=hidden][name=remember]'),
-        ).toHaveValue('1');
+        expect(container.querySelector('[name=remember]')).toBeNull();
     });
 
     it('mostra os textos em inglês', () => {

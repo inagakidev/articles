@@ -1,0 +1,162 @@
+{
+    "title": "Política de conteúdo",
+    "description": "O que não pode ser publicado no he4rt ink. Cada decisão da moderação cita um item numerado desta página.",
+    "summary": [
+        {
+            "icon": "heart-handshake",
+            "title": "Respeito acima de tudo",
+            "text": "Ofensa, assédio e discurso de ódio não são aceitos."
+        },
+        {
+            "icon": "code",
+            "title": "Conteúdo técnico e honesto",
+            "text": "Cite fontes e não publique código que cause dano."
+        },
+        {
+            "icon": "copyright",
+            "title": "Só o que você pode usar",
+            "text": "Nada de plágio nem imagens sem direito de uso."
+        },
+        {
+            "icon": "megaphone",
+            "title": "Sem propaganda disfarçada",
+            "text": "Divulgar seu trabalho tudo bem; spam não."
+        }
+    ],
+    "sections": [
+        {
+            "id": "s1",
+            "title": "Spam e autopromoção",
+            "blocks": [
+                {
+                    "items": [
+                        {
+                            "id": "1.1",
+                            "title": "Conteúdo repetido",
+                            "text": "Publicar o mesmo texto várias vezes, ou mudar só o título.",
+                            "bad": "Três artigos iguais com títulos diferentes.",
+                            "good": "Publicar uma versão revisada no lugar da antiga."
+                        },
+                        {
+                            "id": "1.2",
+                            "title": "Spam e autopromoção",
+                            "text": "Usar artigo, comentário ou username só para vender ou levar tráfego.",
+                            "bad": "Um username como @compre-cursos ou um artigo que é só um link de afiliado.",
+                            "good": "Mencionar seu projeto ou curso quando faz parte do conteúdo técnico."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "s2",
+            "title": "Respeito",
+            "blocks": [
+                {
+                    "items": [
+                        {
+                            "id": "2.1",
+                            "title": "Ofensa e assédio",
+                            "text": "Atacar, humilhar ou perseguir pessoas, dentro ou fora da plataforma.",
+                            "bad": "Comentários que xingam quem escreveu o artigo.",
+                            "good": "Discordar do conteúdo com argumentos."
+                        },
+                        {
+                            "id": "2.2",
+                            "title": "Discurso de ódio",
+                            "text": "Conteúdo que discrimina por raça, gênero, orientação, religião, deficiência ou origem.",
+                            "bad": "Piadas que inferiorizam um grupo.",
+                            "good": "Discutir diversidade e inclusão na tecnologia."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "s3",
+            "title": "Direitos autorais",
+            "blocks": [
+                {
+                    "items": [
+                        {
+                            "id": "3.1",
+                            "title": "Plágio",
+                            "text": "Publicar texto de outra pessoa como se fosse seu.",
+                            "bad": "Traduzir um artigo inteiro sem autorização nem crédito.",
+                            "good": "Citar trechos curtos com a fonte."
+                        },
+                        {
+                            "id": "3.2",
+                            "title": "Imagens sem direito de uso",
+                            "text": "Usar imagens que você não criou e não tem licença para usar.",
+                            "bad": "Prints de cursos pagos ou fotos de banco de imagens sem licença.",
+                            "good": "Imagens próprias, de domínio público ou com licença que permite o uso."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "s4",
+            "title": "Qualidade técnica",
+            "blocks": [
+                {
+                    "items": [
+                        {
+                            "id": "4.1",
+                            "title": "Fora do tema",
+                            "text": "Conteúdo sem relação com tecnologia ou carreira em tecnologia.",
+                            "bad": "Receitas, política partidária ou correntes.",
+                            "good": "Relatos de carreira, estudo e comunidade."
+                        },
+                        {
+                            "id": "4.2",
+                            "title": "Fontes e atribuição",
+                            "text": "Apresentar números, benchmarks ou afirmações técnicas sem fonte ou sem como reproduzir.",
+                            "bad": "“O framework X é 10 vezes mais rápido” sem dizer como foi medido.",
+                            "good": "Mostrar o código ou o link usado na medição."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "s5",
+            "title": "Segurança e veracidade",
+            "blocks": [
+                {
+                    "items": [
+                        {
+                            "id": "5.1",
+                            "title": "Informação enganosa",
+                            "text": "Afirmar como fato algo falso que pode prejudicar quem segue o conteúdo.",
+                            "bad": "Dizer que uma configuração insegura é a recomendada.",
+                            "good": "Expor uma opinião deixando claro que é opinião."
+                        },
+                        {
+                            "id": "5.2",
+                            "title": "Código malicioso e dados de terceiros",
+                            "text": "Publicar malware, credenciais ou dados pessoais de outras pessoas.",
+                            "bad": "Um token de API real no exemplo de código.",
+                            "good": "Explicar uma vulnerabilidade já corrigida, para defesa."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "como",
+            "title": "Como aplicamos esta política",
+            "blocks": [
+                {
+                    "list": [
+                        "Todo artigo é revisado antes de ir ao ar. A decisão de não aprovar cita o item violado.",
+                        "Qualquer pessoa com conta confirmada pode denunciar artigos e comentários.",
+                        "Casos repetidos ou graves levam a suspensão ou banimento, que você pode contestar."
+                    ]
+                }
+            ]
+        }
+    ],
+    "changes": ["Primeira versão."]
+}

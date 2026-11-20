@@ -1,0 +1,280 @@
+{
+    "title": "Privacy policy",
+    "description": "How he4rt ink collects, uses, keeps and protects your data, and how you ask for access, correction or deletion.",
+    "summary": [
+        {
+            "icon": "user-round",
+            "title": "We only ask for what's needed",
+            "text": "Name, username, email and password. We don't keep your date of birth."
+        },
+        {
+            "icon": "globe",
+            "title": "Articles and comments are public",
+            "text": "They show your name and can be found by search engines."
+        },
+        {
+            "icon": "shield-check",
+            "title": "No ads and no tracking",
+            "text": "We only use essential cookies: session, theme and language."
+        },
+        {
+            "icon": "log-out",
+            "title": "You can leave whenever you want",
+            "text": "Deleting the account takes 20 days; backups expire within 5 weeks."
+        }
+    ],
+    "sections": [
+        {
+            "id": "quem-somos",
+            "title": "Who we are and how to reach us",
+            "blocks": [
+                {
+                    "p": "he4rt ink is the technical articles platform of the He4rt community. We are the controller of the data processed here, under Brazil's General Data Protection Law (LGPD)."
+                },
+                {
+                    "p": "For any privacy matter, write to [{privacy_email}](mailto:{privacy_email}). It's the same channel as our data protection officer."
+                }
+            ]
+        },
+        {
+            "id": "dados",
+            "title": "What data we collect",
+            "blocks": [
+                {
+                    "table": {
+                        "caption": "Data we collect, when and what for",
+                        "columns": ["Data", "When", "What for"],
+                        "rows": [
+                            [
+                                "Name, username, email and password",
+                                "At sign-up",
+                                "Create and protect your account. The password is only stored encrypted."
+                            ],
+                            [
+                                "Declaration of being 16 or older",
+                                "At sign-up",
+                                "Meet the minimum age. We don't ask for your date of birth."
+                            ],
+                            [
+                                "Acceptance of the Terms and this policy",
+                                "At sign-up and with each new version",
+                                "Record the date and the version you accepted."
+                            ],
+                            [
+                                "Profile bio, links and photo",
+                                "When you fill them in",
+                                "Show your public profile."
+                            ],
+                            [
+                                "Articles, versions, images and comments",
+                                "When you write",
+                                "Review, publish and display your content."
+                            ],
+                            [
+                                "Likes and bookmarks",
+                                "When you use them",
+                                "Keep what you saved to read later."
+                            ],
+                            [
+                                "Reports and appeals",
+                                "When you send them",
+                                "Moderate the platform and answer your request."
+                            ],
+                            [
+                                "IP address and date of suspicious login attempts",
+                                "When something looks like an attack",
+                                "Protect your account."
+                            ],
+                            [
+                                "Theme and language",
+                                "When you choose them",
+                                "Remember your preferences."
+                            ]
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id": "publico",
+            "title": "What is public",
+            "blocks": [
+                {
+                    "list": [
+                        "**Public:** published articles, your profile (name, username, bio, links and photo) and your comments. Comments show your name to any visitor and can be indexed by search engines.",
+                        "**Only you see:** drafts, articles under review or not approved, bookmarks, notifications and your email.",
+                        "**Only moderation sees:** reports, appeals and the history of decisions about your account."
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "bases",
+            "title": "What we use it for and on which legal basis",
+            "blocks": [
+                {
+                    "list": [
+                        "**Performing our contract with you** (LGPD, art. 7, V): keeping your account, reviewing and publishing your articles, sending account emails.",
+                        "**Legitimate interest** (art. 7, IX): security, abuse prevention and moderation. We do this with as little data as possible.",
+                        "**Complying with legal obligations** (art. 7, II): keeping records when the law requires it and answering authorities."
+                    ]
+                },
+                { "p": "We don't sell data and we don't show ads." }
+            ]
+        },
+        {
+            "id": "cookies",
+            "title": "Cookies",
+            "blocks": [
+                {
+                    "p": "We only use essential cookies, without which the site doesn't work. That's why we don't show a banner asking for consent."
+                },
+                {
+                    "table": {
+                        "caption": "Essential cookies used on he4rt ink",
+                        "columns": ["Cookie", "What for", "Duration"],
+                        "rows": [
+                            [
+                                "Session",
+                                "Keep your session open securely",
+                                "Until you log out or 2 weeks without use"
+                            ],
+                            [
+                                "Theme",
+                                "Remember light, dark or device setting",
+                                "1 year"
+                            ],
+                            [
+                                "Language",
+                                "Remember the chosen language",
+                                "1 year"
+                            ]
+                        ]
+                    }
+                },
+                {
+                    "note": "If we ever count visits, that will get its own notice before it starts."
+                }
+            ]
+        },
+        {
+            "id": "compartilhamento",
+            "title": "Who we share it with",
+            "blocks": [
+                {
+                    "p": "Only with companies that run the platform for us, under contract and only for that purpose:"
+                },
+                {
+                    "list": [
+                        "Hosting of the site and the database.",
+                        "Cloudflare R2, for images and backups, in separate accounts.",
+                        "Service that sends account emails and notices."
+                    ]
+                },
+                {
+                    "p": "We may also hand data to authorities under a court order or legal obligation."
+                }
+            ]
+        },
+        {
+            "id": "retencao",
+            "title": "How long we keep it",
+            "blocks": [
+                {
+                    "table": {
+                        "caption": "Data retention periods",
+                        "columns": ["Data", "Period", "After the period"],
+                        "rows": [
+                            [
+                                "Account with deletion requested",
+                                "20-day grace period",
+                                "Permanent deletion; your articles become anonymous"
+                            ],
+                            ["Account never confirmed", "7 days", "Deletion"],
+                            [
+                                "Article in the trash",
+                                "7 days",
+                                "Permanent deletion"
+                            ],
+                            ["Notifications", "90 days", "Deletion"],
+                            [
+                                "Suspicious login attempts",
+                                "90 days",
+                                "Deletion"
+                            ],
+                            ["Closed reports", "12 months", "Deletion"],
+                            [
+                                "Moderation records of a deleted account",
+                                "12 months, without identifying you",
+                                "Deletion"
+                            ],
+                            [
+                                "Backups",
+                                "Up to about 5 weeks",
+                                "The expired copy is erased"
+                            ]
+                        ]
+                    }
+                },
+                {
+                    "p": "Deleted data stays in backups until the copy expires, at most about 5 weeks. If a backup is restored, the deletion routines run again."
+                }
+            ]
+        },
+        {
+            "id": "direitos",
+            "title": "Your rights",
+            "blocks": [
+                { "p": "Under the LGPD (art. 18), you can ask for:" },
+                {
+                    "list": [
+                        "Confirmation that we process your data, and access to it.",
+                        "Correction of incomplete or wrong data.",
+                        "Anonymization, blocking or deletion of unnecessary data.",
+                        "A copy of your data to take to another service.",
+                        "Information about who we share it with.",
+                        "Review of decisions made about you."
+                    ]
+                },
+                {
+                    "p": "You change your name, username, email and password in Settings, and you delete the account there too. For anything else, write to [{privacy_email}](mailto:{privacy_email}): we answer within 15 days."
+                }
+            ]
+        },
+        {
+            "id": "idade",
+            "title": "Minimum age",
+            "blocks": [
+                {
+                    "p": "he4rt ink is for people aged 16 or older. Age is declared at sign-up and we don't keep the date of birth. If we learn of an account belonging to someone younger, it is deleted."
+                }
+            ]
+        },
+        {
+            "id": "seguranca",
+            "title": "How we protect your data",
+            "blocks": [
+                {
+                    "list": [
+                        "Always-encrypted connection (HTTPS) and passwords stored encrypted.",
+                        "Daily backups in an account separate from the one that stores images.",
+                        "Moderation access limited to what's needed, with every action logged."
+                    ]
+                },
+                {
+                    "p": "If an incident could put you at risk, we tell you by email and notify Brazil's National Data Protection Authority (ANPD)."
+                }
+            ]
+        },
+        {
+            "id": "mudancas",
+            "title": "Changes to this policy",
+            "blocks": [
+                {
+                    "p": "When we change something important, we tell you by email and ask you to accept the new version at your next login. Every version stays in the history below."
+                }
+            ]
+        }
+    ],
+    "changes": ["First version."]
+}
