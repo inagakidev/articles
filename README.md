@@ -55,7 +55,7 @@ Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24, MariaDB 11 e, para ver o
     docker compose up -d mailpit
     ```
 
-    Sem Docker, troque `MAIL_MAILER=smtp` por `MAIL_MAILER=log` no `.env`; os e-mails vão para `storage/logs/laravel.log`.
+    Sem Docker, troque `MAIL_MAILER=smtp` por `MAIL_MAILER=log` no `.env`; os e-mails vão para `storage/logs/laravel.log`. Para conferir o envio com a configuração atual, sem passar pela fila: `php artisan mail:test voce@exemplo.dev`.
 
 5. Suba o servidor, a fila, o agendador, os logs e o Vite:
 
