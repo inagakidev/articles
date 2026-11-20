@@ -3,11 +3,12 @@
 use App\Http\Controllers\Accounts\PolicyAcceptanceController;
 use App\Http\Controllers\Accounts\UnverifiedEmailController;
 use App\Http\Controllers\Accounts\UsernameAvailabilityController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\PolicyController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', HomeController::class)->name('home');
 
 Route::put('locale', LocaleController::class)->name('locale.update');
 

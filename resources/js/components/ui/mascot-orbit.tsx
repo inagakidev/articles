@@ -22,6 +22,13 @@ const dots = [
 
 /** Raio das órbitas e lado do quadro em cada tamanho. */
 const sizes = {
+    // Abertura da página de apresentação
+    lg: {
+        outer: 'min(200px, 40vw)',
+        inner: 'min(150px, 30vw)',
+        box: 'w-[min(460px,92vw)]',
+        icon: 'size-[26px]',
+    },
     md: {
         outer: 'min(175px, 40vw)',
         inner: 'min(128px, 30vw)',

@@ -606,3 +606,17 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Pedido de dados (LGPD):** entra como fatia própria (24), depois da moderação, porque alguém precisa atender os pedidos (RF-384 a RF-389). Até lá, "Ficou com alguma dúvida?" leva ao e-mail de privacidade.
 - **Alternativas descartadas:** texto em Markdown (não representa as tabelas e os cartões e não endereça os itens); publicar o texto como final sem a validação jurídica; gerar PDF no servidor (dependência nova); manter a sessão lembrada para sempre (o texto da política já previa 14 dias e é mais seguro); fazer o pedido de dados agora sem ninguém para atender.
 - **Pendente:** validação jurídica dos textos (RF-276) e publicação da versão final (p8-07); o domínio `he4rt.ink` dos contatos.
+
+### D74 — Página de apresentação
+
+- **Status:** Aprovada (20/11/2026).
+- **Contexto:** a página de apresentação (p5-10) vem antes das fatias de categorias e de leitura pública, mas a prancha mostra categorias, artigos publicados e autores do mês.
+- **Decisão:**
+    - **Seções prontas e ocultas:** `/` (`HomeController`) já envia `categories`, `recentArticles` e `authors` no formato final (`resources/js/types/articles.ts`), vazios por enquanto. Sem dados, a faixa de categorias e os autores não aparecem, e o lugar dos cartões vira um convite: "Os primeiros artigos estão chegando", com o botão para escrever. As fatias de categorias e de leitura pública só preenchem os dados, aplicando a regra única de visibilidade (RF-381) e só o perfil público de quem publicou (RF-382).
+    - **Sem "Ler artigos" por enquanto:** "Ler artigos", "Ler os artigos", "Explorar artigos" e "Ver todos os artigos" voltam quando a listagem em `/artigos` existir. No lugar de "Ler artigos" do cabeçalho fica "Entrar", que a prancha não tinha; para quem já entrou, o botão principal vira "Meus artigos".
+    - **Revisão, não "revisão da comunidade":** quem revisa é a administração (D56), então o texto de "Para quem lê" diz só "revisão".
+    - **Efeitos próprios:** marquee, palavras que se revezam, marca-texto, brilho no texto e no botão, feixe na borda, ondas e linha do tempo que se preenche ao rolar são CSS em `app.css`, sem Magic UI, Aceternity ou `motion`. Como na D72, o movimento é contínuo (as palavras do título giram sem parar, em vez de pararem na última) e tudo pausa com o "Pausar animações" do cabeçalho; pausado ou com "reduzir movimento", cada efeito fica no estado final legível (a primeira palavra, o marca-texto pintado, as faixas sem rolar).
+    - **Rodapé:** o do site, com idioma e tema, em vez do rodapé reduzido da prancha, porque o cabeçalho da apresentação não tem os seletores.
+    - **Cartões e faixa de artigos:** com menos de quatro artigos, os cartões ficam parados lado a lado; a partir de oito, viram duas faixas em sentidos opostos, como na prancha. A cópia que fecha a faixa fica fora do leitor de tela e do teclado.
+- **Alternativas descartadas:** dados de exemplo na página (mostraria artigos e autores que não existem); esconder as seções sem convite (a página ficaria sem mostrar que dá para publicar); instalar as bibliotecas de efeitos (peso e componentes sem uso, D63).
+- **Pendente:** preencher os dados nas fatias de categorias e de leitura pública e devolver os botões de leitura.

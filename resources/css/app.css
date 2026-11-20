@@ -83,6 +83,12 @@
     --color-pastel-peach: #ffcbaf;
     --color-pastel-peach-fg: #292638;
 
+    /* Cores da marca fixas nos dois temas: amostras de contraste da apresentação */
+    --color-brand-paper: #ffffff;
+    --color-brand-ink: #292638;
+    --color-brand-lavender: #875ccb;
+    --color-brand-lilac: #c6acfa;
+
     /* Avisos grandes (DESIGN §2.7): no claro, o par do estado; no escuro, translúcidos */
     --color-tint-success-bg: #bdebd9;
     --color-tint-success-fg: #245c48;
@@ -160,6 +166,8 @@
     --shadow-md: 0 4px 12px rgb(41 38 56 / 0.08);
     --shadow-lg: 0 12px 32px rgb(41 38 56 / 0.12);
     --shadow-hover: 0 8px 24px rgb(41 38 56 / 0.12);
+    /* Brilho lavanda das chamadas principais da página de apresentação */
+    --shadow-primary: 0 6px 18px rgb(135 92 203 / 0.32);
 
     /* Movimento (DESIGN §9.2) */
     --ease-standard: ease-in-out;
@@ -368,7 +376,12 @@
 
     /* "Pausar animações" (RF-383): para o movimento contínuo onde estiver */
     .motion-paused .orbit-item,
-    .motion-paused .animate-float {
+    .motion-paused .animate-float,
+    .motion-paused .shiny-text,
+    .motion-paused .shimmer::after,
+    .motion-paused .border-beam::before,
+    .motion-paused .marquee-track,
+    .motion-paused .ripple {
         animation-play-state: paused;
     }
 
@@ -612,6 +625,311 @@
         }
         .policy-table td::before {
             content: none;
+        }
+    }
+
+    /*
+     * Efeitos da página de apresentação (D74). Feitos aqui, sem bibliotecas.
+     * O que se move sem parar pausa com "Pausar animações" (RF-383); com
+     * "reduzir movimento", o bloco base zera as animações e as regras do
+     * fim desta seção deixam cada efeito no estado final legível.
+     */
+
+    /* Texto com um brilho que passa por cima, de tempos em tempos */
+    .shiny-text {
+        background: linear-gradient(
+            110deg,
+            var(--color-text-on-selected) 40%,
+            var(--color-primary-text) 50%,
+            var(--color-text-on-selected) 60%
+        );
+        background-size: 250% 100%;
+        background-clip: text;
+        color: transparent;
+        animation: shine 3.5s linear infinite;
+    }
+    @keyframes shine {
+        from {
+            background-position: 150% 0;
+        }
+        to {
+            background-position: -50% 0;
+        }
+    }
+
+    /* Palavras que se revezam no mesmo lugar, em ciclo */
+    .flip-words {
+        display: inline-grid;
+        vertical-align: bottom;
+        color: var(--color-primary-text);
+    }
+    .flip-words > span {
+        grid-area: 1 / 1;
+        white-space: nowrap;
+        opacity: 0;
+        animation: flip-word 7.5s var(--ease-emphasized) infinite;
+    }
+    .flip-words > span:nth-child(2) {
+        animation-delay: 2.5s;
+    }
+    .flip-words > span:nth-child(3) {
+        animation-delay: 5s;
+    }
+    @keyframes flip-word {
+        0% {
+            opacity: 0;
+            transform: translateY(45%);
+            filter: blur(8px);
+        }
+        5%,
+        28% {
+            opacity: 1;
+            transform: none;
+            filter: none;
+        }
+        33.33%,
+        100% {
+            opacity: 0;
+            transform: translateY(-45%);
+            filter: blur(8px);
+        }
+    }
+
+    /* Marca-texto amarelo que se pinta uma vez */
+    .highlight-mark {
+        background: linear-gradient(
+                var(--color-pastel-yellow),
+                var(--color-pastel-yellow)
+            )
+            no-repeat 0 85% / 0% 88%;
+        border-radius: 6px;
+        padding: 0 0.12em;
+        color: var(--color-pastel-yellow-fg);
+        animation: highlight-mark 0.9s var(--ease-emphasized) 0.9s forwards;
+    }
+    @keyframes highlight-mark {
+        to {
+            background-size: 100% 88%;
+        }
+    }
+
+    /* Reflexo que atravessa um botão */
+    .shimmer {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+    }
+    .shimmer::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(
+            100deg,
+            transparent 30%,
+            rgb(255 255 255 / 0.28) 50%,
+            transparent 70%
+        );
+        transform: translateX(-120%);
+        animation: sheen 3s ease-in-out infinite;
+    }
+    @keyframes sheen {
+        0%,
+        55% {
+            transform: translateX(-120%);
+        }
+        100% {
+            transform: translateX(120%);
+        }
+    }
+
+    /* Feixe de luz que corre pela borda */
+    @property --beam-angle {
+        syntax: '<angle>';
+        inherits: false;
+        initial-value: 0deg;
+    }
+    .border-beam {
+        position: relative;
+    }
+    .border-beam::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        z-index: 2;
+        border-radius: inherit;
+        padding: 2px;
+        background: conic-gradient(
+            from var(--beam-angle),
+            transparent 0 72%,
+            var(--color-primary) 84%,
+            var(--color-pastel-pink) 92%,
+            transparent 100%
+        );
+        mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        pointer-events: none;
+        animation: beam 6s linear infinite;
+    }
+    @keyframes beam {
+        to {
+            --beam-angle: 360deg;
+        }
+    }
+
+    /*
+     * Faixa que rola sem fim: o conteúdo vem duas vezes e a segunda cópia é
+     * oculta para leitores de tela. Para ao passar o mouse ou focar.
+     */
+    .marquee {
+        overflow: hidden;
+        mask-image: linear-gradient(
+            90deg,
+            transparent,
+            #000 8%,
+            #000 92%,
+            transparent
+        );
+    }
+    .marquee-track {
+        display: flex;
+        gap: 20px;
+        width: max-content;
+        animation: marquee 60s linear infinite;
+    }
+    .marquee-track > * {
+        display: flex;
+        gap: 20px;
+    }
+    .marquee-reverse {
+        animation-direction: reverse;
+        animation-duration: 70s;
+    }
+    .marquee-fast {
+        animation-duration: 40s;
+    }
+    .marquee:hover .marquee-track,
+    .marquee:focus-within .marquee-track {
+        animation-play-state: paused;
+    }
+    @keyframes marquee {
+        to {
+            transform: translateX(calc(-50% - 10px));
+        }
+    }
+
+    /* Ondas que saem do centro, atrás do mascote */
+    .ripple {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        border-radius: 999px;
+        border: 1.5px solid
+            color-mix(in srgb, var(--color-primary) 40%, transparent);
+        pointer-events: none;
+        opacity: 0;
+        animation: ripple 2.6s ease-out infinite;
+    }
+    @keyframes ripple {
+        from {
+            transform: translate(-50%, -50%) scale(0.85);
+            opacity: 0.9;
+        }
+        to {
+            transform: translate(-50%, -50%) scale(1.15);
+            opacity: 0;
+        }
+    }
+
+    /* Cartão que sobe ao passar o mouse */
+    .lift-card {
+        transition:
+            transform var(--duration-normal) var(--ease-emphasized),
+            box-shadow var(--duration-normal) ease,
+            border-color var(--duration-normal) ease;
+    }
+    .lift-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-hover);
+        border-color: var(--color-pastel-lavender);
+    }
+    /* Link que cobre o cartão inteiro, com o foco desenhado no cartão */
+    .stretched-link::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+    }
+    .stretched-link:focus-visible {
+        outline: none;
+    }
+    .lift-card:has(.stretched-link:focus-visible) {
+        outline: 2px solid var(--color-focus);
+        outline-offset: 3px;
+    }
+
+    /* Entra ao rolar até a seção; a linha do tempo se preenche com a rolagem */
+    .timeline-fill {
+        transform-origin: top;
+    }
+    @supports (animation-timeline: view()) {
+        .reveal {
+            animation: rise linear both;
+            animation-timeline: view();
+            animation-range: entry 5% entry 45%;
+        }
+        .timeline-fill {
+            animation: grow-y linear both;
+            animation-timeline: view();
+            animation-range: entry 30% exit 60%;
+        }
+    }
+    @keyframes grow-y {
+        from {
+            transform: scaleY(0);
+        }
+        to {
+            transform: scaleY(1);
+        }
+    }
+
+    /* Pausado ou sem movimento: cada efeito no estado final legível */
+    .motion-paused .flip-words > span {
+        animation: none;
+    }
+    .motion-paused .flip-words > span:first-child {
+        opacity: 1;
+    }
+    .motion-paused .ripple {
+        animation: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .flip-words > span {
+            animation: none;
+        }
+        .flip-words > span:first-child {
+            opacity: 1;
+        }
+        .highlight-mark {
+            background-size: 100% 88%;
+        }
+        .ripple {
+            display: none;
+        }
+        .marquee-track {
+            flex-wrap: wrap;
+            justify-content: center;
+            width: auto;
+            animation: none;
+        }
+        .marquee-track > [aria-hidden='true'] {
+            display: none;
+        }
+        .reveal,
+        .timeline-fill {
+            animation: none;
         }
     }
 
