@@ -14,6 +14,9 @@ enum SecurityEventType: string
     /** A senha foi trocada, pelo link de recuperação ou logada. */
     case PasswordChanged = 'password_changed';
 
+    /** O e-mail da conta foi trocado. */
+    case EmailChanged = 'email_changed';
+
     /**
      * Tipos que contam como tentativa suspeita de login e somem depois de
      * 90 dias (REQUIREMENTS.md §2.23). Os outros ficam enquanto a conta existir.

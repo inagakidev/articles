@@ -61,14 +61,12 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        Password::defaults(fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
-            : null,
+        // Mínimo de 8 e nenhuma senha que já apareceu em vazamentos (D72). A
+        // consulta envia só o começo do hash; fora do ar, a senha é aceita.
+        // Nos testes ela fica desligada para não depender da rede.
+        Password::defaults(fn (): Password => app()->runningUnitTests()
+            ? Password::min(8)
+            : Password::min(8)->uncompromised(),
         );
     }
 }

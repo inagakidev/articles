@@ -6,9 +6,13 @@ use App\Notifications\ResetPassword;
 use App\Notifications\VerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -17,7 +21,9 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 /**
  * @property int $id
  * @property string $name
+ * @property string $username
  * @property string $email
+ * @property string $locale
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $two_factor_secret
@@ -27,12 +33,40 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'username', 'email', 'password', 'locale'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, MassPrunable, Notifiable, TwoFactorAuthenticatable;
+
+    /** Prazo para confirmar o e-mail; no dia seguinte a conta é excluída (RF-023). */
+    public const VERIFICATION_DAYS = 7;
+
+    /** Idioma dos e-mails enviados sem uma requisição por perto (D62). */
+    public function preferredLocale(): string
+    {
+        return $this->locale;
+    }
+
+    /** @return HasMany<PolicyAcceptance, $this> */
+    public function policyAcceptances(): HasMany
+    {
+        return $this->hasMany(PolicyAcceptance::class);
+    }
+
+    /**
+     * Contas que não confirmaram o e-mail no prazo, apagadas pelo `model:prune`
+     * diário. Username e e-mail ficam livres na hora (RF-023, RF-029).
+     *
+     * @return Builder<static>
+     */
+    public function prunable(): Builder
+    {
+        return static::query()
+            ->whereNull('email_verified_at')
+            ->where('created_at', '<', now()->subDays(self::VERIFICATION_DAYS));
+    }
 
     /**
      * Os e-mails de conta vão pela fila, no idioma em que a pessoa está

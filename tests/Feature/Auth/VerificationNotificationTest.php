@@ -16,7 +16,8 @@ test('envia a verificação de e-mail', function () {
 
     $this->actingAs($user)
         ->post(route('verification.send'))
-        ->assertRedirect(route('home'));
+        ->assertRedirect(route('verification.notice'))
+        ->assertSessionHas('resendAfter', 60);
 
     Notification::assertSentTo($user, VerifyEmail::class);
 });

@@ -576,3 +576,17 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
         - suporte a domínio próprio e DKIM.
     - **Domínio:** SPF, DKIM e DMARC configurados no DNS antes do primeiro envio real. A Política de privacidade lista o provedor como operador, porque ele processa nome, e-mail e conteúdo das mensagens.
 - **Alternativas descartadas:** uma interface própria de "enviador de e-mail" na aplicação (o mailer do Laravel já é essa abstração, e duplicá-la só acrescentaria código); usar o SDK do provedor para recursos extras (prende o código a ele); enviar de um servidor próprio, sem provedor (IP sem reputação, e-mails no spam).
+
+### D72 — Criar conta
+
+- **Status:** Aprovada (20/11/2026).
+- **Decisão:**
+    - Senha: mínimo de 8 caracteres e recusa de senhas que já apareceram em vazamentos (consulta que envia só o começo do hash; fora do ar, a senha é aceita). Sem regras de composição.
+    - Username de 3 a 30 caracteres, minúsculas sem acento, números, `-` e `_`, começando por letra; palavras reservadas e o começo de qualquer rota da aplicação são recusados; disponibilidade consultada enquanto a pessoa digita.
+    - A declaração de 16 anos ou mais é obrigatória e não é guardada; nenhuma data de nascimento é registrada (RF-012).
+    - Versões dos Termos e da Privacidade em `policy_versions`, aceite em `policy_acceptances`; o texto de cada versão fica em `resources/policies`. A versão inicial é provisória (`2026-11-draft`) até os textos finais. O novo aceite no login e o visual das páginas ficam para a fatia 4.
+    - A conta guarda o idioma (`users.locale`), usado nos e-mails enviados sem requisição.
+    - "Usar outro e-mail" troca o e-mail de uma conta ainda não confirmada e manda um novo link; a troca vira o evento `email_changed`.
+    - Contas não confirmadas são excluídas no 8º dia pelo `model:prune` diário.
+    - A variante "Criar conta vindo de Escrever", os passos 1-2-3 e o "Começar meu primeiro artigo" entram com o editor (fatia 8); até lá, "E-mail confirmado" leva à página inicial.
+    - A tabela de perfil (bio e foto) entra na fatia 6, quando for usada.

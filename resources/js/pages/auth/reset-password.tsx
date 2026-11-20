@@ -4,9 +4,8 @@ import { AuthCardHeader } from '@/layouts/auth-layout';
 import type { AuthLayoutProps } from '@/layouts/auth-layout';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import FormField from '@/components/ui/form-field';
 import { Input } from '@/components/ui/input';
-import InputError from '@/components/ui/input-error';
-import { Label } from '@/components/ui/label';
 import PasswordInput from '@/components/ui/password-input';
 import { Spinner } from '@/components/ui/spinner';
 import TextLink from '@/components/ui/text-link';
@@ -57,81 +56,53 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                             </Alert>
                         )}
 
-                        <div className="flex flex-col gap-1.5">
-                            <Label
-                                htmlFor="email"
-                                className="text-meta font-bold"
-                            >
-                                {t('account.email')}
-                            </Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                name="email"
-                                autoComplete="username"
-                                value={email}
-                                readOnly
-                            />
-                        </div>
+                        <FormField id="email" label={t('account.email')}>
+                            {(field) => (
+                                <Input
+                                    {...field}
+                                    type="email"
+                                    name="email"
+                                    autoComplete="username"
+                                    value={email}
+                                    readOnly
+                                />
+                            )}
+                        </FormField>
 
-                        <div className="flex flex-col gap-1.5">
-                            <Label
-                                htmlFor="password"
-                                className="text-meta font-bold"
-                            >
-                                {t('account.reset.password')}
-                            </Label>
-                            <PasswordInput
-                                id="password"
-                                name="password"
-                                required
-                                autoFocus
-                                autoComplete="new-password"
-                                passwordrules={passwordRules}
-                                aria-invalid={
-                                    errors.password ? true : undefined
-                                }
-                                aria-describedby={
-                                    errors.password
-                                        ? 'password-error'
-                                        : undefined
-                                }
-                            />
-                            <InputError
-                                id="password-error"
-                                message={errors.password}
-                            />
-                        </div>
+                        <FormField
+                            id="password"
+                            label={t('account.reset.password')}
+                            error={errors.password}
+                            hint={t('account.password.hint')}
+                        >
+                            {(field) => (
+                                <PasswordInput
+                                    {...field}
+                                    name="password"
+                                    required
+                                    autoFocus
+                                    minLength={8}
+                                    autoComplete="new-password"
+                                    passwordrules={passwordRules}
+                                />
+                            )}
+                        </FormField>
 
-                        <div className="flex flex-col gap-1.5">
-                            <Label
-                                htmlFor="password_confirmation"
-                                className="text-meta font-bold"
-                            >
-                                {t('account.reset.confirm')}
-                            </Label>
-                            <PasswordInput
-                                id="password_confirmation"
-                                name="password_confirmation"
-                                required
-                                autoComplete="new-password"
-                                passwordrules={passwordRules}
-                                aria-invalid={
-                                    errors.password_confirmation
-                                        ? true
-                                        : undefined
-                                }
-                                aria-describedby={
-                                    errors.password_confirmation
-                                        ? 'password-confirmation-error'
-                                        : undefined
-                                }
-                            />
-                            <InputError
-                                id="password-confirmation-error"
-                                message={errors.password_confirmation}
-                            />
-                        </div>
+                        <FormField
+                            id="password_confirmation"
+                            label={t('account.reset.confirm')}
+                            error={errors.password_confirmation}
+                        >
+                            {(field) => (
+                                <PasswordInput
+                                    {...field}
+                                    name="password_confirmation"
+                                    required
+                                    autoComplete="new-password"
+                                    passwordrules={passwordRules}
+                                />
+                            )}
+                        </FormField>
 
                         <Button
                             type="submit"

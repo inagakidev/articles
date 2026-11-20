@@ -385,6 +385,61 @@
         }
     }
 
+    /*
+     * Confete que estoura uma vez atrás do mascote ("E-mail confirmado").
+     * --confetti-x e --confetti-y definem até onde cada pedaço voa.
+     */
+    .confetti-piece {
+        position: absolute;
+        top: 60%;
+        left: 50%;
+        width: 8px;
+        height: 12px;
+        border-radius: 2px;
+        opacity: 0;
+        animation: confetti 1.4s cubic-bezier(0.1, 0.7, 0.3, 1) 0.3s;
+    }
+
+    @keyframes confetti {
+        from {
+            opacity: 1;
+            transform: translate(0, 0) rotate(0);
+        }
+        to {
+            opacity: 0;
+            transform: translate(var(--confetti-x), var(--confetti-y))
+                rotate(320deg);
+        }
+    }
+
+    /* Texto das políticas (Markdown convertido no servidor) */
+    .policy-text h2 {
+        margin-top: 1rem;
+        font-family: var(--font-display);
+        font-size: var(--text-h3);
+        line-height: var(--text-h3--line-height);
+        font-weight: 800;
+    }
+    .policy-text ul {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-left: 1.5rem;
+        list-style: disc;
+    }
+    .policy-text blockquote {
+        border-radius: var(--radius-md);
+        background: var(--color-tint-warning-bg);
+        color: var(--color-tint-warning-fg);
+        padding: 0.875rem 1rem;
+        font-size: var(--text-body);
+        line-height: var(--text-body--line-height);
+    }
+    .policy-text a {
+        color: var(--color-primary-text);
+        text-decoration: underline;
+    }
+
     /* Grade de pontos que some nas bordas, atrás do mascote */
     .dot-grid {
         --dot-grid-color: var(--color-pastel-lavender);

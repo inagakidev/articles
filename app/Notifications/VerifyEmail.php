@@ -2,9 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail as BaseVerifyEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 
 /**
  * O e-mail de verificação do Laravel, enviado pela fila. Quem chama informa o
@@ -22,5 +24,23 @@ class VerifyEmail extends BaseVerifyEmail implements ShouldQueue
     public function __construct()
     {
         $this->afterCommit();
+    }
+
+    /**
+     * Textos de lang/, no idioma guardado na notificação.
+     *
+     * @param  string  $url
+     */
+    protected function buildMailMessage($url): MailMessage
+    {
+        return (new MailMessage)
+            ->subject(__('mail.verify_email.subject'))
+            ->line(__('mail.verify_email.intro', ['app' => config('app.name')]))
+            ->action(__('mail.verify_email.action'), $url)
+            ->line(__('mail.verify_email.expires', [
+                'minutes' => config('auth.verification.expire', 60),
+                'days' => User::VERIFICATION_DAYS,
+            ]))
+            ->line(__('mail.verify_email.ignore'));
     }
 }

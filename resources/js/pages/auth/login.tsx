@@ -4,9 +4,8 @@ import { useCountdown } from '@/hooks/use-countdown';
 import type { AuthLayoutProps } from '@/layouts/auth-layout';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import InputError from '@/components/ui/input-error';
-import { Label } from '@/components/ui/label';
+import FormField from '@/components/ui/form-field';
+import EmailInput from '@/components/ui/email-input';
 import PasswordInput from '@/components/ui/password-input';
 import { Spinner } from '@/components/ui/spinner';
 import TextLink from '@/components/ui/text-link';
@@ -57,57 +56,36 @@ export default function Login({ status, canResetPassword, retryAfter }: Props) {
                         {/* A sessão é sempre lembrada (D68) */}
                         <input type="hidden" name="remember" value="1" />
 
-                        <div className="flex flex-col gap-1.5">
-                            <Label
-                                htmlFor="email"
-                                className="text-meta font-bold"
-                            >
-                                {t('account.email')}
-                            </Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                name="email"
-                                required
-                                autoFocus
-                                autoComplete="email"
-                                aria-invalid={errors.email ? true : undefined}
-                                aria-describedby={
-                                    errors.email ? 'email-error' : undefined
-                                }
-                            />
-                            <InputError
-                                id="email-error"
-                                message={errors.email}
-                            />
-                        </div>
+                        <FormField
+                            id="email"
+                            label={t('account.email')}
+                            error={errors.email}
+                        >
+                            {(field) => (
+                                <EmailInput
+                                    {...field}
+                                    name="email"
+                                    required
+                                    autoFocus
+                                    autoComplete="email"
+                                />
+                            )}
+                        </FormField>
 
-                        <div className="flex flex-col gap-1.5">
-                            <Label
-                                htmlFor="password"
-                                className="text-meta font-bold"
-                            >
-                                {t('account.password')}
-                            </Label>
-                            <PasswordInput
-                                id="password"
-                                name="password"
-                                required
-                                autoComplete="current-password"
-                                aria-invalid={
-                                    errors.password ? true : undefined
-                                }
-                                aria-describedby={
-                                    errors.password
-                                        ? 'password-error'
-                                        : undefined
-                                }
-                            />
-                            <InputError
-                                id="password-error"
-                                message={errors.password}
-                            />
-                        </div>
+                        <FormField
+                            id="password"
+                            label={t('account.password')}
+                            error={errors.password}
+                        >
+                            {(field) => (
+                                <PasswordInput
+                                    {...field}
+                                    name="password"
+                                    required
+                                    autoComplete="current-password"
+                                />
+                            )}
+                        </FormField>
 
                         {canResetPassword && (
                             <TextLink

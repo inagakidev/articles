@@ -2,6 +2,7 @@
 
 namespace App\Concerns;
 
+use App\Domain\Accounts\Rules\Username;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
@@ -18,7 +19,25 @@ trait ProfileValidationRules
     {
         return [
             'name' => $this->nameRules(),
+            'username' => $this->usernameRules($userId),
             'email' => $this->emailRules($userId),
+        ];
+    }
+
+    /**
+     * Formato, palavras reservadas e disponibilidade (RF-027 a RF-029).
+     *
+     * @return array<int, Unique|ValidationRule|array<mixed>|string>
+     */
+    protected function usernameRules(?int $userId = null): array
+    {
+        return [
+            'required',
+            'string',
+            new Username,
+            $userId === null
+                ? Rule::unique(User::class)
+                : Rule::unique(User::class)->ignore($userId),
         ];
     }
 
@@ -42,7 +61,9 @@ trait ProfileValidationRules
         return [
             'required',
             'string',
-            'email',
+            // RFC e o filtro do PHP: o filtro exige domínio completo, então
+            // "lia@gmail" é recusado e "lia@gmail.com" passa.
+            'email:rfc,filter',
             'max:255',
             $userId === null
                 ? Rule::unique(User::class)

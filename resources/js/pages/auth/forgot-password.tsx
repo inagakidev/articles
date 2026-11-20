@@ -4,9 +4,8 @@ import { useCountdown } from '@/hooks/use-countdown';
 import { AuthCardHeader } from '@/layouts/auth-layout';
 import type { AuthLayoutProps } from '@/layouts/auth-layout';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import InputError from '@/components/ui/input-error';
-import { Label } from '@/components/ui/label';
+import FormField from '@/components/ui/form-field';
+import EmailInput from '@/components/ui/email-input';
 import { Spinner } from '@/components/ui/spinner';
 import TextLink from '@/components/ui/text-link';
 import { useTranslation } from '@/lib/i18n';
@@ -55,31 +54,22 @@ function RequestLink() {
             >
                 {({ processing, errors }) => (
                     <>
-                        <div className="flex flex-col gap-1.5">
-                            <Label
-                                htmlFor="email"
-                                className="text-meta font-bold"
-                            >
-                                {t('account.email')}
-                            </Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                name="email"
-                                required
-                                autoFocus
-                                autoComplete="email"
-                                placeholder="voce@exemplo.dev"
-                                aria-invalid={errors.email ? true : undefined}
-                                aria-describedby={
-                                    errors.email ? 'email-error' : undefined
-                                }
-                            />
-                            <InputError
-                                id="email-error"
-                                message={errors.email}
-                            />
-                        </div>
+                        <FormField
+                            id="email"
+                            label={t('account.email')}
+                            error={errors.email}
+                        >
+                            {(field) => (
+                                <EmailInput
+                                    {...field}
+                                    name="email"
+                                    required
+                                    autoFocus
+                                    autoComplete="email"
+                                    placeholder="voce@exemplo.dev"
+                                />
+                            )}
+                        </FormField>
 
                         <Button
                             type="submit"
