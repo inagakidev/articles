@@ -21,7 +21,7 @@ PHP 8.4, Laravel 13, React 19 com TypeScript, Inertia.js, Tailwind CSS 4, MariaD
 
 ## Rodando localmente
 
-Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24 e MariaDB 11.
+Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24, MariaDB 11 e, para ver os e-mails, Docker.
 
 1. Crie os bancos e o usuário da aplicação (troque `SENHA` por uma senha local):
 
@@ -48,13 +48,21 @@ Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24 e MariaDB 11.
     composer setup
     ```
 
-4. Suba o servidor, a fila, os logs e o Vite:
+4. Suba a caixa de entrada de teste (Mailpit). Todo e-mail enviado pela aplicação aparece em http://localhost:8025, e nada sai da máquina:
+
+    ```bash
+    docker compose up -d mailpit
+    ```
+
+    Sem Docker, troque `MAIL_MAILER=smtp` por `MAIL_MAILER=log` no `.env`; os e-mails vão para `storage/logs/laravel.log`.
+
+5. Suba o servidor, a fila, o agendador, os logs e o Vite:
 
     ```bash
     composer dev
     ```
 
-    A aplicação fica em http://localhost:8000.
+    A aplicação fica em http://localhost:8000. Depois de mudar o `.env`, reinicie o `composer dev`: a fila e o agendador guardam a configuração de quando subiram.
 
 ## Testes e verificações
 
