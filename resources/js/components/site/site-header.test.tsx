@@ -10,7 +10,7 @@ vi.mock('@/hooks/use-appearance', () => ({
 function renderIn(locale: 'pt_BR' | 'en', user: object | null = null) {
     Object.assign(testPage.props, {
         locale,
-        name: 'Plataforma de Artigos',
+        name: 'he4rt ink',
         auth: { user },
     });
 

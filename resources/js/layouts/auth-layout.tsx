@@ -105,7 +105,7 @@ function PanelLayout({
             </aside>
 
             <header className="px-4 py-4 lg:hidden">
-                <SiteLogo size={28} />
+                <SiteLogo height={28} />
             </header>
             {art && headline && (
                 <div className="mx-4 flex items-center gap-3 rounded-xl bg-surface-muted px-4 py-3 lg:hidden">

@@ -13,7 +13,7 @@ export default function SiteHeader() {
     return (
         <header className="border-b border-border bg-bg">
             <div className="mx-auto flex h-18 max-w-page items-center gap-4 px-4 sm:px-8">
-                <SiteLogo nameOnlyOnDesktop />
+                <SiteLogo compactOnMobile />
                 <div className="ml-auto flex items-center gap-1 sm:gap-2">
                     <ThemeToggle />
                     <LanguageToggle />

@@ -1,4 +1,4 @@
-# ROADMAP — Plataforma de Artigos
+# ROADMAP — he4rt ink
 
 **Atualizado em:** 19/11/2026  
 **Escopo:** MVP aprovado (`REQUIREMENTS.md`, seção 8)  

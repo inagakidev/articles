@@ -1,4 +1,4 @@
-# ARCHITECTURE — Plataforma de Artigos
+# ARCHITECTURE — he4rt ink
 
 **Atualizado em:** 19/11/2026
 

@@ -1,37 +1,46 @@
 import { Link, usePage } from '@inertiajs/react';
-import Mascot from '@/components/mascot';
+import Logo from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 
 export default function SiteLogo({
-    size = 32,
-    nameOnlyOnDesktop = false,
+    height = 32,
+    compactOnMobile = false,
+    withTagline = false,
     className,
 }: {
-    size?: number;
-    /** No celular, mostra só o avatar; o nome continua para leitores de tela. */
-    nameOnlyOnDesktop?: boolean;
+    height?: number;
+    /** No celular, mostra só o ícone. */
+    compactOnMobile?: boolean;
+    /** Logo com a tagline "he4rt developers", para o rodapé. */
+    withTagline?: boolean;
     className?: string;
 }) {
     const { name } = usePage().props;
+    const variant = withTagline ? 'wordmark-full' : 'wordmark';
 
     return (
         <Link
             href={home()}
-            className={cn(
-                'flex items-center gap-2.5 rounded-md text-text-primary',
-                className,
-            )}
+            className={cn('flex items-center rounded-md', className)}
         >
-            <Mascot art="rosto" size={size} />
-            <span
-                className={cn(
-                    'font-display text-lg font-extrabold tracking-tight',
-                    nameOnlyOnDesktop && 'sr-only sm:not-sr-only',
-                )}
-            >
-                {name}
-            </span>
+            {compactOnMobile ? (
+                <>
+                    <Logo
+                        variant="icon"
+                        height={height}
+                        className="sm:hidden"
+                    />
+                    <Logo
+                        variant={variant}
+                        height={height}
+                        className="hidden sm:inline-flex"
+                    />
+                </>
+            ) : (
+                <Logo variant={variant} height={height} />
+            )}
+            <span className="sr-only">{name}</span>
         </Link>
     );
 }

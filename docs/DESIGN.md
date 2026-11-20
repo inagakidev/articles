@@ -1,4 +1,4 @@
-# Design System --- Plataforma de Artigos
+# Design System --- he4rt ink
 
 > Documento de referência visual e de interação da plataforma. Consolida
 > as decisões tomadas durante o planejamento do design system. Valores
@@ -811,32 +811,31 @@ a própria paleta da marca (§2.1 e §2.2).
 **Papel:** acolher em momentos de espera, vazio ou conquista. Nunca
 compete com o texto, nunca carrega informação sozinho.
 
-| Contexto                                                             | Usa o mascote?         | Ilustração     |
-| -------------------------------------------------------------------- | ---------------------- | -------------- |
-| Logo no cabeçalho, fora do painel administrativo                     | Sim, rosto de 28–32 px | `rosto`        |
-| Página inicial, login e cadastro                                     | Sim                    | `apresentando` |
-| Chamada "publicar aqui" na página inicial                            | Sim                    | `escrevendo`   |
-| Confirmação de e-mail                                                | Sim                    | `escrevendo`   |
-| Recuperar senha                                                      | Sim                    | `pensativo`    |
-| Novo aceite dos Termos                                               | Sim                    | `lendo`        |
-| Editor vazio                                                         | Sim, pequeno           | `escrevendo`   |
-| Artigo enviado para revisão                                          | Sim, discreto          | `esperando`    |
-| Artigo aprovado (Meus artigos, notificação, e-mail)                  | Sim                    | `comemorando`  |
-| Fim do artigo, depois do texto                                       | Sim, pequeno           | `lendo`        |
-| Busca carregando                                                     | Sim                    | `procurando`   |
-| Busca sem resultados                                                 | Sim                    | `pensativo`    |
-| Nenhum favorito                                                      | Sim                    | `escrevendo`   |
-| Nenhum rascunho ou artigo                                            | Sim                    | `escrevendo`   |
-| Notificações em dia                                                  | Sim                    | `dormindo`     |
-| Erro 404                                                             | Sim                    | `procurando`   |
-| Erro 500                                                             | Sim                    | `dormindo`     |
-| Manutenção                                                           | Sim                    | `dormindo`     |
-| Favicon e ícones menores que 24 px                                   | Só o marcador roxo     | ---            |
-| Durante a leitura e a escrita (corpo do artigo, editor com conteúdo) | **Não**                | ---            |
-| Painel administrativo, inclusive o logo                              | **Não**                | ---            |
-| Artigo não aprovado ou despublicado                                  | **Não**                | ---            |
-| Suspensão, banimento, contestação, exclusão de conta, denúncias      | **Não**                | ---            |
-| Foto padrão de usuário                                               | **Não** (ver §6.2)     | ---            |
+| Contexto                                                             | Usa o mascote?               | Ilustração     |
+| -------------------------------------------------------------------- | ---------------------------- | -------------- |
+| Logo, favicon e ícones do site                                       | **Não** (logo própria, §5.4) | ---            |
+| Página inicial, login e cadastro                                     | Sim                          | `apresentando` |
+| Chamada "publicar aqui" na página inicial                            | Sim                          | `escrevendo`   |
+| Confirmação de e-mail                                                | Sim                          | `escrevendo`   |
+| Recuperar senha                                                      | Sim                          | `pensativo`    |
+| Novo aceite dos Termos                                               | Sim                          | `lendo`        |
+| Editor vazio                                                         | Sim, pequeno                 | `escrevendo`   |
+| Artigo enviado para revisão                                          | Sim, discreto                | `esperando`    |
+| Artigo aprovado (Meus artigos, notificação, e-mail)                  | Sim                          | `comemorando`  |
+| Fim do artigo, depois do texto                                       | Sim, pequeno                 | `lendo`        |
+| Busca carregando                                                     | Sim                          | `procurando`   |
+| Busca sem resultados                                                 | Sim                          | `pensativo`    |
+| Nenhum favorito                                                      | Sim                          | `escrevendo`   |
+| Nenhum rascunho ou artigo                                            | Sim                          | `escrevendo`   |
+| Notificações em dia                                                  | Sim                          | `dormindo`     |
+| Erro 404                                                             | Sim                          | `procurando`   |
+| Erro 500                                                             | Sim                          | `dormindo`     |
+| Manutenção                                                           | Sim                          | `dormindo`     |
+| Durante a leitura e a escrita (corpo do artigo, editor com conteúdo) | **Não**                      | ---            |
+| Painel administrativo                                                | **Não**                      | ---            |
+| Artigo não aprovado ou despublicado                                  | **Não**                      | ---            |
+| Suspensão, banimento, contestação, exclusão de conta, denúncias      | **Não**                      | ---            |
+| Foto padrão de usuário                                               | **Não** (ver §6.2)           | ---            |
 
 Os estados vazios de §5.2 continuam contextuais: cada um com mensagem e
 ação próprias, e a pose da tabela como apoio visual.
@@ -856,7 +855,7 @@ entre o leitor e o conteúdo.
   comunica a mensagem sem depender da imagem.
 - Sem texto dentro da arte, para a interface funcionar igual em PT e EN.
 - Tamanho: corpo inteiro a partir de 96 px; entre 24 e 96 px, só o
-  `rosto`; abaixo de 24 px, só o marcador (favicon e ícones).
+  `rosto`; abaixo de 24 px, o mascote não é usado.
 - Respiro mínimo de ½ largura de olho ao redor.
 - Animação apenas onde acrescenta algo (estado vazio, artigo aprovado),
   com transformações CSS da imagem inteira, sem bibliotecas externas.
@@ -868,6 +867,30 @@ entre o leitor e o conteúdo.
 **Tema escuro:** o contorno roxo-escuro tem pouco contraste com o `bg`
 escuro, mas o corpo creme garante a leitura da silhueta. Como o mascote
 é decorativo, não há mínimo exigido; a verificação visual está em §12.2.
+
+### 5.4 Logo
+
+A logo é **he4rt ink**: o ícone de folha com coração e o nome desenhado
+(D66). O mascote não substitui a logo, e a logo não substitui o mascote
+nos estados de §5.3.
+
+| Variação      | Onde                                                  |
+| ------------- | ----------------------------------------------------- |
+| Ícone + nome  | Cabeçalho do site, telas de entrar e criar conta      |
+| Ícone         | Cabeçalho no celular, favicon e ícone da tela inicial |
+| Com a tagline | Rodapé ("he4rt developers")                           |
+
+- Cada variação tem uma versão para o tema claro e outra para o escuro,
+  trocadas só com CSS. No escuro, o ícone fica branco com o coração
+  roxo e o nome em branco e lavanda.
+- Os arquivos ficam em `resources/images/logo/`, gerados por
+  `design/logo/gerar.mjs` a partir da prancha da marca, que fica fora do
+  repositório. O mesmo script gera `favicon.svg`, `favicon.ico` e
+  `apple-touch-icon.png`.
+- As cores da logo são da arte e não viram tokens. Logotipos são isentos
+  do contraste mínimo do WCAG (1.4.3).
+- A arte é decorativa: o link da logo leva o nome do produto como texto
+  oculto, para leitores de tela.
 
 ## 6. Ícones e avatares
 

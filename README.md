@@ -1,4 +1,4 @@
-# Plataforma de Artigos
+# he4rt ink
 
 Publicação e leitura de artigos técnicos para a comunidade He4rt e para devs em geral. Visão do produto em [PRODUCT.md](PRODUCT.md).
 
@@ -10,6 +10,7 @@ Publicação e leitura de artigos técnicos para a comunidade He4rt e para devs 
 - [docs/ROADMAP.md](docs/ROADMAP.md): fases e tarefas
 - [docs/DESIGN.md](docs/DESIGN.md): design system, paleta do editor e uso do mascote
 - [design/mascote/](design/mascote/): guia de identidade do mascote e script que gera as ilustrações
+- [design/logo/](design/logo/): script que gera as variações da logo e os ícones do navegador
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): organização e convenções do código
 - [CONTRIBUTING.md](CONTRIBUTING.md): padrão de mensagens de commit
 - [AGENTS.md](AGENTS.md): diretrizes de engenharia e processo de desenvolvimento
