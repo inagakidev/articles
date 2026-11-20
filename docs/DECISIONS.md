@@ -389,7 +389,7 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
 
 ### D57 — Mascote
 
-- **Status:** Aprovada (16/11/2026); contextos de uso atualizados pela D61 (17/11/2026).
+- **Status:** Aprovada (16/11/2026); contextos de uso atualizados pela D61 (17/11/2026); arte e formato substituídos pela D65 (19/11/2026).
 - **Contexto:** o kit do mascote chegou em três versões: vetorial chapada (SVGs do kit), vetorial com degradês (só na prancha HTML, sem arquivos exportados) e traçada a partir da ilustração original.
 - **Decisão:** a versão oficial é a vetorial chapada, em `design/mascote/`, com os SVGs usados pela aplicação em `resources/images/mascote/`. Onde e como o mascote aparece está em `DESIGN.md` §5.3: estados vazios, boas-vindas, artigo aprovado, aguardando aprovação e páginas de erro; nunca na leitura, no editor, no painel administrativo, em rejeições ou penalidades. É sempre decorativo. A animação usa o rig próprio do kit, portado para TypeScript, sem Rive. PNGs só para e-mails, regenerados pelos scripts do kit. A versão traçada fica fora do repositório.
 - **Alternativas descartadas:** versão com degradês (sem arquivos exportados e contrária ao guia de identidade); versão traçada (até 2,1 MB por SVG e com artefatos visíveis em fundo escuro; serve só para apresentação); Rive (dependência a mais e formato editável apenas no editor deles); mascote como foto padrão de usuário (confundiria perfis comuns e o autor anonimizado com a plataforma; usam-se iniciais).
@@ -476,3 +476,19 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - testes no estilo de funções do Pest.
 - **Alternativas descartadas:** nomes do domínio em português (misturaria idiomas no mesmo arquivo); modelos dentro de cada módulo (exige configurar factories, autenticação e descoberta de Policies fora do padrão); só as pastas padrão do Laravel (regras de um domínio espalhadas); testes em classes PHPUnit (os testes de navegador só aceitam funções, e os dois estilos ficariam misturados).
 - **Impacto:** o código de frontend já escrito em português foi renomeado, e os testes existentes foram convertidos para funções do Pest com descrições em português.
+
+### D65 — Mascote em ilustração WEBP
+
+- **Status:** Aprovada (19/11/2026). Substitui a D57 no formato e nas artes; os contextos de uso continuam os da D57 e da D61.
+- **Contexto:** o mascote foi redesenhado como ilustração, com textura de papel e traço manual, e ficou melhor que o kit vetorial chapado. A ilustração não tem versão vetorial.
+- **Decisão:**
+    - São dez ilustrações: `apresentando`, `rosto`, `lendo`, `pensativo`, `comemorando`, `escrevendo`, `esperando`, `procurando`, `dormindo` e `ajustando`. O mapa de uso fica em `DESIGN.md` §5.3.
+    - A aplicação usa WEBP com transparência em `resources/images/mascote/`, gerado por `design/mascote/converter.py` a partir dos PNGs originais: largura de 600 px (192 px no rosto), o dobro do maior tamanho de exibição, com qualidade 85. Cada arquivo tem entre 9 e 62 KB, contra 0,8 a 7 MB dos PNGs. Um teste limita cada ilustração a 80 KB.
+    - Os PNGs e os arquivos de trabalho ficam fora do repositório, no Drive do projeto (pasta `mascote-poses-v2`, variante `sem-risquinhos`), para não pesar no histórico do git.
+    - Abaixo de 96 px usa-se o `rosto`; abaixo de 24 px, o mascote não é usado. O favicon e o ícone da tela inicial continuam sendo o marcador roxo.
+    - O kit vetorial (SVGs, rig para web, base para o Rive e scripts) foi removido do repositório e continua no histórico do git.
+- **Alternativas descartadas:** manter o kit vetorial ao lado das ilustrações (dois estilos na mesma interface); versionar os PNGs, inclusive com Git LFS (cerca de 36 MB que só servem de origem); converter a ilustração em SVG traçado (a D57 já mostrou arquivos de até 2,1 MB com artefatos).
+- **Impacto:**
+    - A animação pelo rig do kit deixa de existir. Se uma tela pedir movimento, ele se limita a transformações CSS da imagem inteira, desligadas com `prefers-reduced-motion`.
+    - Clientes de e-mail não exibem WEBP de forma confiável. Quando os e-mails forem feitos, o script ganha uma saída em PNG.
+- **Pendente:** a ilustração `ajustando` foi feita para o artigo devolvido para ajuste, mas a D61 tira o mascote do artigo não aprovado. Até nova decisão, ela não é usada.
