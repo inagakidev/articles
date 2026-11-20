@@ -534,3 +534,15 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - O mascote segue o mapa do canvas (`DESIGN.md` §5.3), menos onde ele contraria a D57 e a D61: sem mascote em artigo não aprovado, na exclusão de conta e no admin. O texto alternativo continua vazio (D57), embora as pranchas usem uma descrição.
 - **Alternativas descartadas:** caixa "Lembrar de mim" (diverge da prancha); sessão de 2 horas sem lembrar (quem escreve perderia o acesso no meio do texto); manter o limitador nomeado e acrescentar o do Fortify (exigiria copiar o pipeline de login do Fortify para a aplicação); registrar cada tentativa errada (ruído e dados pessoais sem ganho para a análise).
 - **Pendente:** um limite por IP que valha para vários e-mails, contra tentativas em massa; hoje o limite é por e-mail e IP. O CAPTCHA diante de comportamento suspeito fica para depois do MVP (RF-021).
+
+### D69 — Recuperar senha
+
+- **Status:** Aprovada (19/11/2026).
+- **Decisão:**
+    - O pedido do link responde sempre da mesma forma, com conta ou sem conta e mesmo quando é repetido cedo demais: a tela "Link enviado" diz "Se existir uma conta com…" e nunca revela quem está cadastrado. A mensagem de "não encontramos esse e-mail" do Fortify deixou de ser usada.
+    - O link vale por 60 minutos, e um novo link para o mesmo e-mail só sai depois de 60 segundos. A tela mostra a contagem no botão "Reenviar link".
+    - Ao salvar a nova senha, todas as sessões abertas da conta são encerradas, inclusive as lembradas (D68), a troca vira o evento de segurança `password_changed` (RF-024) e a pessoa recebe o e-mail "Sua senha foi alterada", com o caminho para recuperar o acesso se não foi ela. A ação `SecureAccountAfterPasswordChange` faz os três passos e será reaproveitada na troca de senha logada (fatia 6), mantendo a sessão atual.
+    - Os e-mails da conta saem em PT e EN: os templates de notificação e da moldura do Laravel foram publicados em `resources/views/vendor` com os textos em `lang/` (`mail.*`), e o rodapé deixou o "All rights reserved" por uma frase que diz por que a pessoa recebeu o e-mail.
+    - A tela de nova senha não tem prancha no canvas: ela segue o cartão de "Recuperar senha", com os mesmos componentes. As telas em cartão passaram a montar o topo (mascote, título e texto) com `AuthCardHeader`, porque o mascote e o título mudam com o estado.
+- **Alternativas descartadas:** manter a mensagem de e-mail não encontrado (permite descobrir quem tem conta); manter as outras sessões (quem tinha acesso indevido continuaria dentro da conta); traduzir os textos do Laravel usando o próprio inglês como chave (a D62 escolheu chaves por área).
+- **Pendente:** um limite por IP para os pedidos de link, contra o envio em massa para e-mails diferentes (hoje o limite é por e-mail); o visual dos e-mails com a marca.

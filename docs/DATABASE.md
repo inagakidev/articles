@@ -20,13 +20,13 @@ A anonimização de registros de contas excluídas (12 meses, `REQUIREMENTS.md` 
 
 ### `security_events`
 
-Eventos de segurança da conta (RF-022, RF-024, D68).
+Eventos de segurança da conta (RF-022, RF-024, D68, D69).
 
 | Coluna       | Tipo              | Observação                                                                         |
 | ------------ | ----------------- | ---------------------------------------------------------------------------------- |
 | `id`         | bigint            |                                                                                    |
 | `user_id`    | bigint, nulo      | A conta, quando o e-mail digitado pertence a uma. Nulo depois da exclusão da conta |
-| `type`       | string(40)        | `login_blocked`; os demais tipos entram com as fatias deles                        |
+| `type`       | string(40)        | `login_blocked`, `password_changed`; os demais tipos entram com as fatias deles    |
 | `email`      | string, nulo      | O e-mail digitado, para analisar tentativas contra contas inexistentes             |
 | `ip_address` | string(45), nulo  | IPv4 ou IPv6                                                                       |
 | `user_agent` | string(512), nulo | Cortado em 512 caracteres                                                          |

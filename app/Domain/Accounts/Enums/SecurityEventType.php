@@ -11,6 +11,9 @@ enum SecurityEventType: string
     /** O login foi pausado depois de tentativas seguidas com senha errada. */
     case LoginBlocked = 'login_blocked';
 
+    /** A senha foi trocada, pelo link de recuperação ou logada. */
+    case PasswordChanged = 'password_changed';
+
     /**
      * Tipos que contam como tentativa suspeita de login e somem depois de
      * 90 dias (REQUIREMENTS.md §2.23). Os outros ficam enquanto a conta existir.
