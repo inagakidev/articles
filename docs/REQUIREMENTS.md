@@ -564,6 +564,7 @@ Contestação rejeitada:
 | Notificações                              | 90 dias, pausado na suspensão (A24)                    | Exclusão                                  |
 | Denúncias encerradas                      | 12 meses                                               | Exclusão                                  |
 | Tentativas suspeitas de login             | 90 dias                                                | Exclusão                                  |
+| Jobs com falha (e-mails e rotinas)        | 7 dias                                                 | Exclusão                                  |
 | Registros de auditoria de conta excluída  | 12 meses após a exclusão, anonimizados                 | Exclusão                                  |
 | Visualizações individuais (depois do MVP) | 12 meses                                               | Exclusão                                  |
 | Backups (D55)                             | 7 cópias diárias e 4 semanais (até cerca de 5 semanas) | Cópia expirada é apagada                  |

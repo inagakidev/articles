@@ -1,8 +1,10 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+// Links de recuperação de senha vencidos.
+Schedule::command('auth:clear-resets')->daily();
+
+// Jobs com falha guardam o conteúdo, inclusive o e-mail da pessoa
+// (REQUIREMENTS.md §2.23: 7 dias).
+Schedule::command('queue:prune-failed', ['--hours' => 7 * 24])->daily();

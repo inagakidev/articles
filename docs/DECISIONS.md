@@ -505,3 +505,18 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - As cores da logo ficam na arte e não viram tokens da interface (D60): são marca, não cor de componente.
 - **Alternativas descartadas:** o rosto do mascote como logo (mistura a marca com a ilustração de estados); SVG da logo embutido no código dos componentes (cerca de 9 KB de caminhos dentro do JavaScript, repetidos para cada tema); a tagline no cabeçalho (fica ilegível na altura do cabeçalho).
 - **Impacto:** `APP_NAME` passa a ser "he4rt ink", o que muda o título das páginas e o remetente dos e-mails. Os documentos do projeto passam a usar o nome.
+
+### D67 — Filas, agendador e e-mail
+
+- **Status:** Aprovada (19/11/2026).
+- **Decisão:**
+    - A fila usa o driver `database` do Laravel, já configurado. Todo e-mail sai pela fila, com 3 tentativas e espera de 1 e 5 minutos entre elas, e só depois da confirmação da transação. Os e-mails de verificação e de recuperação de senha do Laravel passam a usar as notificações em `app/Notifications`, que são as mesmas com fila.
+    - O idioma do e-mail é o da requisição que pediu o envio, guardado na notificação, porque o worker não conhece a requisição. Quando a preferência de idioma for salva na conta, ela passa a valer.
+    - As rotinas agendadas ficam em `routes/console.php`. As primeiras apagam os links de recuperação de senha vencidos e os jobs com falha com mais de 7 dias, que guardam o conteúdo do e-mail, inclusive o endereço da pessoa (linha nova na tabela de retenção, `REQUIREMENTS.md` §2.23).
+    - Localmente, o `composer dev` sobe também o agendador (`schedule:work`), e os e-mails vão para o Mailpit 1.33.1 (MIT), pelo `compose.yaml`: SMTP na porta 1025 e caixa de entrada em `http://localhost:8025`. Sem Docker, `MAIL_MAILER=log` grava os e-mails no log. Os testes usam fila síncrona e o mailer `array`.
+- **Alternativas descartadas:** Redis e Horizon para a fila (mais um serviço para manter, sem volume que justifique); enviar os e-mails na hora (a requisição fica esperando o servidor de e-mail e falha junto com ele); binário do Mailpit sem Docker (mais um executável para baixar e atualizar à mão); manter jobs com falha sem prazo (dados pessoais guardados sem limite).
+- **Pendente:**
+    - Produção precisa de um worker permanente (`queue:work`), reiniciado a cada deploy, e de um cron que rode `schedule:run` a cada minuto (p8-01). Como o worker monta os links fora de uma requisição, `APP_URL` precisa ser o endereço público.
+    - O provedor de e-mail de produção e o remetente (`MAIL_FROM_ADDRESS`).
+    - Os textos dos e-mails de verificação e de recuperação de senha ainda são os do Laravel, em inglês; a tradução entra na p3-05 e na p3-06.
+    - Alerta quando a fila parar ou acumular jobs com falha (fase 8).

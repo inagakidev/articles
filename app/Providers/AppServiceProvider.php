@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Foundation\DevCommands;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +25,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureDevProcesses();
+    }
+
+    /**
+     * O `composer dev` sobe servidor, fila, logs e Vite; o agendador entra
+     * junto para que as rotinas de routes/console.php rodem localmente.
+     */
+    protected function configureDevProcesses(): void
+    {
+        DevCommands::artisan('schedule:work', 'scheduler');
     }
 
     /**
