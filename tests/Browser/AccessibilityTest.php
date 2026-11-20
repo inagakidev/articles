@@ -14,6 +14,7 @@ $telas = [
     'entrar' => '/login',
     'criar conta' => '/register',
     'recuperar senha' => '/forgot-password',
+    'nova senha' => '/reset-password/token?email=lia%40exemplo.dev',
 ];
 
 it('não tem problemas de acessibilidade no tema claro', function (string $url) {

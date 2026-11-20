@@ -18,6 +18,8 @@ const buttonVariants = cva(
         secondary:
           "bg-surface-muted text-text-primary shadow-xs hover:bg-surface-selected disabled:bg-disabled-bg",
         ghost: "text-text-primary hover:bg-surface-hover",
+        // Ação secundária sem fundo, na cor de link (prancha "Link enviado")
+        subtle: "font-bold text-primary-text hover:bg-surface-hover disabled:bg-transparent",
         link: "text-primary-text underline underline-offset-4 hover:text-text-primary",
       },
       size: {
@@ -26,6 +28,7 @@ const buttonVariants = cva(
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         // Ação principal de formulário (pranchas de entrar e criar conta)
         xl: "h-13 rounded-md px-6 text-body font-bold shadow-sm motion-safe:hover:-translate-y-px",
+        md: "h-11 rounded-md px-[18px] text-[0.9375rem]",
         icon: "size-9",
       },
     },

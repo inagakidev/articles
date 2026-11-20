@@ -7,14 +7,11 @@ import SiteLogo from '@/components/site/site-logo';
 import type { TranslationKey } from '@/lib/i18n';
 import { useTranslation } from '@/lib/i18n';
 
-type Common = {
-    /** Pose do mascote (DESIGN §5.3). Sem arte, a página fica sem mascote. */
-    art?: MascotArt;
-};
-
 /** Mascote ao lado do formulário (entrar, criar conta). Textos por chave de tradução. */
-type PanelProps = Common & {
+type PanelProps = {
     variant: 'panel';
+    /** Pose do mascote (DESIGN §5.3). */
+    art?: MascotArt;
     title: TranslationKey;
     description?: TranslationKey;
     /** Frase grande ao lado do mascote. */
@@ -23,11 +20,13 @@ type PanelProps = Common & {
     support?: TranslationKey;
 };
 
-/** Cartão centralizado. Recebe texto pronto até as telas dele serem traduzidas. */
-type CardProps = Common & {
+/**
+ * Cartão centralizado (recuperar senha e as telas curtas). O layout é só a
+ * moldura: cada página monta o topo com `AuthCardHeader`, porque o mascote e
+ * o título mudam com o estado (pedir o link, link enviado).
+ */
+type CardProps = {
     variant?: 'card';
-    title?: string;
-    description?: string;
 };
 
 /** O que cada página declara em `Page.layout` (use com `satisfies`). */
@@ -40,20 +39,6 @@ export default function AuthLayout(props: Props) {
         <PanelLayout {...props} />
     ) : (
         <CardLayout {...props} />
-    );
-}
-
-function AuthHeading({
-    title,
-    description,
-}: Pick<CardProps, 'title' | 'description'>) {
-    return (
-        <div className="flex flex-col gap-3">
-            <h1 className="text-h2 font-extrabold">{title}</h1>
-            {description && (
-                <p className="text-body text-text-secondary">{description}</p>
-            )}
-        </div>
     );
 }
 
@@ -130,30 +115,41 @@ function PanelLayout({
     );
 }
 
-function CardLayout({
-    title,
-    description,
-    art,
-    children,
-}: CardProps & { children: ReactNode }) {
+function CardLayout({ children }: CardProps & { children: ReactNode }) {
     return (
         <div className="flex min-h-svh flex-col bg-bg text-text-primary">
-            <header className="border-b border-border">
-                <div className="flex h-18 items-center px-4 sm:px-8">
-                    <SiteLogo />
-                </div>
+            <header className="flex h-15 items-center px-4 sm:h-18 sm:border-b sm:border-border sm:px-8">
+                <SiteLogo height={31} className="sm:hidden" />
+                <SiteLogo height={36} className="hidden sm:flex" />
             </header>
-            <main className="flex flex-1 items-start justify-center px-4 pt-8 pb-16 sm:px-6 sm:pt-16">
-                <div className="flex w-full max-w-lg flex-col gap-5 sm:rounded-xl sm:border sm:border-border sm:bg-surface sm:px-11 sm:py-10 sm:shadow-md">
-                    {art && (
-                        <Mascot art={art} size={170} className="self-center" />
-                    )}
-                    <div className="text-center">
-                        <AuthHeading title={title} description={description} />
-                    </div>
+            <main className="flex flex-1 items-start justify-center px-5 pt-2 pb-8 sm:px-6 sm:pt-16 sm:pb-24">
+                <div className="stagger flex w-full max-w-[520px] flex-col items-center gap-[18px] text-center sm:gap-5 sm:rounded-[28px] sm:border sm:border-border sm:bg-surface sm:px-11 sm:py-10 sm:shadow-md">
                     {children}
                 </div>
             </main>
         </div>
+    );
+}
+
+/** Topo das telas em cartão: mascote, título e texto de apoio. */
+export function AuthCardHeader({
+    art,
+    title,
+    description,
+}: {
+    art?: MascotArt;
+    title: string;
+    description?: ReactNode;
+}) {
+    return (
+        <>
+            {art && <Mascot art={art} size={170} className="animate-float" />}
+            <h1 className="font-display text-[1.75rem]/9 font-extrabold tracking-[-0.02em] sm:text-[2rem]/10">
+                {title}
+            </h1>
+            {description && (
+                <p className="text-body text-text-secondary">{description}</p>
+            )}
+        </>
     );
 }

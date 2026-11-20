@@ -1,4 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
+import { AuthCardHeader } from '@/layouts/auth-layout';
+import type { AuthLayoutProps } from '@/layouts/auth-layout';
 import InputError from '@/components/ui/input-error';
 import PasswordInput from '@/components/ui/password-input';
 import { Button } from '@/components/ui/button';
@@ -10,6 +12,12 @@ export default function ConfirmPassword() {
     return (
         <>
             <Head title="Confirm password" />
+
+            {/* Textos traduzidos na fatia desta tela */}
+            <AuthCardHeader
+                title="Confirm password"
+                description="This is a secure area of the application. Please confirm your password before continuing."
+            />
 
             <Form {...store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
@@ -44,8 +52,4 @@ export default function ConfirmPassword() {
     );
 }
 
-ConfirmPassword.layout = {
-    title: 'Confirm password',
-    description:
-        'This is a secure area of the application. Please confirm your password before continuing.',
-};
+ConfirmPassword.layout = { variant: 'card' } satisfies AuthLayoutProps;

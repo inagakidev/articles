@@ -1,70 +1,172 @@
-// Components
-import { Form, Head } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-import InputError from '@/components/ui/input-error';
-import TextLink from '@/components/ui/text-link';
+import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { ArrowLeft, Send } from 'lucide-react';
+import { useCountdown } from '@/hooks/use-countdown';
+import { AuthCardHeader } from '@/layouts/auth-layout';
+import type { AuthLayoutProps } from '@/layouts/auth-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import InputError from '@/components/ui/input-error';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
+import TextLink from '@/components/ui/text-link';
+import { useTranslation } from '@/lib/i18n';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
 
-export default function ForgotPassword({ status }: { status?: string }) {
+/** Validade do link, em minutos (config/auth.php, passwords.users.expire). */
+const LINK_MINUTES = 60;
+
+type Props = {
+    /** O e-mail digitado, depois do pedido. A resposta é a mesma com ou sem conta. */
+    sentTo?: string | null;
+    /** Segundos até poder pedir outro link para o mesmo e-mail. */
+    resendAfter?: number | null;
+};
+
+export default function ForgotPassword({ sentTo, resendAfter }: Props) {
+    const { t } = useTranslation();
+
     return (
         <>
-            <Head title="Forgot password" />
-
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-success-fg">
-                    {status}
-                </div>
+            <Head title={t('account.forgot.title')} />
+            {sentTo ? (
+                <LinkSent email={sentTo} resendAfter={resendAfter} />
+            ) : (
+                <RequestLink />
             )}
+        </>
+    );
+}
 
-            <div className="space-y-6">
-                <Form {...email.form()}>
-                    {({ processing, errors }) => (
+function RequestLink() {
+    const { t } = useTranslation();
+
+    return (
+        <>
+            <AuthCardHeader
+                art="pensativo"
+                title={t('account.forgot.title')}
+                description={t('account.forgot.description')}
+            />
+
+            <Form
+                {...email.form()}
+                className="flex w-full flex-col gap-4 text-left"
+            >
+                {({ processing, errors }) => (
+                    <>
+                        <div className="flex flex-col gap-1.5">
+                            <Label
+                                htmlFor="email"
+                                className="text-meta font-bold"
+                            >
+                                {t('account.email')}
+                            </Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                name="email"
+                                required
+                                autoFocus
+                                autoComplete="email"
+                                placeholder="voce@exemplo.dev"
+                                aria-invalid={errors.email ? true : undefined}
+                                aria-describedby={
+                                    errors.email ? 'email-error' : undefined
+                                }
+                            />
+                            <InputError
+                                id="email-error"
+                                message={errors.email}
+                            />
+                        </div>
+
+                        <Button
+                            type="submit"
+                            size="xl"
+                            className="w-full"
+                            disabled={processing}
+                            data-test="email-password-reset-link-button"
+                        >
+                            {processing ? (
+                                <Spinner />
+                            ) : (
+                                <Send aria-hidden="true" />
+                            )}
+                            {t('account.forgot.submit')}
+                        </Button>
+                    </>
+                )}
+            </Form>
+
+            <TextLink
+                href={login()}
+                className="inline-flex items-center gap-1.5 text-[0.9375rem] font-bold no-underline"
+            >
+                <ArrowLeft aria-hidden="true" className="size-4" />
+                {t('account.forgot.back')}
+            </TextLink>
+        </>
+    );
+}
+
+function LinkSent({
+    email: address,
+    resendAfter,
+}: {
+    email: string;
+    resendAfter?: number | null;
+}) {
+    const { t } = useTranslation();
+    const { props } = usePage();
+    const secondsLeft = useCountdown(resendAfter, props);
+    // O e-mail entra em negrito no meio da frase traduzida.
+    const [before, after] = t('account.forgot.sent.description', {
+        minutes: LINK_MINUTES,
+    }).split(':email');
+
+    return (
+        <>
+            <AuthCardHeader
+                art="esperando"
+                title={t('account.forgot.sent.title')}
+                description={
+                    <span role="status">
+                        {before}
+                        <strong className="text-text-primary">{address}</strong>
+                        {after}
+                    </span>
+                }
+            />
+
+            <div className="flex w-full flex-col gap-2.5">
+                <Button asChild size="xl" className="w-full">
+                    <Link href={login()}>{t('account.forgot.back')}</Link>
+                </Button>
+
+                <Form {...email.form()} className="w-full">
+                    {({ processing }) => (
                         <>
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    autoComplete="off"
-                                    autoFocus
-                                    placeholder="email@example.com"
-                                />
-
-                                <InputError message={errors.email} />
-                            </div>
-
-                            <div className="my-6 flex items-center justify-start">
-                                <Button
-                                    className="w-full"
-                                    disabled={processing}
-                                    data-test="email-password-reset-link-button"
-                                >
-                                    {processing && (
-                                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                                    )}
-                                    Email password reset link
-                                </Button>
-                            </div>
+                            <input type="hidden" name="email" value={address} />
+                            <Button
+                                type="submit"
+                                variant="subtle"
+                                size="md"
+                                className="w-full"
+                                disabled={processing || secondsLeft > 0}
+                            >
+                                {secondsLeft > 0
+                                    ? t('account.forgot.resend_in', {
+                                          seconds: secondsLeft,
+                                      })
+                                    : t('account.forgot.resend')}
+                            </Button>
                         </>
                     )}
                 </Form>
-
-                <div className="space-x-1 text-center text-sm text-muted-foreground">
-                    <span>Or, return to</span>
-                    <TextLink href={login()}>log in</TextLink>
-                </div>
             </div>
         </>
     );
 }
 
-ForgotPassword.layout = {
-    art: 'pensativo',
-    title: 'Forgot password',
-    description: 'Enter your email to receive a password reset link',
-};
+ForgotPassword.layout = { variant: 'card' } satisfies AuthLayoutProps;

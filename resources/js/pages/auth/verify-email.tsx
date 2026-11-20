@@ -1,5 +1,7 @@
 // Components
 import { Form, Head } from '@inertiajs/react';
+import { AuthCardHeader } from '@/layouts/auth-layout';
+import type { AuthLayoutProps } from '@/layouts/auth-layout';
 import TextLink from '@/components/ui/text-link';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -10,6 +12,13 @@ export default function VerifyEmail({ status }: { status?: string }) {
     return (
         <>
             <Head title="Email verification" />
+
+            {/* Textos traduzidos na fatia desta tela */}
+            <AuthCardHeader
+                art="esperando"
+                title="Email verification"
+                description="Please verify your email address by clicking on the link we just emailed to you."
+            />
 
             {status === 'verification-link-sent' && (
                 <div className="mb-4 text-center text-sm font-medium text-success-fg">
@@ -39,9 +48,4 @@ export default function VerifyEmail({ status }: { status?: string }) {
     );
 }
 
-VerifyEmail.layout = {
-    art: 'esperando',
-    title: 'Email verification',
-    description:
-        'Please verify your email address by clicking on the link we just emailed to you.',
-};
+VerifyEmail.layout = { variant: 'card' } satisfies AuthLayoutProps;
