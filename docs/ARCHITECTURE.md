@@ -2,7 +2,7 @@
 
 **Atualizado em:** 19/11/2026
 
-Como o código é organizado e escrito. Os princípios estão no `AGENTS.md`; as decisões técnicas, no `DECISIONS.md`; as convenções do banco, na seção 3.6 do `DECISIONS.md` (e, a partir da modelagem de usuários, no `DATABASE.md`).
+Como o código é organizado e escrito. Os princípios estão no `AGENTS.md`; as decisões técnicas, no `DECISIONS.md`; as convenções do banco, na seção 3.6 do `DECISIONS.md` e no `DATABASE.md`.
 
 ## 1. Idioma
 
@@ -27,6 +27,7 @@ app/
 │   ├── Queries/         Consultas reutilizadas por mais de um lugar
 │   ├── Rules/           Regras de negócio puras, testáveis sem banco
 │   ├── Events/          Fatos do domínio ("VersionApproved")
+│   ├── Listeners/       Reações a eventos, registradas no AppServiceProvider
 │   └── Exceptions/      Recusas de regra de negócio
 ├── Http/
 │   ├── Controllers/<Área>/   Recebem a requisição e devolvem a resposta
@@ -81,7 +82,7 @@ resources/js/
 ├── pages/<área>/        Páginas Inertia (o nome segue a rota: auth/login)
 ├── layouts/             Layouts das páginas (público, conta, aplicação, admin)
 ├── components/
-│   ├── ui/              Base do shadcn/ui ajustada aos tokens
+│   ├── ui/              Componentes de interface usados em mais de uma tela: a base do shadcn/ui ajustada aos tokens e os próprios (mascote, logo, campo de senha)
 │   ├── effects/         Efeitos copiados de bibliotecas, com fonte e licença no topo
 │   ├── blocks/          Seções da página de apresentação
 │   ├── site/            Cabeçalho, rodapé, logo, tema e idioma
@@ -92,6 +93,7 @@ resources/js/
 └── test/                Utilidades de teste
 ```
 
+- **Onde fica cada componente:** um componente de interface usado em mais de uma tela fica em `components/ui` (botão, campo, aviso, mascote), com as variações como props ou variantes (`size="xl"`), em vez de classes repetidas em cada página. A estrutura das páginas fica em `layouts/`. O que só uma área usa fica na pasta da área.
 - **Arquivos** em kebab-case (`article-card.tsx`); componentes em PascalCase (`ArticleCard`).
 - **Componentes de bibliotecas** entram só como código-fonte do componente usado, quando a tela que o usa é implementada, nunca como dependência (D63).
 - **Estilo:** só os tokens do `DESIGN.md`, por classes do Tailwind. Sem hex nem paleta padrão do Tailwind; a paleta padrão foi removida (D60).

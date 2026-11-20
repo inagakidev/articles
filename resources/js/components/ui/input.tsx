@@ -8,9 +8,9 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       type={type}
       data-slot="input"
       className={cn(
-        "border-input file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-disabled-bg disabled:text-disabled-text md:text-sm",
-        "focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-[3px]",
-        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+        "flex h-12 w-full min-w-0 rounded-md border border-border-strong bg-surface px-3.5 text-body text-text-primary placeholder:text-text-muted transition-[border-color,box-shadow] file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium selection:bg-primary selection:text-text-on-primary disabled:cursor-not-allowed disabled:bg-disabled-bg disabled:text-disabled-text",
+        // DESIGN §7.4: erro com borda de 2 px; o foco usa o anel global (§2.8)
+        "aria-invalid:border-2 aria-invalid:border-danger-fg",
         className
       )}
       {...props}

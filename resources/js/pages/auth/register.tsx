@@ -1,7 +1,8 @@
 import { Form, Head } from '@inertiajs/react';
-import InputError from '@/components/input-error';
-import PasswordInput from '@/components/password-input';
-import TextLink from '@/components/text-link';
+import type { AuthLayoutProps } from '@/layouts/auth-layout';
+import InputError from '@/components/ui/input-error';
+import PasswordInput from '@/components/ui/password-input';
+import TextLink from '@/components/ui/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -112,6 +113,6 @@ Register.layout = {
     art: 'apresentando',
     headline: 'account.register.headline',
     support: 'account.register.support',
-    title: 'Create an account',
-    description: 'Enter your details below to create your account',
-};
+    title: 'account.register.title',
+    description: 'account.register.description',
+} satisfies AuthLayoutProps;

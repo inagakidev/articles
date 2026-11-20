@@ -1,9 +1,9 @@
-import iconDark from '../../images/logo/icon-dark.svg?url';
-import iconLight from '../../images/logo/icon-light.svg?url';
-import wordmarkDark from '../../images/logo/wordmark-dark.svg?url';
-import wordmarkFullDark from '../../images/logo/wordmark-full-dark.svg?url';
-import wordmarkFullLight from '../../images/logo/wordmark-full-light.svg?url';
-import wordmarkLight from '../../images/logo/wordmark-light.svg?url';
+import iconDark from '../../../images/logo/icon-dark.svg?url';
+import iconLight from '../../../images/logo/icon-light.svg?url';
+import wordmarkDark from '../../../images/logo/wordmark-dark.svg?url';
+import wordmarkFullDark from '../../../images/logo/wordmark-full-dark.svg?url';
+import wordmarkFullLight from '../../../images/logo/wordmark-full-light.svg?url';
+import wordmarkLight from '../../../images/logo/wordmark-light.svg?url';
 import { cn } from '@/lib/utils';
 
 /**

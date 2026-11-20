@@ -30,11 +30,11 @@ As cores são as da marca (`docs/DESIGN.md` §2.1 e §2.2). A ilustração tem v
 |---|---|
 | `apresentando` | Boas-vindas: página inicial, entrar, criar conta |
 | `rosto` | Qualquer uso entre 24 e 96 px |
-| `lendo` | Leitura: fim do artigo, novo aceite dos Termos |
-| `pensativo` | Recuperar senha, busca sem resultados |
-| `comemorando` | Artigo aprovado |
-| `escrevendo` | Editor vazio, nada escrito ainda, confirmação de e-mail |
-| `esperando` | Artigo enviado para revisão |
+| `lendo` | Leitura: fim do artigo, novo aceite dos Termos, nenhum favorito |
+| `pensativo` | Recuperar senha, busca sem resultados, troca obrigatória de username |
+| `comemorando` | Artigo aprovado, e-mail confirmado |
+| `escrevendo` | Editor vazio, nada escrito ainda |
+| `esperando` | Artigo enviado para revisão, confirmação de e-mail, link de recuperação enviado |
 | `procurando` | Busca carregando, erro 404 |
 | `dormindo` | Notificações em dia, erro 500, manutenção |
 | `ajustando` | Artigo devolvido para ajuste (não usada por enquanto, ver D65) |

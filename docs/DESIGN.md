@@ -816,8 +816,10 @@ compete com o texto, nunca carrega informação sozinho.
 | Logo, favicon e ícones do site                                       | **Não** (logo própria, §5.4) | ---            |
 | Página inicial, login e cadastro                                     | Sim                          | `apresentando` |
 | Chamada "publicar aqui" na página inicial                            | Sim                          | `escrevendo`   |
-| Confirmação de e-mail                                                | Sim                          | `escrevendo`   |
+| Confirmação de e-mail e link de recuperação enviado                  | Sim                          | `esperando`    |
 | Recuperar senha                                                      | Sim                          | `pensativo`    |
+| E-mail confirmado                                                    | Sim                          | `comemorando`  |
+| Troca obrigatória de username                                        | Sim                          | `pensativo`    |
 | Novo aceite dos Termos                                               | Sim                          | `lendo`        |
 | Editor vazio                                                         | Sim, pequeno                 | `escrevendo`   |
 | Artigo enviado para revisão                                          | Sim, discreto                | `esperando`    |
@@ -825,7 +827,7 @@ compete com o texto, nunca carrega informação sozinho.
 | Fim do artigo, depois do texto                                       | Sim, pequeno                 | `lendo`        |
 | Busca carregando                                                     | Sim                          | `procurando`   |
 | Busca sem resultados                                                 | Sim                          | `pensativo`    |
-| Nenhum favorito                                                      | Sim                          | `escrevendo`   |
+| Nenhum favorito                                                      | Sim                          | `lendo`        |
 | Nenhum rascunho ou artigo                                            | Sim                          | `escrevendo`   |
 | Notificações em dia                                                  | Sim                          | `dormindo`     |
 | Erro 404                                                             | Sim                          | `procurando`   |
