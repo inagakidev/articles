@@ -533,7 +533,7 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - Como o movimento é contínuo, o painel tem o botão "Pausar animações" do RF-383 (WCAG 2.2.2): no rodapé do painel no desktop e no topo do palco no celular. A escolha fica no navegador (`localStorage`), vale para o site inteiro e é aplicada antes de a página aparecer. "Reduzir movimento" no sistema continua parando tudo.
     - O mascote segue o mapa do canvas (`DESIGN.md` §5.3), menos onde ele contraria a D57 e a D61: sem mascote em artigo não aprovado, na exclusão de conta e no admin. O texto alternativo continua vazio (D57), embora as pranchas usem uma descrição.
 - **Alternativas descartadas:** caixa "Lembrar de mim" (diverge da prancha); sessão de 2 horas sem lembrar (quem escreve perderia o acesso no meio do texto); manter o limitador nomeado e acrescentar o do Fortify (exigiria copiar o pipeline de login do Fortify para a aplicação); registrar cada tentativa errada (ruído e dados pessoais sem ganho para a análise).
-- **Pendente:** um limite por IP que valha para vários e-mails, contra tentativas em massa; hoje o limite é por e-mail e IP. O CAPTCHA diante de comportamento suspeito fica para depois do MVP (RF-021).
+- **Atualização (D70):** o limite por IP que valha para vários e-mails foi acrescentado. O CAPTCHA diante de comportamento suspeito fica para depois do MVP (RF-021).
 
 ### D69 — Recuperar senha
 
@@ -545,4 +545,13 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - Os e-mails da conta saem em PT e EN: os templates de notificação e da moldura do Laravel foram publicados em `resources/views/vendor` com os textos em `lang/` (`mail.*`), e o rodapé deixou o "All rights reserved" por uma frase que diz por que a pessoa recebeu o e-mail.
     - A tela de nova senha não tem prancha no canvas: ela segue o cartão de "Recuperar senha", com os mesmos componentes. As telas em cartão passaram a montar o topo (mascote, título e texto) com `AuthCardHeader`, porque o mascote e o título mudam com o estado.
 - **Alternativas descartadas:** manter a mensagem de e-mail não encontrado (permite descobrir quem tem conta); manter as outras sessões (quem tinha acesso indevido continuaria dentro da conta); traduzir os textos do Laravel usando o próprio inglês como chave (a D62 escolheu chaves por área).
-- **Pendente:** um limite por IP para os pedidos de link, contra o envio em massa para e-mails diferentes (hoje o limite é por e-mail); o visual dos e-mails com a marca.
+- **Atualização (D70):** o limite por IP para os pedidos de link e o visual dos e-mails com a marca foram feitos.
+
+### D70 — Limite por IP e e-mails com a marca
+
+- **Status:** Aprovada (19/11/2026). Resolve as pendências da D68 e da D69.
+- **Decisão:**
+    - Além do limite por e-mail do Fortify, o middleware `ThrottleAuthByIp` limita cada IP: 20 envios por minuto na tela de entrar e 10 pedidos de link de senha por hora, para qualquer e-mail. No login, o bloqueio por IP segue o mesmo caminho do bloqueio por e-mail (aviso com contagem e evento `login_blocked`); no pedido de link, a tela mostra quantos minutos faltam. Como o limite é por rede, e não por conta, ele não revela quem tem conta.
+    - Os e-mails usam o tema `he4rt` (`resources/views/vendor/mail/html/themes/he4rt.css`): o tema do Laravel com as cores da marca, cartão de cantos arredondados e botão roxo. O cabeçalho mostra a logo em PNG (`public/images/email/logo.png`, gerada por `design/logo/gerar.mjs`), porque clientes de e-mail não exibem SVG.
+- **Alternativas descartadas:** CAPTCHA já no MVP (fora do escopo, RF-021); limite por IP mais baixo no login (redes compartilhadas, como a de um evento da comunidade, bloqueariam pessoas legítimas); logo como texto no e-mail (perde a identidade).
+- **Pendente:** a logo do e-mail é carregada de `APP_URL`, que precisa ser o endereço público em produção (já exigido pela D67).

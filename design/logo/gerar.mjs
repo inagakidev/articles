@@ -115,4 +115,21 @@ writeFileSync(
 );
 console.log('public/favicon.svg, public/favicon.ico, public/apple-touch-icon.png');
 
+// Logo dos e-mails: PNG em 2x (72 px de altura, exibida com 36), porque
+// clientes de e-mail não exibem SVG.
+const wordmark = readFileSync(resolve(output, 'wordmark-light.svg'), 'utf8');
+const [, viewWidth, viewHeight] = wordmark.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);
+const emailHeight = 72;
+const emailWidth = Math.round((viewWidth / viewHeight) * emailHeight);
+await page.setViewportSize({ width: emailWidth, height: emailHeight });
+await page.setContent(
+    `<body style="margin:0">${wordmark.replace('<svg ', `<svg width="${emailWidth}" height="${emailHeight}" `)}</body>`,
+);
+mkdirSync(resolve(publicDir, 'images/email'), { recursive: true });
+writeFileSync(
+    resolve(publicDir, 'images/email/logo.png'),
+    await page.screenshot({ omitBackground: true }),
+);
+console.log(`public/images/email/logo.png (${emailWidth}x${emailHeight})`);
+
 await browser.close();

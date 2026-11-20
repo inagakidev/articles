@@ -159,7 +159,11 @@ test('os e-mails de senha saem no idioma pedido', function (string $locale, stri
 
     expect($resetMail->subject)->toBe($reset)
         ->and((new PasswordChanged)->toMail($user)->subject)->toBe($changed)
-        ->and((string) $resetMail->render())->toContain($greeting)->not->toContain('Regards');
+        ->and((string) $resetMail->render())
+        ->toContain($greeting)
+        ->toContain('images/email/logo.png')
+        ->toContain('#875ccb')
+        ->not->toContain('Regards');
 })->with([
     'português' => ['pt_BR', 'Crie uma nova senha', 'Sua senha foi alterada', 'Olá!'],
     'inglês' => ['en', 'Create a new password', 'Your password was changed', 'Hi!'],
