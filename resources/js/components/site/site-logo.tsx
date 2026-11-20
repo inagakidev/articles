@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import Logo from '@/components/logo';
+import Logo from '@/components/ui/logo';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 

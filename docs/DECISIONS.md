@@ -520,3 +520,18 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - O provedor de e-mail de produção e o remetente (`MAIL_FROM_ADDRESS`).
     - Os textos dos e-mails de verificação e de recuperação de senha ainda são os do Laravel, em inglês; a tradução entra na p3-05 e na p3-06.
     - Alerta quando a fila parar ou acumular jobs com falha (fase 8).
+
+### D68 — Entrar: sessão, limite de tentativas e eventos de segurança
+
+- **Status:** Aprovada (19/11/2026).
+- **Decisão:**
+    - A tela de entrar não tem "Lembrar de mim", como a prancha: a sessão é sempre lembrada, e a pessoa continua conectada até sair. Quem escreve volta ao rascunho sem entrar de novo.
+    - O limite de tentativas é o do próprio Fortify: 5 senhas erradas por minuto para o mesmo e-mail e IP. O login fica pausado até o prazo acabar, mesmo com a senha certa, e a tela mostra o aviso da prancha com os segundos que faltam. O limitador nomeado do starter kit foi retirado, porque contava também os logins certos e respondia com erro 429, sem disparar o evento `Lockout`.
+    - Cada pausa vira um evento de segurança `login_blocked` em `security_events`, com o e-mail digitado, a conta (quando existe), o IP e o navegador. Um registro por pausa, não por tentativa, para não encher a tabela durante um ataque. Esses eventos somem depois de 90 dias (§2.23), pelo `model:prune` diário; os outros tipos de evento de segurança ficam enquanto a conta existir.
+    - Os links "Termos de uso" e "Privacidade" do painel entram com as páginas, na fatia 4.
+    - **Diferenças da prancha, pedidas na revisão:** no celular, o mascote fica num palco lilás com a órbita compacta e o formulário numa folha que sobe por cima (escolhida entre três propostas); a órbita e a flutuação do mascote são contínuas, em vez de pararem depois de uma volta; o painel não tem a estrela, o círculo e a onda soltos.
+    - O mascote segue o mapa do canvas (`DESIGN.md` §5.3), menos onde ele contraria a D57 e a D61: sem mascote em artigo não aprovado, na exclusão de conta e no admin. O texto alternativo continua vazio (D57), embora as pranchas usem uma descrição.
+- **Alternativas descartadas:** caixa "Lembrar de mim" (diverge da prancha); sessão de 2 horas sem lembrar (quem escreve perderia o acesso no meio do texto); manter o limitador nomeado e acrescentar o do Fortify (exigiria copiar o pipeline de login do Fortify para a aplicação); registrar cada tentativa errada (ruído e dados pessoais sem ganho para a análise).
+- **Pendente:**
+    - Movimento contínuo que começa sozinho e dura mais de 5 segundos precisa de um jeito de pausar (WCAG 2.2.2, nível A). Hoje ele só para com "reduzir movimento" no sistema.
+    - Um limite por IP que valha para vários e-mails, contra tentativas em massa; hoje o limite é por e-mail e IP. O CAPTCHA diante de comportamento suspeito fica para depois do MVP (RF-021).

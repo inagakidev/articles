@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Domain\Accounts\Listeners\RecordLoginLockout;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\DevCommands;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -26,6 +29,16 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureDevProcesses();
+        $this->configureEvents();
+    }
+
+    /**
+     * Reações a eventos do framework. Os listeners do domínio ficam em
+     * app/Domain/<Módulo>/Listeners e são registrados aqui.
+     */
+    protected function configureEvents(): void
+    {
+        Event::listen(Lockout::class, RecordLoginLockout::class);
     }
 
     /**

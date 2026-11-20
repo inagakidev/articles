@@ -11,6 +11,9 @@ const alertVariants = cva(
         default: "bg-background text-foreground",
         destructive:
           "text-destructive-foreground [&>svg]:text-current *:data-[slot=alert-description]:text-destructive-foreground/80",
+        // Aviso tingido das pranchas (DESIGN §2.4): fundo e texto da cor de estado
+        danger:
+          "rounded-[14px] border-0 bg-tint-danger-bg px-4 py-3.5 text-tint-danger-fg has-[>svg]:grid-cols-[calc(var(--spacing)*5)_1fr] [&>svg]:size-5 [&>svg]:translate-y-px *:data-[slot=alert-title]:text-label *:data-[slot=alert-title]:leading-[1.375rem] *:data-[slot=alert-title]:font-bold *:data-[slot=alert-description]:text-meta *:data-[slot=alert-description]:leading-[1.3125rem] *:data-[slot=alert-description]:text-current dark:shadow-[inset_0_0_0_1px_currentColor]",
       },
     },
     defaultVariants: {

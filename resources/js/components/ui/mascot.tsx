@@ -20,7 +20,7 @@ export const mascotArts = [
 
 export type MascotArt = (typeof mascotArts)[number];
 
-const files = import.meta.glob<string>('../../images/mascote/*.webp', {
+const files = import.meta.glob<string>('../../../images/mascote/*.webp', {
     eager: true,
     query: '?url',
     import: 'default',

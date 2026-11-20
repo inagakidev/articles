@@ -24,6 +24,8 @@ const buttonVariants = cva(
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
         sm: "h-8 rounded-md px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        // Ação principal de formulário (pranchas de entrar e criar conta)
+        xl: "h-13 rounded-md px-6 text-body font-bold shadow-sm motion-safe:hover:-translate-y-px",
         icon: "size-9",
       },
     },

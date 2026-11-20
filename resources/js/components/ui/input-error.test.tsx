@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vite-plus/test';
-import InputError from '@/components/input-error';
+import InputError from '@/components/ui/input-error';
 
 describe('InputError', () => {
     it('renders the message', () => {

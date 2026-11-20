@@ -7,6 +7,7 @@ Publicação e leitura de artigos técnicos para a comunidade He4rt e para devs 
 - [PRODUCT.md](PRODUCT.md): visão, usuários e princípios do produto
 - [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md): requisitos funcionais, perfis, estados, fluxos e escopo do MVP
 - [docs/DECISIONS.md](docs/DECISIONS.md): decisões de produto e de arquitetura
+- [docs/DATABASE.md](docs/DATABASE.md): tabelas do domínio e convenções de modelagem
 - [docs/ROADMAP.md](docs/ROADMAP.md): fases e tarefas
 - [docs/DESIGN.md](docs/DESIGN.md): design system, paleta do editor e uso do mascote
 - [design/mascote/](design/mascote/): guia de identidade do mascote e script que gera as ilustrações

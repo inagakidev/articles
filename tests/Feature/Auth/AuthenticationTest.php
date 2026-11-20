@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Features;
 
 test('exibe a tela de entrar', function () {
@@ -16,9 +16,12 @@ test('usuários entram pela tela de entrar', function () {
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
         'password' => 'password',
+        'remember' => '1',
     ]);
 
     $this->assertAuthenticated();
+    // A tela sempre pede para lembrar a sessão (D68).
+    $response->assertCookie(Auth::guard()->getRecallerName());
     $response->assertRedirect(route('dashboard', absolute: false));
 });
 
@@ -61,17 +64,4 @@ test('usuários saem da conta', function () {
     $response->assertRedirect(route('home'));
 
     $this->assertGuest();
-});
-
-test('limita as tentativas de entrar', function () {
-    $user = User::factory()->create();
-
-    RateLimiter::increment(md5('login'.implode('|', [$user->email, '127.0.0.1'])), amount: 5);
-
-    $response = $this->post(route('login.store'), [
-        'email' => $user->email,
-        'password' => 'wrong-password',
-    ]);
-
-    $response->assertTooManyRequests();
 });

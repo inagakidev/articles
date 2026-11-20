@@ -3,7 +3,7 @@ import { readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vite-plus/test';
-import Mascot, { mascotArts, mascotUrls } from '@/components/mascot';
+import Mascot, { mascotArts, mascotUrls } from '@/components/ui/mascot';
 
 describe('Mascote', () => {
     it('tem um arquivo para cada arte e uma arte para cada arquivo', () => {

@@ -23,6 +23,7 @@ test('as rotinas de limpeza rodam todo dia', function () {
     expect(scheduledCommands())->toMatchArray([
         'auth:clear-resets' => '0 0 * * *',
         'queue:prune-failed --hours=168' => '0 0 * * *',
+        'model:prune' => '0 0 * * *',
     ]);
 });
 

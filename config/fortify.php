@@ -115,7 +115,9 @@ return [
     */
 
     'limiters' => [
-        'login' => 'login',
+        // Sem limitador nomeado: o próprio Fortify conta as senhas erradas e
+        // dispara o evento Lockout (ver FortifyServiceProvider).
+        'login' => null,
         'two-factor' => 'two-factor',
     ],
 

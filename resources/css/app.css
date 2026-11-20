@@ -165,6 +165,33 @@
     --ease-standard: ease-in-out;
     --ease-emphasized: cubic-bezier(0.2, 0.8, 0.2, 1);
     --ease-spring: cubic-bezier(0.3, 1.4, 0.5, 1);
+
+    /* Animações das pranchas. Com "reduzir movimento", o bloco base as zera. */
+    --animate-float: float 4s ease-in-out infinite;
+    --animate-rise: rise 0.75s var(--ease-emphasized) both;
+
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes rise {
+        from {
+            opacity: 0;
+            transform: translateY(18px);
+            filter: blur(6px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+            filter: none;
+        }
+    }
 }
 
 /*
@@ -298,5 +325,75 @@
             transition-duration: 0.01ms !important;
             scroll-behavior: auto !important;
         }
+    }
+}
+
+@layer components {
+    /* Filhos que entram um depois do outro (telas de entrar e criar conta) */
+    .stagger > * {
+        animation: var(--animate-rise);
+    }
+    .stagger > :nth-child(2) {
+        animation-delay: 70ms;
+    }
+    .stagger > :nth-child(3) {
+        animation-delay: 140ms;
+    }
+    .stagger > :nth-child(4) {
+        animation-delay: 210ms;
+    }
+    .stagger > :nth-child(5) {
+        animation-delay: 280ms;
+    }
+    .stagger > :nth-child(n + 6) {
+        animation-delay: 350ms;
+    }
+
+    /*
+     * Item que gira em torno do centro do pai, sem parar. --orbit-radius e
+     * --orbit-angle definem a posição inicial.
+     */
+    .orbit-item {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -24px 0 0 -24px;
+        transform: rotate(var(--orbit-angle)) translateX(var(--orbit-radius))
+            rotate(calc(-1 * var(--orbit-angle)));
+        animation: orbit 48s linear infinite;
+    }
+    .orbit-item-reverse {
+        animation-direction: reverse;
+    }
+
+    @keyframes orbit {
+        from {
+            transform: rotate(var(--orbit-angle))
+                translateX(var(--orbit-radius))
+                rotate(calc(-1 * var(--orbit-angle)));
+        }
+        to {
+            transform: rotate(calc(var(--orbit-angle) + 360deg))
+                translateX(var(--orbit-radius))
+                rotate(calc(-1 * var(--orbit-angle) - 360deg));
+        }
+    }
+
+    /* Grade de pontos que some nas bordas, atrás do mascote */
+    .dot-grid {
+        --dot-grid-color: var(--color-pastel-lavender);
+        background-image: radial-gradient(
+            var(--dot-grid-color) 1.3px,
+            transparent 1.3px
+        );
+        background-size: 22px 22px;
+        mask-image: radial-gradient(
+            ellipse 60% 70% at 70% 45%,
+            #000 25%,
+            transparent 75%
+        );
+    }
+    .dark .dot-grid {
+        --dot-grid-color: var(--color-border);
     }
 }
