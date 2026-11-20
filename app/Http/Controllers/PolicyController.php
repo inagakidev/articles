@@ -23,7 +23,9 @@ class PolicyController extends Controller
             ->map(fn (string $locale) => "{$folder}/{$version->version}.{$locale}.md")
             ->first(fn (string $path) => is_file($path));
 
-        abort_if($file === null, 404);
+        $markdown = $file === null ? false : file_get_contents($file);
+
+        abort_if($markdown === false, 404);
 
         return Inertia::render('policies/show', [
             'type' => $type->value,
@@ -31,7 +33,7 @@ class PolicyController extends Controller
             'publishedAt' => $version->published_at->toDateString(),
             'draft' => $version->isDraft(),
             // Texto versionado no repositório, revisado em PR: sem conteúdo de usuário.
-            'html' => Str::markdown(file_get_contents($file), ['html_input' => 'strip']),
+            'html' => Str::markdown($markdown, ['html_input' => 'strip']),
         ]);
     }
 }

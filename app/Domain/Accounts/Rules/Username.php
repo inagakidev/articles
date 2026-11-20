@@ -54,7 +54,7 @@ class Username implements ValidationRule
     {
         $segments = [];
 
-        foreach (Route::getRoutes() as $route) {
+        foreach (Route::getRoutes()->getRoutes() as $route) {
             $first = Str::lower(Str::before($route->uri(), '/'));
 
             if ($first !== '' && ! str_starts_with($first, '{')) {
