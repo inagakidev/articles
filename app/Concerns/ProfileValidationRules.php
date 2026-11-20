@@ -61,7 +61,9 @@ trait ProfileValidationRules
         return [
             'required',
             'string',
-            'email',
+            // RFC e o filtro do PHP: o filtro exige domínio completo, então
+            // "lia@gmail" é recusado e "lia@gmail.com" passa.
+            'email:rfc,filter',
             'max:255',
             $userId === null
                 ? Rule::unique(User::class)

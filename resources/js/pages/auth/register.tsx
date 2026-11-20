@@ -5,6 +5,7 @@ import { useUsernameAvailability } from '@/hooks/use-username-availability';
 import type { AuthLayoutProps } from '@/layouts/auth-layout';
 import { Button } from '@/components/ui/button';
 import FormField from '@/components/ui/form-field';
+import EmailInput from '@/components/ui/email-input';
 import { Input } from '@/components/ui/input';
 import InputError from '@/components/ui/input-error';
 import PasswordInput from '@/components/ui/password-input';
@@ -88,9 +89,8 @@ export default function Register({ passwordRules }: Props) {
                             error={errors.email}
                         >
                             {(field) => (
-                                <Input
+                                <EmailInput
                                     {...field}
-                                    type="email"
                                     name="email"
                                     required
                                     autoComplete="email"

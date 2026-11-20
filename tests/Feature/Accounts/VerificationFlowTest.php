@@ -82,3 +82,11 @@ test('trocar o idioma com a conta aberta vale também para os e-mails', function
     expect($user->fresh()->locale)->toBe('en')
         ->and($user->fresh()->preferredLocale())->toBe('en');
 });
+
+test('"Usar outro e-mail" também exige o domínio completo', function () {
+    $user = User::factory()->unverified()->create();
+
+    $this->actingAs($user)
+        ->put(route('verification.email.update'), ['email' => 'lia@gmail'])
+        ->assertSessionHasErrors('email');
+});

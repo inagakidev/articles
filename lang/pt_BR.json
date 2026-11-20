@@ -1,5 +1,6 @@
 {
     "account.email": "E-mail",
+    "account.email.invalid": "Digite um e-mail completo, como voce@exemplo.dev.",
     "account.forgot.back": "Voltar para o login",
     "account.forgot.description": "Acontece. Informe o e-mail da conta e enviamos um link para criar uma nova senha.",
     "account.forgot.resend": "Reenviar link",

@@ -1,5 +1,6 @@
 {
     "account.email": "Email",
+    "account.email.invalid": "Enter a complete email, like you@example.dev.",
     "account.forgot.back": "Back to log in",
     "account.forgot.description": "It happens. Enter your account email and we'll send you a link to create a new password.",
     "account.forgot.resend": "Resend link",

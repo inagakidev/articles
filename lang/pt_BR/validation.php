@@ -159,8 +159,9 @@ return [
     'ulid' => 'O :attribute deve ser um ULID válido.',
     'uuid' => ':Attribute deve ser um UUID válido.',
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        // Mensagem com exemplo para o e-mail incompleto (D72).
+        'email' => [
+            'email' => 'Digite um e-mail completo, como voce@exemplo.dev.',
         ],
     ],
     'attributes' => [

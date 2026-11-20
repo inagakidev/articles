@@ -5,7 +5,7 @@ import { AuthCardHeader } from '@/layouts/auth-layout';
 import type { AuthLayoutProps } from '@/layouts/auth-layout';
 import { Button } from '@/components/ui/button';
 import FormField from '@/components/ui/form-field';
-import { Input } from '@/components/ui/input';
+import EmailInput from '@/components/ui/email-input';
 import { Spinner } from '@/components/ui/spinner';
 import TextLink from '@/components/ui/text-link';
 import { useTranslation } from '@/lib/i18n';
@@ -60,9 +60,8 @@ function RequestLink() {
                             error={errors.email}
                         >
                             {(field) => (
-                                <Input
+                                <EmailInput
                                     {...field}
-                                    type="email"
                                     name="email"
                                     required
                                     autoFocus

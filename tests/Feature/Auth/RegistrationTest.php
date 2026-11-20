@@ -83,3 +83,15 @@ test('a senha precisa de 8 caracteres', function () {
     $this->post(route('register.store'), registration(['password' => '1234567', 'password_confirmation' => '1234567']))
         ->assertSessionHasErrors('password');
 });
+
+test('recusa e-mail sem o domínio completo', function (string $email) {
+    $this->post(route('register.store'), registration(['email' => $email]))
+        ->assertSessionHasErrors(['email' => __('validation.custom.email.email')]);
+
+    expect(User::count())->toBe(0);
+})->with(['gabislis233@gmail', 'lia@localhost', 'lia@']);
+
+test('aceita e-mail com domínio completo', function (string $email) {
+    $this->post(route('register.store'), registration(['email' => $email]))
+        ->assertSessionHasNoErrors();
+})->with(['gabislis233@gmail.com', 'lia@sub.dominio.com.br']);
