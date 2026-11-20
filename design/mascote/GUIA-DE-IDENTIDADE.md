@@ -29,7 +29,7 @@ As cores são as da marca (`docs/DESIGN.md` §2.1 e §2.2). A ilustração tem v
 | Nome | Momento |
 |---|---|
 | `apresentando` | Boas-vindas: página inicial, entrar, criar conta |
-| `rosto` | Logo e qualquer uso entre 24 e 96 px |
+| `rosto` | Qualquer uso entre 24 e 96 px |
 | `lendo` | Leitura: fim do artigo, novo aceite dos Termos |
 | `pensativo` | Recuperar senha, busca sem resultados |
 | `comemorando` | Artigo aprovado |
@@ -54,4 +54,4 @@ A ilustração não tem partes separadas. Se uma tela pedir movimento, use só t
 - Redesenhar com outra estética, mudar proporções ou trocar a assimetria dos olhos.
 - Remover a dobra ou o marcador.
 - Adicionar cores fora da paleta, sombras projetadas ou texto dentro da arte.
-- Usar o mascote como foto de usuário.
+- Usar o mascote como foto de usuário ou no lugar da logo (D66).

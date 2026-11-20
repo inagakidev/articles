@@ -1,4 +1,4 @@
-# DECISIONS — Plataforma de Artigos
+# DECISIONS — he4rt ink
 
 **Atualizado em:** 19/11/2026
 
@@ -427,7 +427,7 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - As contagens de favoritos, que faltavam nas telas, entram na leitura e nos cards (RF-137, RF-161). Os cards voltaram a ficar sem contagens pela D63.
     - A interface usa "Aguardando revisão" e "Não aprovado" para os estados pendente e rejeitado (`DESIGN.md` §8.13).
 - **Alternativas descartadas:** a paleta da prancha (reaproveitava cores de estado como texto e, no tema escuro, texto colorido sobre destaque ficava perto de 1:1); mascote também na rejeição, com pose neutra.
-- **Pendente:** o nome do produto (`[NOME]` nas telas) e as telas no tema escuro.
+- **Pendente:** as telas no tema escuro. O nome do produto foi definido na D66.
 
 ### D62 — Interface em português e inglês
 
@@ -485,10 +485,23 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - São dez ilustrações: `apresentando`, `rosto`, `lendo`, `pensativo`, `comemorando`, `escrevendo`, `esperando`, `procurando`, `dormindo` e `ajustando`. O mapa de uso fica em `DESIGN.md` §5.3.
     - A aplicação usa WEBP com transparência em `resources/images/mascote/`, gerado por `design/mascote/converter.py` a partir dos PNGs originais: largura de 600 px (192 px no rosto), o dobro do maior tamanho de exibição, com qualidade 85. Cada arquivo tem entre 9 e 62 KB, contra 0,8 a 7 MB dos PNGs. Um teste limita cada ilustração a 80 KB.
     - Os PNGs e os arquivos de trabalho ficam fora do repositório, no Drive do projeto (pasta `mascote-poses-v2`, variante `sem-risquinhos`), para não pesar no histórico do git.
-    - Abaixo de 96 px usa-se o `rosto`; abaixo de 24 px, o mascote não é usado. O favicon e o ícone da tela inicial continuam sendo o marcador roxo.
+    - Abaixo de 96 px usa-se o `rosto`; abaixo de 24 px, o mascote não é usado. O favicon e o ícone da tela inicial são os da logo (D66).
     - O kit vetorial (SVGs, rig para web, base para o Rive e scripts) foi removido do repositório e continua no histórico do git.
 - **Alternativas descartadas:** manter o kit vetorial ao lado das ilustrações (dois estilos na mesma interface); versionar os PNGs, inclusive com Git LFS (cerca de 36 MB que só servem de origem); converter a ilustração em SVG traçado (a D57 já mostrou arquivos de até 2,1 MB com artefatos).
 - **Impacto:**
     - A animação pelo rig do kit deixa de existir. Se uma tela pedir movimento, ele se limita a transformações CSS da imagem inteira, desligadas com `prefers-reduced-motion`.
     - Clientes de e-mail não exibem WEBP de forma confiável. Quando os e-mails forem feitos, o script ganha uma saída em PNG.
 - **Pendente:** a ilustração `ajustando` foi feita para o artigo devolvido para ajuste, mas a D61 tira o mascote do artigo não aprovado. Até nova decisão, ela não é usada.
+
+### D66 — Nome e logo: he4rt ink
+
+- **Status:** Aprovada (19/11/2026). Resolve a pendência do nome do produto na D61.
+- **Decisão:**
+    - O produto se chama **he4rt ink**, sempre em minúsculas, e a tagline é "he4rt developers".
+    - A logo é o ícone de folha com coração mais o nome desenhado. Ela aparece no cabeçalho do site e nas telas de entrar e criar conta; o ícone sozinho aparece no cabeçalho do celular, no favicon e no ícone da tela inicial; a versão com tagline fica no rodapé. O mapa está em `DESIGN.md` §5.4.
+    - O mascote deixa de ser usado como logo e fica só nos estados e momentos de `DESIGN.md` §5.3.
+    - As variações são separadas da prancha da marca por `design/logo/gerar.mjs`, que também gera `favicon.svg`, `favicon.ico` e `apple-touch-icon.png`. A prancha fica fora do repositório, como os originais do mascote.
+    - No tema escuro, a logo usa as cores da variação branca da prancha (ícone branco, coração roxo, nome em branco e lavanda). As duas versões são trocadas só com CSS, sem JavaScript, para não piscar ao carregar.
+    - As cores da logo ficam na arte e não viram tokens da interface (D60): são marca, não cor de componente.
+- **Alternativas descartadas:** o rosto do mascote como logo (mistura a marca com a ilustração de estados); SVG da logo embutido no código dos componentes (cerca de 9 KB de caminhos dentro do JavaScript, repetidos para cada tema); a tagline no cabeçalho (fica ilegível na altura do cabeçalho).
+- **Impacto:** `APP_NAME` passa a ser "he4rt ink", o que muda o título das páginas e o remetente dos e-mails. Os documentos do projeto passam a usar o nome.

@@ -1,4 +1,4 @@
-# Plataforma de Artigos
+# he4rt ink
 
 Publicação e leitura de artigos técnicos para a comunidade He4rt e para devs em geral. Escreva, envie para revisão, publique.
 
@@ -20,7 +20,7 @@ O que querem resolver: autores, publicar um texto técnico revisado num lugar qu
 
 A comunidade He4rt já publica artigos, mas em uma plataforma externa e genérica, o dev.to. Não existe um espaço que seja da própria comunidade, onde a produção dela apareça como um conjunto e onde as regras de publicação sejam definidas por ela.
 
-A Plataforma de Artigos dá à He4rt esse espaço: um lugar próprio para publicar, com revisão antes de cada publicação, para que quem escreve publique com segurança e quem chega veja que a comunidade tem o seu próprio "dev.to".
+O he4rt ink dá à He4rt esse espaço: um lugar próprio para publicar, com revisão antes de cada publicação, para que quem escreve publique com segurança e quem chega veja que a comunidade tem o seu próprio "dev.to".
 
 ## Product Purpose
 

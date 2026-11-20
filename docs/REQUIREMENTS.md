@@ -1,4 +1,4 @@
-# REQUIREMENTS — Plataforma de Artigos
+# REQUIREMENTS — he4rt ink
 
 **Versão:** 1.5 — Decisões do handoff de design (D63)
 **Data:** 19/11/2026
