@@ -48,4 +48,17 @@ describe('Mascote', () => {
             );
         }
     });
+
+    it('com sombra no chão, continua decorativo e a sombra acompanha a flutuação', () => {
+        const { container } = render(
+            <Mascot art="lendo" size={200} float grounded />,
+        );
+        const wrapper = container.firstElementChild!;
+
+        expect(wrapper).toHaveAttribute('aria-hidden', 'true');
+        expect(container.querySelector('img')).toHaveClass('animate-float');
+        expect(container.querySelector('.mascot-shadow')).toHaveClass(
+            'mascot-shadow-float',
+        );
+    });
 });

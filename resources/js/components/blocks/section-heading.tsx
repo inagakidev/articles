@@ -20,10 +20,16 @@ export default function SectionHeading({
         <div
             className={cn(
                 'reveal flex max-w-180 flex-col gap-3.5',
-                align === 'center' && 'mx-auto items-center text-center',
+                align === 'center'
+                    ? 'mx-auto items-center text-center'
+                    : 'items-start',
             )}
         >
-            <span className="text-caption font-extrabold tracking-[0.1em] text-primary-text uppercase">
+            <span className="inline-flex items-center gap-2 rounded-full bg-surface-muted px-3.5 py-1.5 text-caption font-extrabold tracking-[0.1em] text-primary-text uppercase ring-1 ring-pastel-lavender ring-inset dark:ring-border">
+                <span
+                    aria-hidden="true"
+                    className="size-1.5 rounded-full bg-primary"
+                />
                 {eyebrow}
             </span>
             <h2

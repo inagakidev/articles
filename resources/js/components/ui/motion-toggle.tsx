@@ -28,11 +28,15 @@ export default function MotionToggle({
                 aria-label={label}
                 title={label}
                 className={cn(
-                    'inline-flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-text-primary hover:bg-surface-hover',
+                    'inline-flex size-10 shrink-0 items-center justify-center rounded-full text-text-primary hover:bg-surface-hover',
                     className,
                 )}
             >
-                <Icon aria-hidden="true" className="size-[18px]" />
+                <Icon
+                    key={String(paused)}
+                    aria-hidden="true"
+                    className="size-[18px] animate-icon-swap"
+                />
             </button>
         );
     }

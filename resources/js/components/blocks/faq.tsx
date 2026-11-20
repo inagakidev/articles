@@ -48,11 +48,7 @@ export default function Faq() {
                         }
                     />
                     <div className="reveal">
-                        <Mascot
-                            art="pensativo"
-                            size={170}
-                            className="animate-float"
-                        />
+                        <Mascot art="pensativo" size={170} float grounded />
                     </div>
                 </div>
 

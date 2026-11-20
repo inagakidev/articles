@@ -3,6 +3,7 @@ import AuthorAvatar from '@/components/articles/author-avatar';
 import Pill, { pastelTones } from '@/components/ui/pill';
 import { formatDate } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
+import { followPointer } from '@/lib/spotlight';
 import { cn } from '@/lib/utils';
 import type { ArticleSummary } from '@/types';
 
@@ -22,8 +23,9 @@ export default function ArticleCard({
 
     return (
         <article
+            onPointerMove={followPointer}
             className={cn(
-                'lift-card relative flex flex-col gap-4 rounded-[20px] border border-border bg-surface p-3 shadow-sm',
+                'lift-card spotlight relative flex flex-col gap-4 rounded-[20px] border border-border bg-surface p-3 shadow-sm',
                 className,
             )}
         >

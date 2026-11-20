@@ -7,6 +7,7 @@ import type { MascotArt } from '@/components/ui/mascot';
 import StatusBadge from '@/components/ui/status-badge';
 import type { ArticleStatus } from '@/components/ui/status-badge';
 import { useTranslation } from '@/lib/i18n';
+import { followPointer } from '@/lib/spotlight';
 import type { TranslationKey } from '@/lib/i18n';
 
 type Step = {
@@ -75,11 +76,14 @@ export default function HowItWorks() {
                             >
                                 <span
                                     aria-hidden="true"
-                                    className="relative z-1 inline-flex size-14 items-center justify-center rounded-[18px] bg-surface font-display text-[1.375rem] font-extrabold text-text-on-selected shadow-md ring-2 ring-pastel-lavender ring-inset"
+                                    className="step-number relative z-1 inline-flex size-14 items-center justify-center rounded-[18px] bg-primary font-display text-[1.375rem] font-extrabold text-text-on-primary shadow-primary"
                                 >
                                     {index + 1}
                                 </span>
-                                <div className="lift-card flex flex-wrap items-center gap-6 rounded-[28px] border border-border bg-surface p-[clamp(20px,3vw,32px)]">
+                                <div
+                                    onPointerMove={followPointer}
+                                    className="lift-card spotlight relative flex flex-wrap items-center gap-6 rounded-[28px] border border-border bg-surface p-[clamp(20px,3vw,32px)]"
+                                >
                                     <div className="flex min-w-0 flex-[999_1_300px] flex-col gap-3">
                                         <StatusBadge status={step.status} />
                                         <h3 className="text-[clamp(1.375rem,2.4vw,1.75rem)] leading-[1.2] font-extrabold tracking-[-0.02em]">
@@ -103,11 +107,12 @@ export default function HowItWorks() {
                                             ))}
                                         </ul>
                                     </div>
-                                    <div className="flex flex-[1_1_160px] justify-center rounded-[22px] bg-surface-muted p-4.5">
+                                    <div className="flex flex-[1_1_160px] justify-center">
                                         <Mascot
                                             art={step.art}
                                             size={150}
-                                            className="animate-float"
+                                            float
+                                            grounded
                                         />
                                     </div>
                                 </div>

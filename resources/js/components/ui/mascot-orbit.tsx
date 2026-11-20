@@ -54,10 +54,13 @@ function position(radius: string, angle: number) {
 export default function MascotOrbit({
     children,
     size = 'md',
+    float = true,
     className,
 }: {
     children: ReactNode;
     size?: keyof typeof sizes;
+    /** Falso quando o próprio mascote flutua (com a sombra parada no chão). */
+    float?: boolean;
     className?: string;
 }) {
     const { outer, inner, box, icon } = sizes[size];
@@ -100,7 +103,9 @@ export default function MascotOrbit({
                     <span className={cn('size-4 rounded-full', color)} />
                 </span>
             ))}
-            <div className="relative animate-float">{children}</div>
+            <div className={cn('relative', float && 'animate-float')}>
+                {children}
+            </div>
         </div>
     );
 }

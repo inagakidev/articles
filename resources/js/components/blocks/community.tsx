@@ -128,7 +128,7 @@ function Invitation() {
 
     return (
         <div className="reveal mx-auto flex max-w-180 flex-wrap items-center justify-center gap-x-8 gap-y-5 rounded-[28px] border border-dashed border-pastel-lavender bg-surface-muted p-[clamp(24px,4vw,40px)] text-center sm:text-left dark:border-border">
-            <Mascot art="escrevendo" size={140} className="animate-float" />
+            <Mascot art="escrevendo" size={140} float grounded />
             <div className="flex min-w-0 flex-[1_1_280px] flex-col items-center gap-3 sm:items-start">
                 <h3 className="text-h3 font-extrabold">
                     {t('landing.community.empty.title')}

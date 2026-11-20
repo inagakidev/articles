@@ -861,6 +861,10 @@ entre o leitor e o conteúdo.
 
 **Regras de uso**
 
+- Sem quadro ou fundo atrás do mascote. Na página de apresentação, ele
+  fica sobre uma sombra elíptica no chão (`grounded`), para parecer
+  apoiado em vez de solto; quando flutua, a sombra encolhe no mesmo
+  ritmo.
 - Sempre decorativo: `alt=""` e `aria-hidden="true"`. O texto ao lado
   comunica a mensagem sem depender da imagem.
 - Sem texto dentro da arte, para a interface funcionar igual em PT e EN.

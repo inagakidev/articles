@@ -65,7 +65,9 @@ export default function FinalCta() {
                     <Mascot
                         art="comemorando"
                         size={220}
-                        className="relative animate-float"
+                        float
+                        grounded
+                        className="relative"
                     />
                 </div>
             </div>

@@ -167,12 +167,8 @@ export default function Audience() {
                     aria-labelledby={`tab-${journey.id}`}
                     className="flex flex-wrap items-center gap-[clamp(24px,5vw,56px)] rounded-[32px] border border-border bg-surface p-[clamp(24px,4vw,48px)]"
                 >
-                    <div className="flex flex-[1_1_220px] animate-rise justify-center rounded-[28px] bg-surface-muted p-6">
-                        <Mascot
-                            art={journey.art}
-                            size={200}
-                            className="animate-float"
-                        />
+                    <div className="flex flex-[1_1_220px] animate-rise justify-center">
+                        <Mascot art={journey.art} size={200} float grounded />
                     </div>
                     <div className="stagger flex min-w-0 flex-[999_1_380px] flex-col gap-5.5">
                         <h3 className="text-[clamp(1.5rem,2.8vw,2rem)] leading-[1.2] font-extrabold tracking-[-0.02em]">

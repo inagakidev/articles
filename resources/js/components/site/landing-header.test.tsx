@@ -1,10 +1,32 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vite-plus/test';
+import {
+    afterEach,
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+} from 'vite-plus/test';
 import { testPage } from '@/test/inertia';
 import LandingHeader from '@/components/site/landing-header';
 
 describe('cabeçalho da apresentação', () => {
-    it('leva às seções, pausa as animações e chama para escrever', () => {
+    beforeEach(() => {
+        vi.stubGlobal(
+            'matchMedia',
+            vi.fn(() => ({
+                matches: false,
+                addEventListener: vi.fn(),
+                removeEventListener: vi.fn(),
+            })),
+        );
+    });
+
+    afterEach(() => {
+        vi.unstubAllGlobals();
+    });
+
+    it('leva às seções, troca tema e idioma, pausa as animações e chama para escrever', () => {
         Object.assign(testPage.props, {
             locale: 'pt_BR',
             auth: { user: null },
@@ -25,8 +47,14 @@ describe('cabeçalho da apresentação', () => {
             '/login',
         );
         expect(
-            screen.getByRole('link', { name: 'Começar a escrever' }),
+            screen.getByRole('link', { name: /Começar a escrever/ }),
         ).toHaveAttribute('href', '/register');
+        expect(
+            screen.getByRole('button', { name: /Tema/i }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', { name: /English/ }),
+        ).toBeInTheDocument();
     });
 
     it('para quem já entrou, leva aos próprios artigos', () => {

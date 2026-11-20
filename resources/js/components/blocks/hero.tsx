@@ -40,6 +40,14 @@ export default function Hero({
             aria-labelledby="hero-title"
             className="relative overflow-hidden pt-[clamp(40px,7vw,88px)]"
         >
+            <div
+                aria-hidden="true"
+                className="absolute inset-0 overflow-hidden"
+            >
+                <span className="aurora top-[-10%] right-[5%] size-[min(520px,80vw)] bg-pastel-lavender" />
+                <span className="aurora bottom-[-20%] left-[-10%] size-[min(420px,70vw)] bg-pastel-pink [animation-delay:-6s]" />
+                <span className="aurora top-[30%] right-[30%] size-[min(300px,50vw)] bg-pastel-blue [animation-delay:-12s]" />
+            </div>
             <div aria-hidden="true" className="dot-grid absolute inset-0" />
             <LandingContainer className="relative flex flex-wrap items-center gap-[clamp(32px,5vw,56px)]">
                 <div className="stagger flex min-w-0 flex-[999_1_520px] flex-col gap-6">
@@ -121,10 +129,12 @@ export default function Hero({
 
                 <div className="flex flex-[1_1_360px] animate-rise justify-center [animation-delay:200ms]">
                     <div className="relative flex w-[min(460px,92vw)] justify-center">
-                        <MascotOrbit size="lg">
+                        <MascotOrbit size="lg" float={false}>
                             <Mascot
                                 art="apresentando"
                                 size={230}
+                                float
+                                grounded
                                 className="max-w-[42vw]"
                             />
                         </MascotOrbit>

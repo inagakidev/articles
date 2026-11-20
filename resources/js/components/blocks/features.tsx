@@ -21,6 +21,7 @@ import SectionHeading, {
 import Mascot from '@/components/ui/mascot';
 import StatusBadge from '@/components/ui/status-badge';
 import { localeNames, useTranslation } from '@/lib/i18n';
+import { followPointer } from '@/lib/spotlight';
 import { cn } from '@/lib/utils';
 
 const toolbar = [Bold, Italic, Heading2, Link2, SquareCode, List, Image];
@@ -47,7 +48,7 @@ export default function Features() {
                         Icon={Eye}
                         title={t('landing.features.preview.title')}
                         text={t('landing.features.preview.text')}
-                        className="md:col-span-2 md:row-span-2"
+                        className="md:col-span-2"
                     >
                         <div
                             aria-hidden="true"
@@ -81,9 +82,12 @@ export default function Features() {
                                     {t('landing.features.preview.sample_mark')}
                                 </mark>{' '}
                                 {t('landing.features.preview.sample_after')}
+                                <span className="caret" />
                             </div>
                             <div className="dark overflow-x-auto rounded-md bg-bg px-3.5 py-3 font-mono text-caption whitespace-pre text-text-primary">
-                                <span className="text-primary-text">php</span>{' '}
+                                <span className="text-primary-text">
+                                    php
+                                </span>{' '}
                                 artisan queue:work --tries=3
                             </div>
                         </div>
@@ -96,7 +100,7 @@ export default function Features() {
                     >
                         <div
                             aria-hidden="true"
-                            className="mt-auto flex flex-col gap-2"
+                            className="skeleton-sweep mt-auto flex flex-col gap-2"
                         >
                             {['92%', '100%', '84%', '96%', '60%'].map(
                                 (width) => (
@@ -118,10 +122,10 @@ export default function Features() {
                     >
                         <div
                             aria-hidden="true"
-                            className="mt-auto flex gap-3 rounded-[18px] bg-surface-muted p-3.5"
+                            className="mt-auto flex items-end gap-2.5"
                         >
-                            <Mascot art="rosto" size={40} />
-                            <div className="flex flex-col gap-1">
+                            <Mascot art="rosto" size={44} />
+                            <div className="relative flex flex-1 flex-col gap-1 rounded-[18px] rounded-bl-sm bg-surface-muted p-3.5">
                                 <span className="text-badge font-bold text-text-secondary">
                                     {t('landing.features.review.label')}
                                 </span>
@@ -166,12 +170,12 @@ export default function Features() {
                         <div
                             role="img"
                             aria-label={t('landing.features.languages.label')}
-                            className="mt-auto inline-flex self-start rounded-full bg-surface-muted p-1"
+                            className="lang-swap mt-auto grid grid-cols-2 self-start rounded-full bg-surface-muted p-1"
                         >
-                            <span className="inline-flex h-9 items-center rounded-full bg-surface px-4 text-meta font-extrabold shadow-sm">
+                            <span className="inline-flex h-9 items-center justify-center px-4 text-meta font-bold">
                                 {localeNames.pt_BR.name}
                             </span>
-                            <span className="inline-flex h-9 items-center px-4 text-meta font-semibold">
+                            <span className="inline-flex h-9 items-center justify-center px-4 text-meta font-bold">
                                 {localeNames.en.name}
                             </span>
                         </div>
@@ -183,9 +187,12 @@ export default function Features() {
                         iconClassName="bg-surface-selected text-primary-text"
                         title={t('landing.features.dark.title')}
                         text={t('landing.features.dark.text')}
-                        className="dark bg-bg"
+                        className="dark bg-bg md:col-span-full"
                     >
-                        <div aria-hidden="true" className="mt-auto flex gap-2">
+                        <div
+                            aria-hidden="true"
+                            className="swatch-wave mt-auto flex gap-2"
+                        >
                             {[
                                 'bg-surface',
                                 'bg-surface-selected',
@@ -196,7 +203,7 @@ export default function Features() {
                                 <span
                                     key={color}
                                     className={cn(
-                                        'h-8.5 flex-1 rounded-[10px]',
+                                        'h-8.5 flex-1 rounded-[10px] md:h-12',
                                         color,
                                     )}
                                 />
@@ -226,15 +233,16 @@ function FeatureCard({
 }) {
     return (
         <article
+            onPointerMove={followPointer}
             className={cn(
-                'lift-card reveal flex min-w-0 flex-col gap-3.5 overflow-hidden rounded-[28px] border border-border bg-surface p-7 text-text-primary',
+                'lift-card spotlight reveal relative flex min-w-0 flex-col gap-3.5 overflow-hidden rounded-[28px] border border-border bg-surface p-7 text-text-primary',
                 className,
             )}
         >
             <span
                 aria-hidden="true"
                 className={cn(
-                    'inline-flex size-11 items-center justify-center rounded-[14px]',
+                    'card-icon inline-flex size-11 items-center justify-center rounded-[14px]',
                     iconClassName,
                 )}
             >

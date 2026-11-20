@@ -1,5 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
+import { LanguageToggle } from '@/components/site/language-switch';
 import SiteLogo from '@/components/site/site-logo';
+import { ThemeToggle } from '@/components/site/theme-toggle';
 import { Button } from '@/components/ui/button';
 import MotionToggle from '@/components/ui/motion-toggle';
 import { useTranslation } from '@/lib/i18n';
@@ -14,9 +16,14 @@ const sections: { id: string; label: TranslationKey }[] = [
     { id: 'faq', label: 'landing.nav.faq' },
 ];
 
+/** Botões de ferramenta do cabeçalho: redondos, sem borda, como o de pausar. */
+const toolClass =
+    'size-10 shrink-0 rounded-full px-0 text-text-primary hover:bg-surface-hover';
+
 /**
  * Cabeçalho fixo e translúcido da página de apresentação: atalhos para as
- * seções, "Pausar animações" (RF-383) e a chamada para escrever.
+ * seções, tema, idioma, "Pausar animações" (RF-383) e a chamada para
+ * escrever.
  */
 export default function LandingHeader() {
     const { auth } = usePage().props;
@@ -40,7 +47,9 @@ export default function LandingHeader() {
                         </a>
                     ))}
                 </nav>
-                <div className="ml-auto flex items-center gap-2">
+                <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
+                    <ThemeToggle className={toolClass} />
+                    <LanguageToggle className={toolClass} />
                     <MotionToggle variant="icon" />
                     {auth.user ? (
                         <Button
@@ -66,7 +75,12 @@ export default function LandingHeader() {
                                 className="rounded-[14px] font-bold shadow-primary"
                             >
                                 <Link href={register()}>
-                                    {t('landing.cta.write')}
+                                    <span className="sm:hidden">
+                                        {t('landing.cta.write_short')}
+                                    </span>
+                                    <span className="hidden sm:inline">
+                                        {t('landing.cta.write')}
+                                    </span>
                                 </Link>
                             </Button>
                         </>
