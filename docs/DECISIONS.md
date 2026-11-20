@@ -558,13 +558,21 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
 
 ### D71 — Provedor de e-mail com baixo acoplamento
 
-- **Status:** Proposta (19/11/2026). O provedor é escolhido na p8-12.
+- **Status:** Proposta (19/11/2026). **O provedor de e-mail é uma decisão em aberto até a P8-01.**
 - **Contexto:** hoje os e-mails saem pela fila para o Mailpit, que só existe no desenvolvimento. Em produção, um provedor entrega os e-mails, assina com o domínio (DKIM) e avisa sobre bounces e reclamações. O projeto quer poder trocar de provedor sem retrabalho.
 - **Decisão:**
     - **Envio:** a aplicação só envia por `Notification` ou `Mailable` do Laravel, sempre pela fila. O provedor é escolhido só por configuração (`MAIL_MAILER` e `config/mail.php`); trocar de provedor é mudar o `.env` e, se preciso, instalar o pacote do transporte. Nenhum SDK de provedor entra no domínio.
     - **Avisos do provedor:** bounces e reclamações chegam por webhook a um único ponto de entrada em `app/Support/Mail`. Cada provedor tem um adaptador que traduz o aviso para eventos próprios (`EmailBounced`, `EmailComplained`); o domínio reage a esses eventos e para de enviar para o endereço, sem saber qual provedor avisou (p6-17).
     - **Falha do provedor:** em produção, o mailer padrão é o `failover` do Laravel: provedor principal, provedor reserva e, por último, `log`.
     - **Conferência:** o comando `php artisan mail:test {e-mail}` envia na hora, sem fila, um e-mail com a configuração atual e mostra o erro do transporte quando ele falha. Serve para conferir um provedor novo antes de virar a chave.
-    - **Critérios de escolha (p8-12):** transporte nativo no Laravel (SES, Postmark, Resend e Mailgun têm), entregabilidade para e-mail transacional, webhooks de bounce e reclamação, custo no volume da comunidade, onde os dados ficam e adequação à LGPD, e domínio próprio com DKIM.
+    - **Até a P8-01:** nenhum provedor é escolhido, instalado, configurado ou integrado, e nenhum é tratado como padrão. Não há credenciais, variáveis de ambiente nem configuração de fornecedor no projeto: as entradas de fornecedores que vinham no esqueleto do Laravel (`config/mail.php` e `config/services.php`) foram retiradas. O desenvolvimento continua com o Mailpit local e o mailer `array` nos testes, sem depender de fornecedor.
+    - **Na P8-01:** comparar os fornecedores disponíveis pelos critérios abaixo e apresentar prós, contras, custos e implicações técnicas de cada um antes de recomendar ou implementar qualquer solução.
+    - **Critérios de avaliação:**
+        - integração nativa com o Laravel;
+        - entregabilidade de e-mails transacionais;
+        - webhooks para eventos de entrega, bounce e reclamação;
+        - plano gratuito e custo conforme o volume esperado da comunidade;
+        - localização e tratamento dos dados, considerando a LGPD;
+        - suporte a domínio próprio e DKIM.
     - **Domínio:** SPF, DKIM e DMARC configurados no DNS antes do primeiro envio real. A Política de privacidade lista o provedor como operador, porque ele processa nome, e-mail e conteúdo das mensagens.
 - **Alternativas descartadas:** uma interface própria de "enviador de e-mail" na aplicação (o mailer do Laravel já é essa abstração, e duplicá-la só acrescentaria código); usar o SDK do provedor para recursos extras (prende o código a ele); enviar de um servidor próprio, sem provedor (IP sem reputação, e-mails no spam).
