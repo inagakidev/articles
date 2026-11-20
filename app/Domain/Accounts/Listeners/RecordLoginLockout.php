@@ -24,12 +24,13 @@ class RecordLoginLockout
         $request = $event->request;
         $email = Str::lower(trim((string) $request->input(Fortify::username())));
 
-        // O Fortify dispara o Lockout a cada tentativa durante a pausa. Um
-        // registro por pausa basta e evita encher a tabela durante um ataque.
+        // O Lockout chega a cada tentativa durante a pausa (por e-mail no
+        // Fortify, por IP no ThrottleAuthByIp). Um registro por e-mail e IP a
+        // cada minuto basta e evita encher a tabela durante um ataque.
         $once = Cache::add(
             'security-events:login-blocked:'.sha1($email.'|'.$request->ip()),
             true,
-            max(1, $this->limiter->availableIn($request)),
+            max(60, $this->limiter->availableIn($request)),
         );
 
         if (! $once) {

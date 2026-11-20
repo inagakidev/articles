@@ -8,6 +8,7 @@
     "account.forgot.sent.title": "Link enviado",
     "account.forgot.submit": "Enviar link",
     "account.forgot.title": "Esqueceu a senha?",
+    "account.forgot.too_many": "Muitos pedidos de link a partir desta rede. Tente de novo em :minutes min.",
     "account.login.create_account": "Criar conta",
     "account.login.description": "Bom te ver de novo. Ler não exige conta; entre para escrever, comentar e curtir.",
     "account.login.forgot": "Esqueci a senha",
