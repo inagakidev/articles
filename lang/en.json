@@ -8,6 +8,7 @@
     "account.forgot.sent.title": "Link sent",
     "account.forgot.submit": "Send link",
     "account.forgot.title": "Forgot your password?",
+    "account.forgot.too_many": "Too many link requests from this network. Try again in :minutes min.",
     "account.login.create_account": "Sign up",
     "account.login.description": "Good to see you again. Reading doesn't need an account; log in to write, comment and like.",
     "account.login.forgot": "Forgot password",
