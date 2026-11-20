@@ -25,6 +25,8 @@
     "home.title": "Início",
     "language.label": "Idioma",
     "language.toggle": "Idioma: :current. Mudar para :next",
+    "motion.pause": "Pausar animações",
+    "motion.resume": "Retomar animações",
     "site.footer.about": "O espaço da comunidade He4rt para artigos técnicos. Cada artigo passa por revisão antes de ir ao ar.",
     "site.nav.login": "Entrar",
     "site.nav.my_articles": "Meus artigos",

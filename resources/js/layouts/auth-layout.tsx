@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import type { MascotArt } from '@/components/ui/mascot';
 import Mascot from '@/components/ui/mascot';
 import MascotOrbit from '@/components/ui/mascot-orbit';
+import MotionToggle from '@/components/ui/motion-toggle';
 import SiteLogo from '@/components/site/site-logo';
 import type { TranslationKey } from '@/lib/i18n';
 import { useTranslation } from '@/lib/i18n';
@@ -89,13 +90,14 @@ function PanelLayout({
                     )}
                 </div>
                 {/* Termos de uso e Privacidade entram aqui com as páginas (fatia 4) */}
-                <span />
+                <MotionToggle className="relative -ml-3 self-start" />
             </aside>
 
             {/* Celular: palco com o mascote e o formulário numa folha por cima */}
             <div className="flex flex-col bg-surface-muted pb-10 lg:hidden">
-                <header className="flex h-15 items-center px-4">
+                <header className="flex h-15 items-center justify-between pr-2 pl-4">
                     <SiteLogo height={31} />
+                    {art && <MotionToggle />}
                 </header>
                 {art && (
                     <div className="flex flex-col items-center gap-1 text-center">

@@ -366,6 +366,12 @@
         animation-direction: reverse;
     }
 
+    /* "Pausar animações" (RF-383): para o movimento contínuo onde estiver */
+    .motion-paused .orbit-item,
+    .motion-paused .animate-float {
+        animation-play-state: paused;
+    }
+
     @keyframes orbit {
         from {
             transform: rotate(var(--orbit-angle))

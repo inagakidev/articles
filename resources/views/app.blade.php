@@ -16,6 +16,13 @@
                         document.documentElement.classList.add('dark');
                     }
                 }
+
+                // Animações pausadas pela pessoa (use-motion-pause.ts)
+                try {
+                    if (localStorage.getItem('motion') === 'paused') {
+                        document.documentElement.classList.add('motion-paused');
+                    }
+                } catch (e) {}
             })();
         </script>
 
