@@ -555,3 +555,16 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - Os e-mails usam o tema `he4rt` (`resources/views/vendor/mail/html/themes/he4rt.css`): o tema do Laravel com as cores da marca, cartão de cantos arredondados e botão roxo. O cabeçalho mostra a logo em PNG (`public/images/email/logo.png`, gerada por `design/logo/gerar.mjs`), porque clientes de e-mail não exibem SVG.
 - **Alternativas descartadas:** CAPTCHA já no MVP (fora do escopo, RF-021); limite por IP mais baixo no login (redes compartilhadas, como a de um evento da comunidade, bloqueariam pessoas legítimas); logo como texto no e-mail (perde a identidade).
 - **Pendente:** a logo do e-mail é carregada de `APP_URL`, que precisa ser o endereço público em produção (já exigido pela D67).
+
+### D71 — Provedor de e-mail com baixo acoplamento
+
+- **Status:** Proposta (19/11/2026). O provedor é escolhido na p8-12.
+- **Contexto:** hoje os e-mails saem pela fila para o Mailpit, que só existe no desenvolvimento. Em produção, um provedor entrega os e-mails, assina com o domínio (DKIM) e avisa sobre bounces e reclamações. O projeto quer poder trocar de provedor sem retrabalho.
+- **Decisão:**
+    - **Envio:** a aplicação só envia por `Notification` ou `Mailable` do Laravel, sempre pela fila. O provedor é escolhido só por configuração (`MAIL_MAILER` e `config/mail.php`); trocar de provedor é mudar o `.env` e, se preciso, instalar o pacote do transporte. Nenhum SDK de provedor entra no domínio.
+    - **Avisos do provedor:** bounces e reclamações chegam por webhook a um único ponto de entrada em `app/Support/Mail`. Cada provedor tem um adaptador que traduz o aviso para eventos próprios (`EmailBounced`, `EmailComplained`); o domínio reage a esses eventos e para de enviar para o endereço, sem saber qual provedor avisou (p6-17).
+    - **Falha do provedor:** em produção, o mailer padrão é o `failover` do Laravel: provedor principal, provedor reserva e, por último, `log`.
+    - **Conferência:** o comando `php artisan mail:test {e-mail}` envia na hora, sem fila, um e-mail com a configuração atual e mostra o erro do transporte quando ele falha. Serve para conferir um provedor novo antes de virar a chave.
+    - **Critérios de escolha (p8-12):** transporte nativo no Laravel (SES, Postmark, Resend e Mailgun têm), entregabilidade para e-mail transacional, webhooks de bounce e reclamação, custo no volume da comunidade, onde os dados ficam e adequação à LGPD, e domínio próprio com DKIM.
+    - **Domínio:** SPF, DKIM e DMARC configurados no DNS antes do primeiro envio real. A Política de privacidade lista o provedor como operador, porque ele processa nome, e-mail e conteúdo das mensagens.
+- **Alternativas descartadas:** uma interface própria de "enviador de e-mail" na aplicação (o mailer do Laravel já é essa abstração, e duplicá-la só acrescentaria código); usar o SDK do provedor para recursos extras (prende o código a ele); enviar de um servidor próprio, sem provedor (IP sem reputação, e-mails no spam).

@@ -39,6 +39,8 @@
     "home.title": "Início",
     "language.label": "Idioma",
     "language.toggle": "Idioma: :current. Mudar para :next",
+    "mail.check.body": "Se você recebeu esta mensagem, o envio pelo mailer \":mailer\" está funcionando. Enviado em :time (UTC).",
+    "mail.check.subject": "E-mail de teste do he4rt ink",
     "mail.footer": "Você recebeu este e-mail porque tem uma conta no :app.",
     "mail.greeting": "Olá!",
     "mail.greeting_error": "Algo deu errado",

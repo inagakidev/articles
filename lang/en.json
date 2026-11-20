@@ -39,6 +39,8 @@
     "home.title": "Home",
     "language.label": "Language",
     "language.toggle": "Language: :current. Switch to :next",
+    "mail.check.body": "If you got this message, sending through the \":mailer\" mailer works. Sent at :time (UTC).",
+    "mail.check.subject": "he4rt ink test email",
     "mail.footer": "You received this email because you have an account on :app.",
     "mail.greeting": "Hi!",
     "mail.greeting_error": "Something went wrong",

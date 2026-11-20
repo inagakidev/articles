@@ -69,6 +69,7 @@ app/
 - **Resources:** nenhum modelo vai direto para o Inertia. Cada página recebe só os campos de que precisa, por um `JsonResource`, para não expor dados por acidente.
 - **Policies:** toda operação protegida passa por uma Policy. Não há liberação geral para o administrador (`Gate::before`), porque ele também tem restrições (D56).
 - **Support:** cada integração externa tem um ponto de entrada (`Support/Images`, `Support/Editor`, `Support/Search`). Interface só quando houver uma segunda implementação. O Cloudflare R2 é usado pelo filesystem do Laravel (`Storage::disk()`), sem camada própria.
+- **E-mail (D71):** a aplicação só envia por `Notification` ou `Mailable` do Laravel, sempre pela fila. O provedor aparece só em `config/mail.php` e no `.env` (`MAIL_MAILER`), e trocar de provedor não muda código. Nunca usar o SDK de um provedor no domínio. O que for específico de um provedor (webhooks de bounce e reclamação) fica em `Support/Mail`, com um adaptador por provedor que traduz o aviso para eventos próprios (`EmailBounced`, `EmailComplained`). O comando `php artisan mail:test {e-mail}` confere a configuração atual.
 - **Jobs:** trabalho demorado ou agendado chama uma Action; não repete a regra.
 
 ### 2.3 Configuração

@@ -2,7 +2,7 @@
 
 **Atualizado em:** 19/11/2026  
 **Escopo:** MVP aprovado (`REQUIREMENTS.md`, seção 8)  
-**Tarefas:** 92 em 8 fases
+**Tarefas:** 94 em 8 fases
 
 Este documento descreve o plano: fases, dependências, entregáveis, critérios de conclusão e tarefas. O andamento real (status de cada tarefa, bloqueios e histórico) fica no workspace de acompanhamento do projeto. Requisitos estão em `REQUIREMENTS.md` e decisões em `DECISIONS.md`.
 
@@ -330,6 +330,7 @@ A fase está concluída quando todas as tarefas estão concluídas e todos os cr
 | p6-14 | Rotinas de retenção                            | BE   | Média      | p6-13, p6-08, p6-04               | Cada prazo da tabela coberto por uma rotina testada.                                                                                                                      |
 | p6-15 | Painel administrativo e dashboard básico       | FE   | Média      | p6-06, p6-08, p4-03               | Painel acessível só ao admin com 2FA.                                                                                                                                     |
 | p6-16 | Testar interações e moderação                  | TS   | Alta       | p6-02, p6-12, p6-13               | Testes Pest executados e passando.                                                                                                                                        |
+| p6-17 | Bounces e reclamações de e-mail                | BE   | Alta       | p6-05                             | Webhook do provedor vira evento próprio (`EmailBounced`, `EmailComplained`); endereço que voltou deixa de receber e-mails (D71).                                          |
 
 ---
 
@@ -404,19 +405,20 @@ A fase está concluída quando todas as tarefas estão concluídas e todos os cr
 
 **Tarefas**
 
-| ID    | Tarefa                                         | Cat. | Prioridade | Depende de          | Critério de conclusão                                |
-| ----- | ---------------------------------------------- | ---- | ---------- | ------------------- | ---------------------------------------------------- |
-| p8-01 | Definir hospedagem e banco de produção         | AR   | Alta       | p2-08               | Provedor e banco escolhidos com justificativa.       |
-| p8-02 | Configurar o ambiente de produção              | BE   | Alta       | p8-01               | Nenhum segredo versionado; filas e agendador ativos. |
-| p8-03 | Preparar o banco de produção e o admin inicial | DB   | Alta       | p8-02, p7-09        | Banco acessível só pela aplicação.                   |
-| p8-04 | Build e deploy repetível                       | BE   | Alta       | p8-02, p7-02        | Deploy executado ao menos duas vezes.                |
-| p8-05 | Configurar backup                              | BE   | Alta       | p8-03, p2-08        | Uma restauração testada a partir do backup.          |
-| p8-06 | Validar a aplicação publicada                  | TS   | Alta       | p8-04, p8-05, p7-03 | Evidência registrada no controle de qualidade.       |
-| p8-07 | Publicar os textos de Termos e políticas       | DC   | Alta       | p3-11               | Textos publicados com versão registrada.             |
-| p8-08 | Documentar arquitetura e banco                 | DC   | Média      | p7-01               | Diagramas e textos atualizados.                      |
-| p8-09 | Documentar instalação e configuração           | DC   | Média      | p8-04               | Passo a passo seguido do início ao fim sem ajustes.  |
-| p8-10 | Finalizar o README                             | DC   | Alta       | p8-06, p8-09        | README revisado e publicado.                         |
-| p8-11 | Preparar a apresentação para portfólio         | DC   | Média      | p8-10               | Apresentação pronta com link e capturas.             |
+| ID    | Tarefa                                         | Cat. | Prioridade | Depende de          | Critério de conclusão                                                                                             |
+| ----- | ---------------------------------------------- | ---- | ---------- | ------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| p8-01 | Definir hospedagem e banco de produção         | AR   | Alta       | p2-08               | Provedor e banco escolhidos com justificativa.                                                                    |
+| p8-02 | Configurar o ambiente de produção              | BE   | Alta       | p8-01               | Nenhum segredo versionado; filas e agendador ativos.                                                              |
+| p8-03 | Preparar o banco de produção e o admin inicial | DB   | Alta       | p8-02, p7-09        | Banco acessível só pela aplicação.                                                                                |
+| p8-04 | Build e deploy repetível                       | BE   | Alta       | p8-02, p7-02        | Deploy executado ao menos duas vezes.                                                                             |
+| p8-05 | Configurar backup                              | BE   | Alta       | p8-03, p2-08        | Uma restauração testada a partir do backup.                                                                       |
+| p8-06 | Validar a aplicação publicada                  | TS   | Alta       | p8-04, p8-05, p7-03 | Evidência registrada no controle de qualidade.                                                                    |
+| p8-07 | Publicar os textos de Termos e políticas       | DC   | Alta       | p3-11               | Textos publicados com versão registrada.                                                                          |
+| p8-08 | Documentar arquitetura e banco                 | DC   | Média      | p7-01               | Diagramas e textos atualizados.                                                                                   |
+| p8-09 | Documentar instalação e configuração           | DC   | Média      | p8-04               | Passo a passo seguido do início ao fim sem ajustes.                                                               |
+| p8-10 | Finalizar o README                             | DC   | Alta       | p8-06, p8-09        | README revisado e publicado.                                                                                      |
+| p8-11 | Preparar a apresentação para portfólio         | DC   | Média      | p8-10               | Apresentação pronta com link e capturas.                                                                          |
+| p8-12 | Escolher e configurar o provedor de e-mail     | BE   | Alta       | p8-01, p6-17        | Provedor escolhido pelos critérios da D71; SPF, DKIM e DMARC válidos; failover configurado; `mail:test` entregue. |
 
 ---
 
@@ -455,7 +457,7 @@ As tarefas acima são implementadas em **fatias**: cada fatia entrega uma funcio
 | 16. Moderação                         | p6-05 (aprovação e rejeição), p6-06, p6-07, p6-09, p6-15 | Admin · Painel, Fila de aprovação, Revisão de versão, Auditoria                                      |
 | 17. Comentários e curtidas            | p6-01, p6-02                                             | Comentários · logada (desktop e mobile)                                                              |
 | 18. Favoritos                         | p6-03                                                    | Favoritos, Favoritos vazio                                                                           |
-| 19. Notificações                      | p6-04, p6-05                                             | Notificações, menu do sino, Notificações vazias                                                      |
+| 19. Notificações                      | p6-04, p6-05, p6-17                                      | Notificações, menu do sino, Notificações vazias                                                      |
 | 20. Denúncias                         | p6-08                                                    | Denunciar artigo, Admin · Denúncias                                                                  |
 | 21. Penalidades e contestação         | p6-10, p6-11, p6-12                                      | Admin · Usuário e penalidade, Contestações, Conta suspensa, Contestar suspensão                      |
 | 22. Exclusão de conta                 | p6-13                                                    | Excluir conta, Exclusão solicitada, Cancelar exclusão                                                |
