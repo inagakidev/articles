@@ -33,14 +33,15 @@ A conta (D72). Além das colunas do Laravel e do Fortify (`name`, `email`, `emai
 
 ### `policy_versions`
 
-Versões dos Termos de uso e da Política de privacidade (RF-013, D72). O texto de cada versão fica em `resources/policies/<tipo>/<versão>.<idioma>.md`.
+Versões das três políticas (RF-013, RF-272, D72, D73). O texto de cada versão fica em `resources/policies/<tipo>/<versão>.<idioma>.json`.
 
-| Coluna         | Tipo       | Observação                                                      |
-| -------------- | ---------- | --------------------------------------------------------------- |
-| `id`           | bigint     |                                                                 |
-| `type`         | string(20) | `terms` ou `privacy`                                            |
-| `version`      | string(20) | Ex.: `2026-11-draft`; o sufixo `-draft` marca versão provisória |
-| `published_at` | timestamp  | A versão em vigor é a mais recente já publicada                 |
+| Coluna         | Tipo       | Observação                                      |
+| -------------- | ---------- | ----------------------------------------------- |
+| `id`           | bigint     |                                                 |
+| `type`         | string(20) | `terms` ou `privacy`                            |
+| `version`      | string(20) | Rótulo exibido, como `1.0`                      |
+| `draft`        | boolean    | Versão provisória, até a validação jurídica     |
+| `published_at` | timestamp  | A versão em vigor é a mais recente já publicada |
 
 Único em `(type, version)`.
 

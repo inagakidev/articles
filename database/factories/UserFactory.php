@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Domain\Accounts\Actions\AcceptCurrentPolicies;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -35,6 +36,26 @@ class UserFactory extends Factory
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
         ];
+    }
+
+    /**
+     * Contas novas já aceitaram as versões em vigor dos Termos e da
+     * Privacidade, como no cadastro (RF-013).
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(
+            fn (User $user) => app(AcceptCurrentPolicies::class)->handle($user),
+        );
+    }
+
+    /**
+     * Conta que ainda não aceitou as versões em vigor (novo aceite, D73). Roda
+     * depois do aceite do configure() e o desfaz.
+     */
+    public function withoutAcceptedPolicies(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->policyAcceptances()->delete());
     }
 
     /**

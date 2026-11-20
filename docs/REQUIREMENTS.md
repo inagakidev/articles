@@ -590,6 +590,15 @@ Contestação rejeitada:
 - **RF-382** A seção da comunidade mostra apenas autores com artigo publicado e só os dados do perfil público (nome e foto). A Política de privacidade informa esse uso.
 - **RF-383** Animações contínuas da página podem ser pausadas por um botão "Pausar animações", e a escolha fica guardada no navegador da pessoa. Com "reduzir movimento" ativo no sistema, nada se move.
 
+### 2.26. Pedido de dados pessoais (LGPD) **[D73]**
+
+- **RF-384** Um formulário público, que funciona sem login, recebe pedidos de titulares: saber quais dados a plataforma tem, receber uma cópia, corrigir um dado, excluir dados, saber com quem são compartilhados ou outro pedido.
+- **RF-385** O pedido tem nome, e-mail, detalhes opcionais (até 2.000 caracteres, sem anexos) e a declaração de ser a pessoa dona dos dados ou sua representante legal.
+- **RF-386** O pedido só começa a ser analisado depois que a pessoa confirma o e-mail por um link válido por 24 horas. Sem a confirmação, o pedido expira.
+- **RF-387** Cada pedido recebe um número de protocolo e mostra as etapas: recebido, confirmação do e-mail, análise e resposta.
+- **RF-388** A resposta sai por e-mail em até 15 dias depois da confirmação. O administrador atende os pedidos pelo painel, e cada decisão fica na auditoria.
+- **RF-389** O que a pessoa resolve sozinha (mudar dados nas Configurações, excluir a conta) aparece ao lado do formulário, com os atalhos.
+
 ---
 
 ## 3. P1-02 — Perfis de acesso e permissões

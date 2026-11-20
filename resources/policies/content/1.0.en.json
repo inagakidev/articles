@@ -1,0 +1,162 @@
+{
+    "title": "Content policy",
+    "description": "What can't be published on he4rt ink. Every moderation decision cites a numbered item on this page.",
+    "summary": [
+        {
+            "icon": "heart-handshake",
+            "title": "Respect above all",
+            "text": "Insults, harassment and hate speech are not accepted."
+        },
+        {
+            "icon": "code",
+            "title": "Technical and honest content",
+            "text": "Cite sources and don't publish code that causes harm."
+        },
+        {
+            "icon": "copyright",
+            "title": "Only what you may use",
+            "text": "No plagiarism and no images without usage rights."
+        },
+        {
+            "icon": "megaphone",
+            "title": "No disguised advertising",
+            "text": "Sharing your work is fine; spam isn't."
+        }
+    ],
+    "sections": [
+        {
+            "id": "s1",
+            "title": "Spam and self-promotion",
+            "blocks": [
+                {
+                    "items": [
+                        {
+                            "id": "1.1",
+                            "title": "Repeated content",
+                            "text": "Publishing the same text several times, or only changing the title.",
+                            "bad": "Three identical articles with different titles.",
+                            "good": "Publishing a revised version in place of the old one."
+                        },
+                        {
+                            "id": "1.2",
+                            "title": "Spam and self-promotion",
+                            "text": "Using an article, comment or username only to sell or drive traffic.",
+                            "bad": "A username like @buy-courses or an article that is just an affiliate link.",
+                            "good": "Mentioning your project or course when it's part of the technical content."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "s2",
+            "title": "Respect",
+            "blocks": [
+                {
+                    "items": [
+                        {
+                            "id": "2.1",
+                            "title": "Insults and harassment",
+                            "text": "Attacking, humiliating or stalking people, on or off the platform.",
+                            "bad": "Comments that insult whoever wrote the article.",
+                            "good": "Disagreeing with the content with arguments."
+                        },
+                        {
+                            "id": "2.2",
+                            "title": "Hate speech",
+                            "text": "Content that discriminates by race, gender, orientation, religion, disability or origin.",
+                            "bad": "Jokes that belittle a group.",
+                            "good": "Discussing diversity and inclusion in tech."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "s3",
+            "title": "Copyright",
+            "blocks": [
+                {
+                    "items": [
+                        {
+                            "id": "3.1",
+                            "title": "Plagiarism",
+                            "text": "Publishing someone else's text as if it were yours.",
+                            "bad": "Translating a whole article without permission or credit.",
+                            "good": "Quoting short excerpts with the source."
+                        },
+                        {
+                            "id": "3.2",
+                            "title": "Images without usage rights",
+                            "text": "Using images you didn't create and have no license to use.",
+                            "bad": "Screenshots of paid courses or stock photos without a license.",
+                            "good": "Your own images, public domain ones or ones with a license that allows the use."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "s4",
+            "title": "Technical quality",
+            "blocks": [
+                {
+                    "items": [
+                        {
+                            "id": "4.1",
+                            "title": "Off topic",
+                            "text": "Content unrelated to technology or a career in technology.",
+                            "bad": "Recipes, party politics or chain messages.",
+                            "good": "Career, study and community stories."
+                        },
+                        {
+                            "id": "4.2",
+                            "title": "Sources and attribution",
+                            "text": "Presenting numbers, benchmarks or technical claims without a source or a way to reproduce them.",
+                            "bad": "“Framework X is 10 times faster” without saying how it was measured.",
+                            "good": "Showing the code or the link used for the measurement."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "s5",
+            "title": "Safety and accuracy",
+            "blocks": [
+                {
+                    "items": [
+                        {
+                            "id": "5.1",
+                            "title": "Misleading information",
+                            "text": "Stating as fact something false that can harm people who follow the content.",
+                            "bad": "Saying an insecure configuration is the recommended one.",
+                            "good": "Giving an opinion while making clear it's an opinion."
+                        },
+                        {
+                            "id": "5.2",
+                            "title": "Malicious code and third-party data",
+                            "text": "Publishing malware, credentials or other people's personal data.",
+                            "bad": "A real API token in a code example.",
+                            "good": "Explaining an already fixed vulnerability, for defense."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "como",
+            "title": "How we apply this policy",
+            "blocks": [
+                {
+                    "list": [
+                        "Every article is reviewed before it goes live. The decision not to approve cites the item that was broken.",
+                        "Anyone with a confirmed account can report articles and comments.",
+                        "Repeated or serious cases lead to suspension or ban, which you can appeal."
+                    ]
+                }
+            ]
+        }
+    ],
+    "changes": ["First version."]
+}

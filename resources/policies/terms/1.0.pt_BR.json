@@ -1,0 +1,124 @@
+{
+    "title": "Termos de uso",
+    "description": "As regras para usar o he4rt ink: quem pode ter conta, como a revisão funciona e o que acontece com o que você publica.",
+    "summary": [
+        {
+            "icon": "user-round",
+            "title": "Conta a partir de 16 anos",
+            "text": "Ler é livre; para escrever e comentar, confirme seu e-mail."
+        },
+        {
+            "icon": "clock",
+            "title": "Todo artigo passa por revisão",
+            "text": "A revisão leva até 6 horas. Você pode reenviar quando quiser."
+        },
+        {
+            "icon": "pen-line",
+            "title": "O texto continua seu",
+            "text": "Você nos autoriza a exibi-lo aqui enquanto ele estiver publicado."
+        },
+        {
+            "icon": "scale",
+            "title": "Regras valem para todos",
+            "text": "Quem descumprir a Política de conteúdo pode ser suspenso ou banido."
+        }
+    ],
+    "sections": [
+        {
+            "id": "aceite",
+            "title": "Aceite e idade mínima",
+            "blocks": [
+                {
+                    "p": "Ao criar uma conta, você aceita estes Termos e a [Política de privacidade](route:policies.privacy). Registramos a data e a versão aceitas."
+                },
+                {
+                    "p": "Você declara ter 16 anos ou mais. Não é preciso ter conta para ler."
+                }
+            ]
+        },
+        {
+            "id": "conta",
+            "title": "Sua conta",
+            "blocks": [
+                {
+                    "list": [
+                        "Use um e-mail que seja seu e confirme-o em até 7 dias; contas não confirmadas são excluídas.",
+                        "Sem confirmação você lê e escreve rascunhos, mas não envia para revisão, não curte e não comenta.",
+                        "Você é responsável pela sua senha e pelo que é feito com a sua conta.",
+                        "Um username pode ser recusado se ferir a [Política de conteúdo](route:policies.content)."
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "revisao",
+            "title": "Revisão e publicação",
+            "blocks": [
+                {
+                    "list": [
+                        "Todo artigo enviado passa por revisão antes de ir ao ar. A revisão leva até 6 horas.",
+                        "A versão enviada fica congelada enquanto está na fila. Você pode retirá-la e editar.",
+                        "Se o artigo não for aprovado, você recebe a justificativa e o item da Política de conteúdo. Pode corrigir e reenviar sem limite de tentativas.",
+                        "Um artigo publicado pode ser despublicado se violar a Política de conteúdo, sempre com justificativa."
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "conteudo",
+            "title": "Direitos sobre o que você publica",
+            "blocks": [
+                {
+                    "p": "O que você escreve continua sendo seu. Ao publicar, você autoriza o he4rt ink a exibir, armazenar e divulgar o conteúdo na plataforma, sem pagamento e sem exclusividade."
+                },
+                {
+                    "p": "Você garante que tem o direito de publicar textos, códigos e imagens que enviar, e cita as fontes do que não é seu."
+                }
+            ]
+        },
+        {
+            "id": "moderacao",
+            "title": "Moderação e penalidades",
+            "blocks": [
+                {
+                    "list": [
+                        "As penalidades são: rejeição ou despublicação do artigo, suspensão temporária e banimento.",
+                        "Toda decisão indica o item violado da Política de conteúdo.",
+                        "Você pode contestar uma suspensão ou banimento. Se a contestação for aceita, a conta volta na hora."
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "exclusao",
+            "title": "Excluir a conta",
+            "blocks": [
+                {
+                    "p": "Você pode excluir a conta em Configurações. Ela fica 20 dias em carência: entrar nesse período permite cancelar. Depois, a exclusão é definitiva e seus artigos publicados ficam anônimos."
+                }
+            ]
+        },
+        {
+            "id": "limites",
+            "title": "Limites de responsabilidade",
+            "blocks": [
+                {
+                    "p": "Os artigos expressam a opinião de quem escreveu. A revisão verifica a Política de conteúdo, não garante que todo código ou informação esteja correto para o seu caso."
+                },
+                {
+                    "p": "Podemos mudar ou interromper partes da plataforma, avisando com antecedência sempre que possível."
+                }
+            ]
+        },
+        {
+            "id": "mudancas-t",
+            "title": "Mudanças nos Termos",
+            "blocks": [
+                {
+                    "p": "Quando os Termos mudarem, avisamos por e-mail e pedimos novo aceite no próximo login. Dúvidas: [{contact_email}](mailto:{contact_email})."
+                }
+            ]
+        }
+    ],
+    "changes": ["Primeira versão."]
+}

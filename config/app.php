@@ -83,6 +83,21 @@ return [
     // Idiomas da interface (RF-008); o primeiro é o padrão.
     'locales' => ['pt_BR', 'en'],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Contatos públicos
+    |--------------------------------------------------------------------------
+    |
+    | Endereços citados nas políticas (D73). Ficam aqui para mudar sem tocar
+    | nos textos.
+    |
+    */
+
+    'contacts' => [
+        'privacy' => env('PRIVACY_EMAIL', 'privacidade@he4rt.ink'),
+        'general' => env('CONTACT_EMAIL', 'contato@he4rt.ink'),
+    ],
+
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
