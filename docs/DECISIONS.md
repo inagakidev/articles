@@ -306,7 +306,7 @@ Esta lista é conceitual e não representa o modelo definitivo do banco de dados
 
 - Estratégia de versionamento do conteúdo.
 - Estratégia de cache.
-- Infraestrutura de hospedagem (p8-01). Requisitos já conhecidos: PHP 8.4 com GD (WebP) e `exif`, MariaDB, worker de fila permanente, agendador e acesso ao R2. De preferência com controle da configuração do MariaDB (ver D54).
+- Provedor de e-mail transacional (p8-01, D71). A hospedagem foi decidida na D78.
 - Política técnica de exclusão e retenção.
 - Processamento de visualizações.
 
@@ -660,3 +660,17 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Bio:** até 300 caracteres, o tamanho da bio da prancha com folga.
 - **Alternativas descartadas:** seguir a prancha desktop (e-mail e senha no perfil, e a aba de segurança vazia para quem não administra); processar a foto na fila (mais um estado de "processando" para uma imagem de 512 px); exigir login para confirmar o e-mail novo (o link costuma ser aberto no celular).
     - **Username antigo não redireciona:** depois da troca, `/@antigo` deixa de funcionar e o username fica livre na hora (RF-029), como a prancha avisa. Redirecionar ligaria a identidade antiga à nova, o que expõe quem troca de username justamente para se desvincular.
+
+### D78 — Hospedagem
+
+- **Status:** Aprovada (21/11/2026).
+- **Contexto:** p8-01. Requisitos já registrados (seção 3.5, D52 a D54, D71): PHP 8.4 com GD (WebP) e `exif`, MariaDB com controle da configuração, worker de fila permanente, agendador a cada minuto e acesso ao R2. Foi pedido publicar o frontend na Vercel.
+- **Decisão:** VPS Cloud Compute da Vultr na região de São Paulo, com 2 GB de RAM, gerenciado pelo Ploi (plano Basic): MariaDB no próprio servidor, worker pelo Supervisor, agendador pelo cron, SSL e deploy repetível pelo script [`deploy/ploi-deploy.sh`](../deploy/ploi-deploy.sh). Imagens e backups seguem no R2 (D53, D55). O passo a passo está em [`DEPLOY.md`](DEPLOY.md). Custo estimado em novembro de 2026: cerca de US$ 15 do servidor (com o acréscimo regional) e US$ 9 do Ploi, por mês.
+- **Alternativas descartadas:**
+    - Vercel: com Inertia, as páginas do React vêm do Laravel, então o frontend não roda sozinho; e a plataforma, serverless, não tem fila permanente nem agendador.
+    - Laravel Cloud: sem manutenção de servidor, mas oferece MySQL em vez de MariaDB, sem controle da configuração do FULLTEXT (D54), sem região no Brasil e com conta variável.
+    - Railway: conta variável, sem região no Brasil e banco em container com menos controle.
+    - Forge: equivalente ao Ploi, por US$ 12 em vez de US$ 9.
+    - Hospedagem compartilhada: não permite worker permanente.
+- **Riscos:** as atualizações de segurança do servidor ficam com o projeto (o Ploi automatiza parte); o banco e a aplicação dividem o mesmo servidor, então um pico de uso afeta os dois.
+- **Pendente:** o provedor de e-mail (p8-01, D71), sem o qual a conta não é confirmada; o backup e a restauração (p8-05).
