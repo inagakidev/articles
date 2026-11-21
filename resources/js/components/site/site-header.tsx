@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import { PenLine } from 'lucide-react';
 import AccountMenu from '@/components/site/account-menu';
 import { Button } from '@/components/ui/button';
 import { LanguageToggle } from '@/components/site/language-switch';
@@ -6,6 +7,7 @@ import SiteLogo from '@/components/site/site-logo';
 import { ThemeToggle } from '@/components/site/theme-toggle';
 import { useTranslation } from '@/lib/i18n';
 import { dashboard, login, register } from '@/routes';
+import { create } from '@/routes/articles';
 
 export default function SiteHeader() {
     const { auth } = usePage().props;
@@ -20,9 +22,20 @@ export default function SiteHeader() {
                     <LanguageToggle />
                     {auth.user ? (
                         <>
-                            <Button asChild size="lg">
+                            <Button
+                                asChild
+                                variant="ghost"
+                                size="lg"
+                                className="hidden sm:inline-flex"
+                            >
                                 <Link href={dashboard()}>
                                     {t('site.nav.my_articles')}
+                                </Link>
+                            </Button>
+                            <Button asChild size="lg">
+                                <Link href={create()}>
+                                    <PenLine aria-hidden="true" />
+                                    {t('site.nav.write')}
                                 </Link>
                             </Button>
                             <AccountMenu />

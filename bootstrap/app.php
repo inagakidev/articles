@@ -20,6 +20,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        // No documento do editor, o espaço no começo ou no fim de um trecho
+        // ("eu achava que " + **negrito**) é parte do texto (D80).
+        $middleware->trimStrings(except: [
+            // Roda antes do roteamento, então confere o caminho, não o nome da rota.
+            fn (Request $request) => $request->is('articles', 'articles/*/draft'),
+        ]);
+
         // Quem já entrou e abre o login ou o cadastro volta para o início, onde
         // o menu da conta tem "Sair", em vez de cair numa tela da conta.
         $middleware->redirectUsersTo(fn () => route('home'));

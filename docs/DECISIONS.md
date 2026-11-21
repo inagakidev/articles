@@ -1,6 +1,6 @@
 # DECISIONS — he4rt ink
 
-**Atualizado em:** 19/11/2026
+**Atualizado em:** 21/11/2026
 
 Registro das decisões de produto e de arquitetura, com contexto, alternativas consideradas e impacto. Os requisitos resultantes estão em `REQUIREMENTS.md`; a visão do produto está em `PRODUCT.md`.
 
@@ -688,3 +688,19 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Tela:** "Categorias e tags" no painel, no desenho da prancha, com o nome nos dois idiomas e a cor no criar e renomear. As categorias reais passam a aparecer na página de apresentação (D74).
 - **Alternativas descartadas:** guardar diferenças entre versões (complexo para aprovar e restaurar, sem ganho no tamanho dos artigos); um campo de estado "na lixeira" (exigiria guardar o estado anterior à parte); a categoria no artigo em vez da versão (mudar a categoria de um artigo publicado não passaria pela revisão); nome de categoria só em português.
 - **Pendente:** as tabelas de imagens entram com a fatia 9, porque o formato delas depende do processamento de lá; o registro de auditoria das ações da administradora em categorias e tags entra com a auditoria (p6-15); o slug e o endereço do artigo, com a leitura (fatia 12).
+
+### D80 — Editor, salvamento automático e prévia
+
+- **Status:** Aprovada (21/11/2026).
+- **Contexto:** a fatia 8 entrega a escrita (p4-04), o editor (p4-05) e a prévia (p4-06), nas pranchas "Editor", "Editor vazio", "Prévia" e "Detalhes do artigo · mobile". A D51 define Tiptap 3 e tiptap-php; faltava decidir como o esquema é compartilhado, como o rascunho é salvo e onde o código é colorido.
+- **Decisão:**
+    - **Esquema:** o `Support/Editor/EditorSchema` é a única lista de nós, marcas, atributos, cores, alinhamentos, níveis de título e linguagens de código. O editor recebe do servidor as listas que mostra (cores, linguagens, limites) e monta só as extensões correspondentes. A paridade é conferida por uma fixture compartilhada (`tests/Fixtures/editor/parity.json`), lida pelo Pest e pelo Vitest: o editor tem exatamente os nós e marcas do servidor, e o documento com todos os elementos volta igual dos dois lados.
+    - **Limpeza ao salvar:** o `DocumentSanitizer` percorre o JSON pela lista permitida e descarta o que não conhece (link fora de http, https e mailto; cor fora da paleta; sublinhado; justificado). O editor não produz nada disso, então só uma requisição forjada perde conteúdo. A recusa explícita de conteúdo fora do esquema, prevista na D51, vale no envio para aprovação (fatia 10).
+    - **Renderização:** o `ArticleRenderer` gera, no servidor, o HTML, o sumário (títulos com âncora), o texto puro, as contagens e o tempo de leitura (200 palavras por minuto, mínimo de 1). A prévia e a página pública (fatia 12) usam o mesmo resultado. Cor e destaque saem como classes com o nome da paleta, com valor por tema no CSS.
+    - **Código colorido no servidor:** `tempest/highlight` (MIT), sem JavaScript de coloração no navegador. As 37 linguagens oferecidas estão no esquema; o bloco de código é sempre escuro, nos dois temas.
+    - **Salvamento automático:** o editor manda só os campos alterados, 1,2 s depois da última mudança, por JSON (`POST /articles` cria; `PUT /articles/{id}/draft` atualiza), com nova tentativa a cada 8 s em falha de rede e aviso ao sair com algo não salvo. O artigo só é criado no primeiro salvamento: abrir "Escrever" e sair não deixa rascunho vazio. Depois dele, a URL vira a de edição sem recarregar.
+    - **Rascunho de artigo já enviado ou publicado:** abrir a edição cria o rascunho copiado da versão pendente, senão da aprovada, senão da rejeitada (`StartDraft`, RF-103, RF-330), com `based_on_id`. A versão em vigor continua no ar.
+    - **Espaços do conteúdo:** o `TrimStrings` do Laravel não roda nas rotas de rascunho, porque cortaria os espaços entre trechos de texto do JSON. Só o título é aparado, na própria validação.
+    - **Limites:** título de 150 caracteres, conteúdo de 50.000 (medido no texto puro depois da limpeza), até 10 tags, idioma entre os da interface. Tag bloqueada é recusada com o nome dela.
+- **Fora desta fatia:** o painel "o que falta" já aparece, mas o botão de envio fica oculto até a fatia 10; capa e imagens no editor, na fatia 9. A prancha mostra um subtítulo, que não existe nos requisitos e ficou de fora.
+- **Alternativas descartadas:** guardar HTML (perde a validação estrutural da D51); colorir o código no navegador com Shiki ou highlight.js (mais JavaScript na leitura, e a prévia dependeria do navegador); salvar por formulário do Inertia (cada salvamento recarregaria as props da página); criar o artigo ao abrir "Escrever" (deixaria rascunhos vazios).

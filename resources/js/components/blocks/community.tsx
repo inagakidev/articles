@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import Marquee from '@/components/ui/marquee';
 import Mascot from '@/components/ui/mascot';
 import UserAvatar from '@/components/ui/user-avatar';
+import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
-import { register } from '@/routes';
 import type { ArticleSummary, AuthorSummary } from '@/types';
 
 /**
@@ -130,6 +130,7 @@ function Authors({ authors }: { authors: CommunityAuthors }) {
 
 function Invitation() {
     const { t } = useTranslation();
+    const writeHref = useWriteHref();
 
     return (
         <div className="reveal mx-auto flex max-w-180 flex-wrap items-center justify-center gap-x-8 gap-y-5 rounded-card border border-dashed border-pastel-lavender bg-surface-muted p-[clamp(24px,4vw,40px)] text-center sm:text-left dark:border-border">
@@ -142,7 +143,7 @@ function Invitation() {
                     {t('landing.community.empty.text')}
                 </p>
                 <Button asChild size="md" className="mt-1 shadow-primary">
-                    <Link href={register()}>
+                    <Link href={writeHref}>
                         <PenLine aria-hidden="true" className="size-[18px]" />
                         {t('landing.cta.write')}
                     </Link>
