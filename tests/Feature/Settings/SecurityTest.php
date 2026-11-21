@@ -1,7 +1,12 @@
 <?php
 
+use App\Domain\Accounts\Enums\SecurityEventType;
+use App\Models\SecurityEvent;
 use App\Models\User;
+use App\Notifications\PasswordChanged;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Inertia\Testing\AssertableInertia as Assert;
 use Laravel\Fortify\Features;
 
@@ -103,6 +108,35 @@ test('exibe a página de segurança sem 2FA quando o recurso está desligado', f
         );
 });
 
+test('mostra o e-mail, a troca pendente e quando a senha mudou', function () {
+    $user = User::factory()->create([
+        'email' => 'lia@exemplo.dev',
+        'pending_email' => 'nova@exemplo.dev',
+        'pending_email_expires_at' => now()->addHours(5),
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get(route('security.edit'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('email', 'lia@exemplo.dev')
+            ->where('pendingEmail.address', 'nova@exemplo.dev')
+            ->where('passwordChangedAt', null),
+        );
+});
+
+test('troca vencida não aparece como pendente', function () {
+    $user = User::factory()->create([
+        'pending_email' => 'nova@exemplo.dev',
+        'pending_email_expires_at' => now()->subMinute(),
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get(route('security.edit'))
+        ->assertInertia(fn (Assert $page) => $page->where('pendingEmail', null));
+});
+
 test('troca a senha', function () {
     $user = User::factory()->create();
 
@@ -120,6 +154,29 @@ test('troca a senha', function () {
         ->assertRedirect(route('security.edit'));
 
     expect(Hash::check('new-password', $user->refresh()->password))->toBeTrue();
+});
+
+test('trocar a senha logada avisa por e-mail, registra e derruba só as outras sessões (RF-031)', function () {
+    Notification::fake();
+    config(['session.driver' => 'database']);
+    $user = User::factory()->create();
+    DB::table('sessions')->insert([
+        'id' => 'outro-aparelho', 'user_id' => $user->id, 'payload' => '', 'last_activity' => time(),
+    ]);
+
+    $this->actingAs($user)
+        ->put(route('user-password.update'), [
+            'current_password' => 'password',
+            'password' => 'nova-senha-123',
+            'password_confirmation' => 'nova-senha-123',
+        ])
+        ->assertSessionHasNoErrors();
+
+    Notification::assertSentTo($user, PasswordChanged::class);
+    expect(DB::table('sessions')->where('id', 'outro-aparelho')->exists())->toBeFalse()
+        ->and(SecurityEvent::query()->where('user_id', $user->id)->where('type', SecurityEventType::PasswordChanged)->exists())->toBeTrue();
+
+    $this->get(route('profile.edit'))->assertOk();
 });
 
 test('exige a senha atual correta para trocar a senha', function () {

@@ -837,6 +837,7 @@ compete com o texto, nunca carrega informação sozinho.
 | Busca sem resultados                                                 | Sim                           | `pensativo`                              |
 | Nenhum favorito                                                      | Sim                           | `lendo`                                  |
 | Nenhum rascunho ou artigo                                            | Sim                           | `escrevendo`                             |
+| Perfil sem artigos (próprio / de outra pessoa)                       | Sim                           | `escrevendo` / `esperando`               |
 | Notificações em dia                                                  | Sim                           | `dormindo`                               |
 | Erro 404                                                             | Sim                           | `procurando`                             |
 | Erro 500                                                             | Sim                           | `dormindo`                               |

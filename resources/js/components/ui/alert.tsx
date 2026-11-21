@@ -18,6 +18,7 @@ const alertVariants = cva(
         // Avisos tingidos das pranchas (DESIGN §2.4): fundo e texto da cor de estado
         danger: cn(tinted, "bg-tint-danger-bg text-tint-danger-fg"),
         info: cn(tinted, "bg-tint-info-bg text-tint-info-fg"),
+        warning: cn(tinted, "bg-tint-warning-bg text-tint-warning-fg"),
       },
     },
     defaultVariants: {

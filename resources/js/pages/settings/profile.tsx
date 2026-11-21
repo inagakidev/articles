@@ -1,138 +1,164 @@
-import { Form, Head, usePage } from '@inertiajs/react';
-import { Link } from '@inertiajs/react';
-import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
-import DeleteUser from '@/components/delete-user';
-import Heading from '@/components/heading';
-import InputError from '@/components/ui/input-error';
+import { Form, Head, Link } from '@inertiajs/react';
+import { ExternalLink } from 'lucide-react';
+import { useState } from 'react';
+import AvatarField from '@/components/account/avatar-field';
+import SettingsSection from '@/components/account/settings-section';
+import UsernameHint from '@/components/account/username-hint';
 import { Button } from '@/components/ui/button';
+import FormField from '@/components/ui/form-field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { edit } from '@/routes/profile';
-import type { Auth } from '@/types';
-import { send } from '@/routes/verification';
+import { Spinner } from '@/components/ui/spinner';
+import Textarea from '@/components/ui/textarea';
+import { useUsernameAvailability } from '@/hooks/use-username-availability';
+import { useTranslation } from '@/lib/i18n';
+import { update } from '@/routes/profile';
+import { show } from '@/routes/profiles';
 
-type PageProps = {
-    auth: Auth;
+type Props = {
+    profile: {
+        name: string;
+        username: string;
+        bio: string | null;
+        avatar: string | null;
+    };
+    bioMax: number;
 };
 
-export default function Profile({
-    mustVerifyEmail,
-    status,
-}: {
-    mustVerifyEmail: boolean;
-    status?: string;
-}) {
-    const { auth } = usePage<PageProps>().props;
+/** "Conta e perfil": o perfil público (RF-025, RF-026). */
+export default function Profile({ profile, bioMax }: Props) {
+    const { t } = useTranslation();
+    const [bio, setBio] = useState(profile.bio ?? '');
 
     return (
         <>
-            <Head title="Profile settings" />
+            <Head title={t('settings.nav.profile')} />
 
-            <h1 className="sr-only">Profile settings</h1>
-
-            <div className="space-y-6">
-                <Heading
-                    variant="small"
-                    title="Profile"
-                    description="Update your name and email address"
-                />
+            <SettingsSection
+                id="profile"
+                title={t('settings.profile.title')}
+                description={t('settings.profile.description')}
+            >
+                <AvatarField name={profile.name} avatar={profile.avatar} />
 
                 <Form
-                    {...ProfileController.update.form()}
-                    options={{
-                        preserveScroll: true,
-                    }}
-                    className="space-y-6"
+                    {...update.form()}
+                    options={{ preserveScroll: true }}
+                    className="flex flex-col gap-4"
                 >
                     {({ processing, errors }) => (
                         <>
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
-
-                                <Input
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <FormField
                                     id="name"
-                                    className="mt-1 block w-full"
-                                    defaultValue={auth.user.name}
-                                    name="name"
-                                    required
-                                    autoComplete="name"
-                                    placeholder="Full name"
-                                />
-
-                                <InputError
-                                    className="mt-2"
-                                    message={errors.name}
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    className="mt-1 block w-full"
-                                    defaultValue={auth.user.email}
-                                    name="email"
-                                    required
-                                    autoComplete="username"
-                                    placeholder="Email address"
-                                />
-
-                                <InputError
-                                    className="mt-2"
-                                    message={errors.email}
-                                />
-                            </div>
-
-                            {mustVerifyEmail &&
-                                auth.user.email_verified_at === null && (
-                                    <div>
-                                        <p className="-mt-4 text-sm text-muted-foreground">
-                                            Your email address is unverified.{' '}
-                                            <Link
-                                                href={send()}
-                                                as="button"
-                                                className="text-primary-text underline underline-offset-4 hover:text-text-primary"
-                                            >
-                                                Click here to re-send the
-                                                verification email.
-                                            </Link>
-                                        </p>
-
-                                        {status ===
-                                            'verification-link-sent' && (
-                                            <div className="mt-2 text-sm font-medium text-success-fg">
-                                                A new verification link has been
-                                                sent to your email address.
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                            <div className="flex items-center gap-4">
-                                <Button
-                                    disabled={processing}
-                                    data-test="update-profile-button"
+                                    label={t('settings.profile.name')}
+                                    error={errors.name}
                                 >
-                                    Save
+                                    {(field) => (
+                                        <Input
+                                            {...field}
+                                            name="name"
+                                            defaultValue={profile.name}
+                                            required
+                                            autoComplete="name"
+                                        />
+                                    )}
+                                </FormField>
+                                <UsernameField
+                                    current={profile.username}
+                                    error={errors.username}
+                                />
+                            </div>
+                            <FormField
+                                id="bio"
+                                label={t('settings.profile.bio')}
+                                error={errors.bio}
+                                hint={t('settings.profile.bio_hint', {
+                                    count: bio.length,
+                                    max: bioMax,
+                                })}
+                            >
+                                {(field) => (
+                                    <Textarea
+                                        {...field}
+                                        name="bio"
+                                        rows={3}
+                                        maxLength={bioMax}
+                                        value={bio}
+                                        onChange={(event) =>
+                                            setBio(event.target.value)
+                                        }
+                                    />
+                                )}
+                            </FormField>
+                            <div className="flex flex-wrap items-center gap-3">
+                                <Button
+                                    type="submit"
+                                    size="md"
+                                    disabled={processing}
+                                >
+                                    {processing && <Spinner />}
+                                    {t('settings.profile.submit')}
+                                </Button>
+                                <Button asChild variant="subtle" size="md">
+                                    <Link
+                                        href={show({
+                                            username: profile.username,
+                                        })}
+                                    >
+                                        <ExternalLink aria-hidden="true" />
+                                        {t('settings.profile.view')}
+                                    </Link>
                                 </Button>
                             </div>
                         </>
                     )}
                 </Form>
-            </div>
-
-            <DeleteUser />
+            </SettingsSection>
         </>
     );
 }
 
-Profile.layout = {
-    breadcrumbs: [
-        {
-            title: 'Profile settings',
-            href: edit(),
-        },
-    ],
-};
+/** Username com a checagem de disponibilidade enquanto digita (RF-029). */
+function UsernameField({
+    current,
+    error,
+}: {
+    current: string;
+    error?: string;
+}) {
+    const { t } = useTranslation();
+    const [value, setValue] = useState(current);
+    const availability = useUsernameAvailability(
+        value === current ? '' : value,
+    );
+
+    return (
+        <FormField
+            id="username"
+            label={t('settings.profile.username')}
+            error={error}
+            hint={
+                value !== current && availability.status !== 'idle' ? (
+                    <UsernameHint check={availability} />
+                ) : (
+                    t('settings.profile.username_hint')
+                )
+            }
+        >
+            {(field) => (
+                <Input
+                    {...field}
+                    name="username"
+                    value={value}
+                    onChange={(event) =>
+                        setValue(event.target.value.toLowerCase())
+                    }
+                    required
+                    autoComplete="username"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                />
+            )}
+        </FormField>
+    );
+}

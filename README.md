@@ -65,7 +65,9 @@ Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24, MariaDB 11 e, para ver o
 
     A aplicação fica em http://localhost:8000. Depois de mudar o `.env`, reinicie o `composer dev`: a fila e o agendador guardam a configuração de quando subiram.
 
-6. Crie a administradora da instalação (só uma no MVP). O comando pede nome, username e senha; com o e-mail de uma conta que já existe, ele a promove:
+6. As fotos de perfil ficam em `storage/app/media`, fora da pasta pública, e saem pela rota `/media`. Em produção, troque para o Cloudflare R2 com `MEDIA_DISK=r2` e as variáveis `R2_*` do `.env.example` (D53).
+
+7. Crie a administradora da instalação (só uma no MVP). O comando pede nome, username e senha; com o e-mail de uma conta que já existe, ele a promove:
 
     ```bash
     php artisan admin:create voce@exemplo.dev

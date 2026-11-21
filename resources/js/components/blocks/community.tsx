@@ -1,13 +1,13 @@
 import { Link } from '@inertiajs/react';
 import { PenLine } from 'lucide-react';
 import ArticleCard from '@/components/articles/article-card';
-import AuthorAvatar from '@/components/articles/author-avatar';
 import SectionHeading, {
     LandingContainer,
 } from '@/components/blocks/section-heading';
 import { Button } from '@/components/ui/button';
 import Marquee from '@/components/ui/marquee';
 import Mascot from '@/components/ui/mascot';
+import UserAvatar from '@/components/ui/user-avatar';
 import { useTranslation } from '@/lib/i18n';
 import { register } from '@/routes';
 import type { ArticleSummary, AuthorSummary } from '@/types';
@@ -105,12 +105,12 @@ function Authors({ authors }: { authors: CommunityAuthors }) {
     return (
         <div className="mt-7 flex flex-col items-center gap-2.5">
             <div aria-hidden="true" className="flex">
-                {faces.map((author, index) => (
-                    <AuthorAvatar
+                {faces.map((author) => (
+                    <UserAvatar
                         key={author.name}
-                        author={author}
-                        index={index}
-                        className="-ml-3 size-12 rounded-full text-label ring-3 ring-surface-muted first:ml-0"
+                        name={author.name}
+                        avatar={author.avatar}
+                        className="-ml-3 size-12 text-label ring-3 ring-surface-muted first:ml-0"
                     />
                 ))}
                 {more > 0 && (

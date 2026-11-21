@@ -6,7 +6,7 @@ import { canAnimateTransition, markTransition } from '@/lib/view-transition';
 import { update } from '@/routes/locale';
 
 /** O texto troca com um esmaecer suave da página (View Transitions, D74). */
-function changeLocale(locale: Locale) {
+export function changeLocale(locale: Locale) {
     router.put(
         update().url,
         { locale },

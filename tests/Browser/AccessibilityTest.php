@@ -96,3 +96,35 @@ it('não tem problemas de acessibilidade no código do 2FA ao entrar', function 
         ->press('Usar um código de recuperação')
         ->assertNoAccessibilityIssues();
 });
+
+it('não tem problemas de acessibilidade nas configurações', function () {
+    $this->actingAs(User::factory()->create([
+        'bio' => 'Front-end com foco em acessibilidade.',
+        'pending_email' => 'nova@exemplo.dev',
+        'pending_email_expires_at' => now()->addHours(10),
+    ]));
+
+    foreach (['/settings/profile', '/settings/appearance'] as $url) {
+        visit($url)->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+        visit($url)->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+        visit($url)->on()->mobile()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    }
+
+    visit('/settings/security')
+        ->withLocale('pt-BR')
+        ->type('password', 'password')
+        ->click('button[type="submit"]')
+        ->wait(3)
+        ->assertSee('Troca de e-mail pendente')
+        ->assertNoAccessibilityIssues()
+        ->press('Alterar senha')
+        ->assertNoAccessibilityIssues();
+});
+
+it('não tem problemas de acessibilidade no perfil público', function () {
+    User::factory()->create(['username' => 'rafa-moreira', 'bio' => 'Dev back-end.']);
+
+    visit('/@rafa-moreira')->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    visit('/@rafa-moreira')->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    visit('/@rafa-moreira')->on()->mobile()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+});

@@ -28,6 +28,13 @@ return [
     |
     */
 
+    /*
+    | Disco das imagens enviadas (fotos de perfil e, depois, as dos artigos):
+    | "media" em desenvolvimento e nos testes, "r2" em produção (D53).
+    */
+
+    'media' => env('MEDIA_DISK', 'media'),
+
     'disks' => [
 
         'local' => [
@@ -43,6 +50,29 @@ return [
             'root' => storage_path('app/public'),
             'url' => rtrim((string) env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
+        // Imagens (D53). Em desenvolvimento ficam fora da pasta pública; só a
+        // rota de mídia as entrega, aplicando a regra de acesso.
+        'media' => [
+            'driver' => 'local',
+            'root' => storage_path('app/media'),
+            'throw' => false,
+            'report' => false,
+        ],
+
+        // Bucket privado de imagens no Cloudflare R2 (D53), para produção.
+        'r2' => [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
+            'region' => 'auto',
+            'bucket' => env('R2_BUCKET'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+            'visibility' => 'private',
             'throw' => false,
             'report' => false,
         ],

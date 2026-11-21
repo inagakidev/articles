@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
-import AuthorAvatar from '@/components/articles/author-avatar';
 import Pill, { pastelTones } from '@/components/ui/pill';
+import UserAvatar from '@/components/ui/user-avatar';
 import { formatDate } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
 import { followPointer } from '@/lib/spotlight';
@@ -58,9 +58,10 @@ export default function ArticleCard({
                     {article.excerpt}
                 </p>
                 <div className="mt-auto flex items-center gap-2.5 pt-1">
-                    <AuthorAvatar
-                        author={author}
-                        className="size-8 rounded-full text-badge"
+                    <UserAvatar
+                        name={author.name}
+                        avatar={author.avatar}
+                        className="size-8 text-badge"
                     />
                     <div className="flex min-w-0 flex-col">
                         <span className="text-meta font-bold">

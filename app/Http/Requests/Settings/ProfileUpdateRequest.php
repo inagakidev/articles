@@ -7,31 +7,30 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 
+/** Perfil público: nome, username e bio (RF-026). E-mail e foto têm o próprio fluxo. */
 class ProfileUpdateRequest extends FormRequest
 {
     use ProfileValidationRules;
 
-    /**
-     * Prepare the data for validation.
-     */
+    /** Bio curta, como a da prancha (cabe em três linhas no perfil). */
+    public const BIO_MAX = 300;
+
     protected function prepareForValidation(): void
     {
-        if (config('fortify.lowercase_usernames') && is_string($this->input('email'))) {
-            $this->merge(['email' => Str::lower($this->input('email'))]);
-        }
+        // O username é sempre minúsculo (RF-027).
+        $this->merge([
+            'username' => Str::lower(trim((string) $this->input('username'))),
+            'bio' => is_string($this->input('bio')) ? trim($this->input('bio')) : null,
+        ]);
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
-        // A troca de username nas configurações entra com elas (fatia 6).
         return [
             'name' => $this->nameRules(),
-            'email' => $this->emailRules($this->user()->id),
+            'username' => $this->usernameRules($this->user()->id),
+            'bio' => ['nullable', 'string', 'max:'.self::BIO_MAX],
         ];
     }
 }
