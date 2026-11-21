@@ -10,7 +10,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useInitials } from '@/hooks/use-initials';
+import UserAvatar from '@/components/ui/user-avatar';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { logout } from '@/routes';
@@ -40,7 +40,6 @@ export default function AccountMenu({
 }) {
     const { auth } = usePage().props;
     const { t } = useTranslation();
-    const getInitials = useInitials();
 
     if (!auth.user) {
         return null;
@@ -65,14 +64,13 @@ export default function AccountMenu({
         <DropdownMenu>
             <DropdownMenuTrigger
                 aria-label={t('site.account.menu', { name: user.name })}
-                className={cn('shrink-0 rounded-[9px]', className)}
+                className={cn('shrink-0 rounded-full', className)}
             >
-                <span
-                    aria-hidden="true"
-                    className="inline-flex size-9 items-center justify-center rounded-[9px] bg-pastel-lavender font-display text-caption font-extrabold text-pastel-lavender-fg"
-                >
-                    {getInitials(user.name)}
-                </span>
+                <UserAvatar
+                    name={user.name}
+                    avatar={user.avatar}
+                    className="size-9 text-caption"
+                />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-56">
                 <DropdownMenuLabel className="flex flex-col font-normal">

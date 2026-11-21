@@ -64,7 +64,7 @@ export default function Dashboard({ metrics, attention, updatedAt }: Props) {
 
             <section
                 aria-labelledby="attention-title"
-                className="rounded-[20px] border border-border bg-surface p-6"
+                className="rounded-card border border-border bg-surface p-6"
             >
                 <h2
                     id="attention-title"

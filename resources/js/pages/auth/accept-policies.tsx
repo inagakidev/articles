@@ -139,7 +139,7 @@ function ChangesCard({ document }: { document: Pending }) {
         : null;
 
     return (
-        <div className="flex w-full flex-col gap-3 rounded-lg bg-surface-muted px-5 py-[18px] text-left">
+        <div className="flex w-full flex-col gap-3 rounded-card bg-surface-muted px-5 py-[18px] text-left">
             <span className="text-caption font-bold text-text-secondary">
                 {previous ? `${version} · ${previous}` : version}
             </span>

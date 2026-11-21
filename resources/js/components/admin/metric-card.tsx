@@ -14,7 +14,7 @@ export default function MetricCard({
     hint: string;
 }) {
     return (
-        <div className="flex flex-col gap-2 rounded-[18px] border border-border bg-surface px-5 py-4.5">
+        <div className="flex flex-col gap-2 rounded-card border border-border bg-surface px-5 py-4.5">
             <dt className="inline-flex items-center gap-2 text-meta font-bold text-text-secondary">
                 <Icon aria-hidden="true" className="size-4" />
                 {title}

@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
-import AuthorAvatar from '@/components/articles/author-avatar';
 import Pill, { pastelTones } from '@/components/ui/pill';
+import UserAvatar from '@/components/ui/user-avatar';
 import { formatDate } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
 import { followPointer } from '@/lib/spotlight';
@@ -25,13 +25,13 @@ export default function ArticleCard({
         <article
             onPointerMove={followPointer}
             className={cn(
-                'lift-card spotlight relative flex flex-col gap-4 rounded-[20px] border border-border bg-surface p-3 shadow-sm',
+                'lift-card spotlight relative flex flex-col gap-4 rounded-card border border-border bg-surface p-3 shadow-sm',
                 className,
             )}
         >
             <div
                 className={cn(
-                    'aspect-video w-full overflow-hidden rounded-[14px]',
+                    'aspect-video w-full overflow-hidden rounded-inner',
                     pastelTones[category?.color ?? 'lilac'],
                 )}
             >
@@ -58,9 +58,10 @@ export default function ArticleCard({
                     {article.excerpt}
                 </p>
                 <div className="mt-auto flex items-center gap-2.5 pt-1">
-                    <AuthorAvatar
-                        author={author}
-                        className="size-8 rounded-sm text-badge"
+                    <UserAvatar
+                        name={author.name}
+                        avatar={author.avatar}
+                        className="size-8 text-badge"
                     />
                     <div className="flex min-w-0 flex-col">
                         <span className="text-meta font-bold">

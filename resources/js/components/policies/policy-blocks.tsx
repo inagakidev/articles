@@ -139,7 +139,7 @@ function ContentItem({
             )}
         >
             <div className="mb-2 flex flex-wrap items-center gap-3">
-                <span className="inline-flex h-7 min-w-11 items-center justify-center rounded-sm bg-surface-muted px-2 text-meta font-extrabold text-text-on-selected">
+                <span className="inline-flex h-7 min-w-11 items-center justify-center rounded-full bg-surface-muted px-2.5 text-meta font-extrabold text-text-on-selected">
                     {item.id}
                 </span>
                 <h3 className="font-display text-[1.1875rem]/[1.625rem] font-extrabold">
@@ -153,13 +153,13 @@ function ContentItem({
             </div>
             <p className="mb-3 text-body">{item.text}</p>
             <dl className="grid gap-2.5 sm:grid-cols-2">
-                <div className="rounded-md bg-tint-danger-bg/40 px-3 py-2.5 text-meta dark:bg-tint-danger-bg">
+                <div className="rounded-inner bg-tint-danger-bg/40 px-3 py-2.5 text-meta dark:bg-tint-danger-bg">
                     <dt className="text-caption font-extrabold">
                         {t('policies.item.bad')}
                     </dt>
                     <dd>{item.bad}</dd>
                 </div>
-                <div className="rounded-md bg-tint-success-bg/40 px-3 py-2.5 text-meta dark:bg-tint-success-bg">
+                <div className="rounded-inner bg-tint-success-bg/40 px-3 py-2.5 text-meta dark:bg-tint-success-bg">
                     <dt className="text-caption font-extrabold">
                         {t('policies.item.good')}
                     </dt>

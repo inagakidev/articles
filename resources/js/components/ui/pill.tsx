@@ -16,13 +16,6 @@ export const pastelTones = {
     peach: 'bg-pastel-peach text-pastel-peach-fg',
 } satisfies Record<PastelTone, string>;
 
-const tones = Object.keys(pastelTones) as PastelTone[];
-
-/** Um tom estável para quem não tem cor própria (avatar sem foto). */
-export function toneAt(index: number): PastelTone {
-    return tones[index % tones.length];
-}
-
 const sizes = {
     sm: 'px-3 py-1 text-caption',
     md: 'px-[18px] py-2 text-label',

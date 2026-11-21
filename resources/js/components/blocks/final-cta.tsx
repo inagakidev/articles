@@ -19,7 +19,7 @@ export default function FinalCta() {
             aria-labelledby="cta-title"
             className="px-[clamp(16px,4vw,32px)] pb-[clamp(72px,10vw,120px)]"
         >
-            <div className="dark reveal relative mx-auto flex max-w-300 flex-wrap items-center gap-10 overflow-hidden rounded-[40px] border border-border bg-bg p-[clamp(40px,6vw,72px)] text-text-primary">
+            <div className="dark reveal relative mx-auto flex max-w-300 flex-wrap items-center gap-10 overflow-hidden rounded-section border border-border bg-bg p-[clamp(40px,6vw,72px)] text-text-primary">
                 <div
                     aria-hidden="true"
                     className="dot-grid absolute inset-0 [mask-image:none] opacity-80"
@@ -38,7 +38,7 @@ export default function FinalCta() {
                         {t('landing.final.text')}
                     </p>
                     <div className="flex flex-wrap gap-3">
-                        <Button asChild size="xl" className="rounded-[14px]">
+                        <Button asChild size="xl">
                             <Link href={register()}>
                                 <PenLine
                                     aria-hidden="true"

@@ -1,128 +1,45 @@
-import { Form, Head } from '@inertiajs/react';
-import { useRef } from 'react';
-import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
-import Heading from '@/components/heading';
-import InputError from '@/components/ui/input-error';
-import PasswordInput from '@/components/ui/password-input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { edit } from '@/routes/security';
+import { Form, Head, Link } from '@inertiajs/react';
+import { Clock, KeyRound } from 'lucide-react';
+import { useState } from 'react';
 import AdminTwoFactor from '@/components/account/admin-two-factor';
+import SettingsSection from '@/components/account/settings-section';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import EmailInput from '@/components/ui/email-input';
+import FormField from '@/components/ui/form-field';
+import PasswordInput from '@/components/ui/password-input';
+import { Spinner } from '@/components/ui/spinner';
+import { formatDate } from '@/lib/format';
+import { useTranslation } from '@/lib/i18n';
+import {
+    destroy as cancelEmail,
+    store as requestEmail,
+} from '@/routes/settings/email';
+import { update as updatePassword } from '@/routes/user-password';
 
 type Props = {
+    email: string;
+    pendingEmail: { address: string; expiresAt: string } | null;
+    passwordChangedAt: string | null;
     passwordRules: string;
-    /** Só a administradora tem 2FA no MVP (RF-017, RF-019). */
     canManageTwoFactor: boolean;
     twoFactorEnabled?: boolean;
     recoveryCodes?: string[];
 };
 
+/** "Privacidade e segurança": e-mail (RF-030), senha (RF-031) e o 2FA da administradora. */
 export default function Security(props: Props) {
-    const passwordInput = useRef<HTMLInputElement>(null);
-    const currentPasswordInput = useRef<HTMLInputElement>(null);
+    const { t } = useTranslation();
 
     return (
         <>
-            <Head title="Security settings" />
+            <Head title={t('settings.nav.security')} />
 
-            <h1 className="sr-only">Security settings</h1>
-
-            <div className="space-y-6">
-                <Heading
-                    variant="small"
-                    title="Update password"
-                    description="Ensure your account is using a long, random password to stay secure"
-                />
-
-                <Form
-                    {...SecurityController.update.form()}
-                    options={{
-                        preserveScroll: true,
-                    }}
-                    resetOnError={[
-                        'password',
-                        'password_confirmation',
-                        'current_password',
-                    ]}
-                    resetOnSuccess
-                    onError={(errors) => {
-                        if (errors.password) {
-                            passwordInput.current?.focus();
-                        }
-
-                        if (errors.current_password) {
-                            currentPasswordInput.current?.focus();
-                        }
-                    }}
-                    className="space-y-6"
-                >
-                    {({ errors, processing }) => (
-                        <>
-                            <div className="grid gap-2">
-                                <Label htmlFor="current_password">
-                                    Current password
-                                </Label>
-
-                                <PasswordInput
-                                    id="current_password"
-                                    ref={currentPasswordInput}
-                                    name="current_password"
-                                    className="mt-1 block w-full"
-                                    autoComplete="current-password"
-                                    placeholder="Current password"
-                                />
-
-                                <InputError message={errors.current_password} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">New password</Label>
-
-                                <PasswordInput
-                                    id="password"
-                                    ref={passwordInput}
-                                    name="password"
-                                    className="mt-1 block w-full"
-                                    autoComplete="new-password"
-                                    placeholder="New password"
-                                    passwordrules={props.passwordRules}
-                                />
-
-                                <InputError message={errors.password} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    Confirm password
-                                </Label>
-
-                                <PasswordInput
-                                    id="password_confirmation"
-                                    name="password_confirmation"
-                                    className="mt-1 block w-full"
-                                    autoComplete="new-password"
-                                    placeholder="Confirm password"
-                                    passwordrules={props.passwordRules}
-                                />
-
-                                <InputError
-                                    message={errors.password_confirmation}
-                                />
-                            </div>
-
-                            <div className="flex items-center gap-4">
-                                <Button
-                                    disabled={processing}
-                                    data-test="update-password-button"
-                                >
-                                    Save
-                                </Button>
-                            </div>
-                        </>
-                    )}
-                </Form>
-            </div>
-
+            <EmailSection email={props.email} pending={props.pendingEmail} />
+            <PasswordSection
+                changedAt={props.passwordChangedAt}
+                rules={props.passwordRules}
+            />
             {props.canManageTwoFactor && (
                 <AdminTwoFactor
                     enabled={props.twoFactorEnabled ?? false}
@@ -133,11 +50,210 @@ export default function Security(props: Props) {
     );
 }
 
-Security.layout = {
-    breadcrumbs: [
-        {
-            title: 'Security settings',
-            href: edit(),
-        },
-    ],
-};
+function EmailSection({
+    email,
+    pending,
+}: {
+    email: string;
+    pending: Props['pendingEmail'];
+}) {
+    const { t, locale } = useTranslation();
+    const deadline = pending
+        ? new Intl.DateTimeFormat(locale.replace('_', '-'), {
+              day: '2-digit',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit',
+          }).format(new Date(pending.expiresAt))
+        : '';
+    const [before, after] = t('settings.email.pending.body', {
+        deadline,
+    }).split(':email');
+
+    return (
+        <SettingsSection id="email" title={t('settings.email.title')}>
+            <Form
+                {...requestEmail.form()}
+                options={{ preserveScroll: true }}
+                className="flex flex-col gap-3"
+            >
+                {({ processing, errors }) => (
+                    <>
+                        <FormField
+                            id="email"
+                            label={t('settings.email.label')}
+                            error={errors.email}
+                            hint={
+                                pending ? undefined : t('settings.email.hint')
+                            }
+                        >
+                            {(field) => (
+                                <EmailInput
+                                    {...field}
+                                    name="email"
+                                    defaultValue={email}
+                                    required
+                                    autoComplete="email"
+                                />
+                            )}
+                        </FormField>
+                        <Button
+                            type="submit"
+                            variant="outline"
+                            size="md"
+                            className="self-start"
+                            disabled={processing}
+                        >
+                            {processing && <Spinner />}
+                            {t('settings.email.submit')}
+                        </Button>
+                    </>
+                )}
+            </Form>
+
+            {pending && (
+                <Alert variant="warning" role="status">
+                    <Clock aria-hidden="true" />
+                    <AlertTitle>{t('settings.email.pending.title')}</AlertTitle>
+                    <AlertDescription>
+                        <p>
+                            {before}
+                            <strong>{pending.address}</strong>
+                            {after}{' '}
+                            <Link
+                                href={cancelEmail()}
+                                as="button"
+                                preserveScroll
+                                className="cursor-pointer font-bold underline underline-offset-2"
+                            >
+                                {t('settings.email.pending.cancel')}
+                            </Link>
+                        </p>
+                    </AlertDescription>
+                </Alert>
+            )}
+        </SettingsSection>
+    );
+}
+
+function PasswordSection({
+    changedAt,
+    rules,
+}: {
+    changedAt: string | null;
+    rules: string;
+}) {
+    const { t, locale } = useTranslation();
+    const [open, setOpen] = useState(false);
+
+    return (
+        <SettingsSection
+            id="password"
+            title={t('settings.password.title')}
+            description={
+                changedAt
+                    ? t('settings.password.changed_at', {
+                          date: formatDate(
+                              locale,
+                              changedAt.slice(0, 10),
+                              'medium',
+                          ),
+                      })
+                    : t('settings.password.never')
+            }
+        >
+            {open ? (
+                <Form
+                    {...updatePassword.form()}
+                    options={{ preserveScroll: true }}
+                    resetOnError
+                    resetOnSuccess
+                    onSuccess={() => setOpen(false)}
+                    className="flex flex-col gap-4"
+                >
+                    {({ processing, errors }) => (
+                        <>
+                            <FormField
+                                id="current_password"
+                                label={t('settings.password.current')}
+                                error={errors.current_password}
+                            >
+                                {(field) => (
+                                    <PasswordInput
+                                        {...field}
+                                        name="current_password"
+                                        required
+                                        autoFocus
+                                        autoComplete="current-password"
+                                    />
+                                )}
+                            </FormField>
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <FormField
+                                    id="password"
+                                    label={t('settings.password.new')}
+                                    error={errors.password}
+                                    hint={t('settings.password.new_hint')}
+                                >
+                                    {(field) => (
+                                        <PasswordInput
+                                            {...field}
+                                            name="password"
+                                            required
+                                            autoComplete="new-password"
+                                            passwordrules={rules}
+                                        />
+                                    )}
+                                </FormField>
+                                <FormField
+                                    id="password_confirmation"
+                                    label={t('settings.password.confirm')}
+                                    error={errors.password_confirmation}
+                                >
+                                    {(field) => (
+                                        <PasswordInput
+                                            {...field}
+                                            name="password_confirmation"
+                                            required
+                                            autoComplete="new-password"
+                                            passwordrules={rules}
+                                        />
+                                    )}
+                                </FormField>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                <Button
+                                    type="submit"
+                                    size="md"
+                                    disabled={processing}
+                                >
+                                    {processing && <Spinner />}
+                                    {t('settings.password.submit')}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="subtle"
+                                    size="md"
+                                    onClick={() => setOpen(false)}
+                                >
+                                    {t('settings.password.cancel')}
+                                </Button>
+                            </div>
+                        </>
+                    )}
+                </Form>
+            ) : (
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="md"
+                    className="self-start"
+                    onClick={() => setOpen(true)}
+                >
+                    <KeyRound aria-hidden="true" />
+                    {t('settings.password.change')}
+                </Button>
+            )}
+        </SettingsSection>
+    );
+}

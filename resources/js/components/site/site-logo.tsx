@@ -22,7 +22,7 @@ export default function SiteLogo({
     return (
         <Link
             href={home()}
-            className={cn('flex items-center rounded-md', className)}
+            className={cn('flex items-center rounded-full', className)}
         >
             {compactOnMobile ? (
                 <>

@@ -137,7 +137,7 @@ function Scan({
             <div
                 role="img"
                 aria-label={t('account.two_factor.setup.scan.qr_label')}
-                className="rounded-lg bg-brand-paper p-3 shadow-sm ring-1 ring-border [&_svg]:size-44"
+                className="rounded-inner bg-brand-paper p-3 shadow-sm ring-1 ring-border [&_svg]:size-44"
                 // SVG gerado pelo Fortify no servidor, sem dado de quem usa.
                 dangerouslySetInnerHTML={{ __html: qrCodeSvg }}
             />
@@ -146,7 +146,7 @@ function Scan({
                 <p className="text-meta text-text-secondary">
                     {t('account.two_factor.setup.scan.manual')}
                 </p>
-                <div className="flex w-full max-w-90 items-center gap-2 rounded-md bg-surface-muted py-1.5 pr-1.5 pl-3.5">
+                <div className="flex w-full max-w-90 items-center gap-2 rounded-full bg-surface-muted py-1.5 pr-1.5 pl-3.5">
                     <code className="min-w-0 flex-1 truncate text-left font-mono text-meta font-bold tracking-wider">
                         {secretKey}
                     </code>

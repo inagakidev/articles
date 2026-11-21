@@ -21,16 +21,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <header className="border-b border-border bg-surface">
                 <div className="flex h-16 items-center gap-3.5 px-4 sm:px-6">
                     <SiteLogo compactOnMobile height={30} />
-                    <Pill
-                        tone="lavender"
-                        className="rounded-sm px-2 py-0.5 text-badge"
-                    >
+                    <Pill tone="lavender" className="px-2.5 py-0.5 text-badge">
                         {t('admin.label')}
                     </Pill>
                     <div className="ml-auto flex items-center gap-2.5 sm:gap-3">
                         <Link
                             href={home()}
-                            className="hidden rounded-sm text-meta font-bold text-primary-text hover:underline sm:inline"
+                            className="hidden rounded-full text-meta font-bold text-primary-text hover:underline sm:inline"
                         >
                             {t('admin.header.site')}
                         </Link>

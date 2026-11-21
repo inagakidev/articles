@@ -5,12 +5,22 @@ use App\Http\Controllers\Accounts\UnverifiedEmailController;
 use App\Http\Controllers\Accounts\UsernameAvailabilityController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PolicyController;
+use App\Http\Controllers\Profiles\ShowProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
 Route::put('locale', LocaleController::class)->name('locale.update');
+
+// Imagens enviadas, com a regra de acesso de cada uma (D53)
+Route::get('media/{path}', MediaController::class)->where('path', '.*')->name('media.show');
+
+// Perfil público (RF-025, D77)
+Route::get('@{username}', ShowProfileController::class)
+    ->where('username', '[a-z][a-z0-9_-]{2,29}')
+    ->name('profiles.show');
 
 // Termos de uso, Política de privacidade e Política de conteúdo (D73)
 Route::get('terms', PolicyController::class)->defaults('type', 'terms')->name('policies.terms');

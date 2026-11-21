@@ -47,7 +47,7 @@ export default function CodeInput({
                     <InputOTPSlot
                         key={index}
                         index={index}
-                        className="h-14 w-11 rounded-md border border-border-strong bg-surface font-display text-h3 font-extrabold shadow-none first:rounded-md first:border-l last:rounded-md sm:w-12 aria-invalid:border-danger-fg"
+                        className="h-14 w-11 rounded-inner border border-border-strong bg-surface font-display text-h3 font-extrabold shadow-none first:rounded-inner first:border-l last:rounded-inner sm:w-12 aria-invalid:border-danger-fg"
                     />
                 ))}
             </InputOTPGroup>

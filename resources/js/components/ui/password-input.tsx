@@ -30,7 +30,7 @@ export default function PasswordInput({
                 onClick={() => setVisible((current) => !current)}
                 aria-label={label}
                 aria-controls={props.id}
-                className="absolute top-1 right-1 h-10 rounded-[10px] px-3 text-meta font-bold text-primary-text hover:bg-surface-hover"
+                className="absolute top-1 right-1 h-10 rounded-full px-3 text-meta font-bold text-primary-text hover:bg-surface-hover"
             >
                 {text}
             </button>

@@ -1,13 +1,13 @@
 import { Link } from '@inertiajs/react';
 import { PenLine } from 'lucide-react';
 import ArticleCard from '@/components/articles/article-card';
-import AuthorAvatar from '@/components/articles/author-avatar';
 import SectionHeading, {
     LandingContainer,
 } from '@/components/blocks/section-heading';
 import { Button } from '@/components/ui/button';
 import Marquee from '@/components/ui/marquee';
 import Mascot from '@/components/ui/mascot';
+import UserAvatar from '@/components/ui/user-avatar';
 import { useTranslation } from '@/lib/i18n';
 import { register } from '@/routes';
 import type { ArticleSummary, AuthorSummary } from '@/types';
@@ -105,12 +105,12 @@ function Authors({ authors }: { authors: CommunityAuthors }) {
     return (
         <div className="mt-7 flex flex-col items-center gap-2.5">
             <div aria-hidden="true" className="flex">
-                {faces.map((author, index) => (
-                    <AuthorAvatar
+                {faces.map((author) => (
+                    <UserAvatar
                         key={author.name}
-                        author={author}
-                        index={index}
-                        className="-ml-3 size-12 rounded-full text-label ring-3 ring-surface-muted first:ml-0"
+                        name={author.name}
+                        avatar={author.avatar}
+                        className="-ml-3 size-12 text-label ring-3 ring-surface-muted first:ml-0"
                     />
                 ))}
                 {more > 0 && (
@@ -132,7 +132,7 @@ function Invitation() {
     const { t } = useTranslation();
 
     return (
-        <div className="reveal mx-auto flex max-w-180 flex-wrap items-center justify-center gap-x-8 gap-y-5 rounded-[28px] border border-dashed border-pastel-lavender bg-surface-muted p-[clamp(24px,4vw,40px)] text-center sm:text-left dark:border-border">
+        <div className="reveal mx-auto flex max-w-180 flex-wrap items-center justify-center gap-x-8 gap-y-5 rounded-card border border-dashed border-pastel-lavender bg-surface-muted p-[clamp(24px,4vw,40px)] text-center sm:text-left dark:border-border">
             <Mascot art="escrevendo" size={140} float grounded />
             <div className="flex min-w-0 flex-[1_1_280px] flex-col items-center gap-3 sm:items-start">
                 <h3 className="text-h3 font-extrabold">
@@ -141,11 +141,7 @@ function Invitation() {
                 <p className="text-body text-text-secondary">
                     {t('landing.community.empty.text')}
                 </p>
-                <Button
-                    asChild
-                    size="md"
-                    className="mt-1 rounded-[14px] shadow-primary"
-                >
+                <Button asChild size="md" className="mt-1 shadow-primary">
                     <Link href={register()}>
                         <PenLine aria-hidden="true" className="size-[18px]" />
                         {t('landing.cta.write')}
