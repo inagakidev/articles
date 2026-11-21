@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vite-plus/test';
 import { testPage } from '@/test/inertia';
+import { MARQUEE_MIN } from '@/components/blocks/community';
 import Home from '@/pages/home';
 import type { ArticleSummary } from '@/types';
 
@@ -92,14 +93,37 @@ describe('página de apresentação', () => {
         ).toBeNull();
     });
 
-    it('em faixa rolante, a cópia dos cartões fica fora do leitor de tela e do teclado', () => {
-        const articles = [1, 2, 3, 4].map(article);
-        render(<Home {...empty} recentArticles={articles} />);
+    it.each([
+        [1, 0],
+        [5, 0],
+        [6, 1],
+        [11, 1],
+        [12, 2],
+    ])(
+        'com %i artigos, mostra %i faixas rolantes, sem cartões repetidos lado a lado',
+        (count, marquees) => {
+            const articles = Array.from({ length: count }, (_, index) =>
+                article(index + 1),
+            );
+            const { container } = render(
+                <Home {...empty} recentArticles={articles} />,
+            );
+            const rows = container.querySelectorAll('.marquee');
 
-        expect(screen.getAllByRole('link', { name: 'Artigo 1' })).toHaveLength(
-            1,
-        );
-    });
+            expect(rows).toHaveLength(marquees);
+            rows.forEach((row) =>
+                expect(
+                    row.querySelectorAll(
+                        '.marquee-track > div:first-child article',
+                    ).length,
+                ).toBeGreaterThanOrEqual(MARQUEE_MIN),
+            );
+            // A cópia que fecha a faixa fica fora do leitor de tela e do teclado
+            expect(
+                screen.getAllByRole('link', { name: /^Artigo \d+$/ }),
+            ).toHaveLength(count);
+        },
+    );
 
     it('troca a jornada pelas abas, também com as setas', () => {
         render(<Home {...empty} />);

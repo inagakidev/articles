@@ -12,8 +12,13 @@ import { useTranslation } from '@/lib/i18n';
 import { register } from '@/routes';
 import type { ArticleSummary, AuthorSummary } from '@/types';
 
-/** Abaixo disso a faixa rolante repetiria os mesmos cartões lado a lado. */
-const MARQUEE_MIN = 4;
+/**
+ * Cartões por fileira para a faixa rolante passar da largura de uma tela
+ * de 1920 px (cada cartão ocupa 350 px com o espaço). Com menos, a cópia
+ * que fecha a faixa apareceria ao lado do original, repetindo os cartões;
+ * por isso eles ficam parados em grade.
+ */
+export const MARQUEE_MIN = 6;
 
 /** Quantos rostos aparecem antes do "+N". */
 const FACES = 5;
