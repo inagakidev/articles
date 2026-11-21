@@ -10,24 +10,28 @@ use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
+use Laravel\Fortify\Fortify;
 
 class SecurityController extends Controller
 {
     /**
-     * Show the user's security settings page.
+     * Senha e, para a administradora, o 2FA (RF-017). As demais pessoas não
+     * veem o 2FA no MVP (RF-019). Os códigos de recuperação novos aparecem
+     * uma vez, logo depois de gerados.
      */
     public function edit(TwoFactorAuthenticationRequest $request): Response
     {
+        $user = $request->user();
         $props = [
-            'canManageTwoFactor' => Features::canManageTwoFactorAuthentication(),
+            'canManageTwoFactor' => $user->is_admin && Features::canManageTwoFactorAuthentication(),
             'passwordRules' => Password::defaults()->toPasswordRulesString(),
         ];
 
-        if (Features::canManageTwoFactorAuthentication()) {
-            $request->ensureStateIsValid();
-
-            $props['twoFactorEnabled'] = $request->user()->hasEnabledTwoFactorAuthentication();
-            $props['requiresConfirmation'] = Features::optionEnabled(Features::twoFactorAuthentication(), 'confirm');
+        if ($props['canManageTwoFactor']) {
+            $props['twoFactorEnabled'] = $user->hasConfirmedTwoFactor();
+            $props['recoveryCodes'] = $request->session()->get('status') === Fortify::RECOVERY_CODES_GENERATED
+                ? $user->recoveryCodes()
+                : [];
         }
 
         return Inertia::render('settings/security', $props);

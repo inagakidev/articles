@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { LanguageToggle } from '@/components/site/language-switch';
+import AccountMenu from '@/components/site/account-menu';
 import SiteLogo from '@/components/site/site-logo';
 import { ThemeToggle } from '@/components/site/theme-toggle';
 import { Button } from '@/components/ui/button';
@@ -52,15 +53,18 @@ export default function LandingHeader() {
                     <LanguageToggle className={toolClass} />
                     <MotionToggle variant="icon" />
                     {auth.user ? (
-                        <Button
-                            asChild
-                            size="md"
-                            className="rounded-[14px] shadow-primary"
-                        >
-                            <Link href={dashboard()}>
-                                {t('site.nav.my_articles')}
-                            </Link>
-                        </Button>
+                        <>
+                            <Button
+                                asChild
+                                size="md"
+                                className="hidden rounded-[14px] shadow-primary sm:inline-flex"
+                            >
+                                <Link href={dashboard()}>
+                                    {t('site.nav.my_articles')}
+                                </Link>
+                            </Button>
+                            <AccountMenu />
+                        </>
                     ) : (
                         <>
                             <Link

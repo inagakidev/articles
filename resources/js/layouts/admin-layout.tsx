@@ -1,20 +1,12 @@
-import { Link, router, usePage } from '@inertiajs/react';
-import { LogOut, ShieldCheck } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { Globe, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
 import AdminNav from '@/components/admin/admin-nav';
 import SiteLogo from '@/components/site/site-logo';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import AccountMenu from '@/components/site/account-menu';
 import Pill from '@/components/ui/pill';
-import { useInitials } from '@/hooks/use-initials';
 import { useTranslation } from '@/lib/i18n';
-import { home, logout } from '@/routes';
+import { home } from '@/routes';
 
 /**
  * Moldura do painel da administração (prancha "Admin · Painel"): cabeçalho
@@ -22,10 +14,7 @@ import { home, logout } from '@/routes';
  * Sem mascote (DESIGN §5.3).
  */
 export default function AdminLayout({ children }: { children: ReactNode }) {
-    const { auth } = usePage().props;
     const { t } = useTranslation();
-    const getInitials = useInitials();
-    const name = auth.user?.name ?? '';
 
     return (
         <div className="flex min-h-svh flex-col bg-bg text-text-primary">
@@ -52,47 +41,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                             />
                             {t('admin.header.two_factor')}
                         </span>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger
-                                aria-label={t('admin.header.account', { name })}
-                                className="rounded-[9px]"
-                            >
-                                <span
-                                    aria-hidden="true"
-                                    className="inline-flex size-9 items-center justify-center rounded-[9px] bg-pastel-lavender font-display text-caption font-extrabold text-pastel-lavender-fg"
-                                >
-                                    {getInitials(name)}
-                                </span>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                align="end"
-                                className="min-w-52"
-                            >
-                                <DropdownMenuLabel className="flex flex-col font-normal">
-                                    <span className="font-bold">{name}</span>
-                                    <span className="text-caption text-text-secondary">
-                                        {auth.user?.email}
-                                    </span>
-                                </DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem asChild className="sm:hidden">
-                                    <Link href={home()}>
-                                        {t('admin.header.site')}
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                    <Link
-                                        href={logout()}
-                                        as="button"
-                                        className="w-full"
-                                        onClick={() => router.flushAll()}
-                                    >
-                                        <LogOut aria-hidden="true" />
-                                        {t('admin.header.logout')}
-                                    </Link>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <AccountMenu
+                            items={[
+                                {
+                                    label: t('admin.header.site'),
+                                    href: home(),
+                                    Icon: Globe,
+                                    className: 'sm:hidden',
+                                },
+                            ]}
+                        />
                     </div>
                 </div>
             </header>

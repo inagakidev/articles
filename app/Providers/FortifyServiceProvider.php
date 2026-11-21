@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Domain\Accounts\Actions\DisableTwoFactor;
+use App\Domain\Accounts\Actions\EnableTwoFactor;
 use App\Http\Responses\EmailVerifiedResponse;
 use App\Http\Responses\LoginLockoutResponse;
 use App\Http\Responses\LoginResponse;
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use Laravel\Fortify\Actions\DisableTwoFactorAuthentication;
+use Laravel\Fortify\Actions\EnableTwoFactorAuthentication;
 use Laravel\Fortify\Contracts\EmailVerificationNotificationSentResponse;
 use Laravel\Fortify\Contracts\FailedPasswordResetLinkRequestResponse;
 use Laravel\Fortify\Contracts\LockoutResponse;
@@ -36,6 +40,10 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->singleton(LockoutResponse::class, LoginLockoutResponse::class);
         $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
         $this->app->singleton(TwoFactorLoginResponse::class, LoginResponse::class);
+
+        // 2FA só para a administradora, que não pode desligá-lo (RF-017, RF-019)
+        $this->app->bind(EnableTwoFactorAuthentication::class, EnableTwoFactor::class);
+        $this->app->bind(DisableTwoFactorAuthentication::class, DisableTwoFactor::class);
         $this->app->bind(SuccessfulPasswordResetLinkRequestResponse::class, PasswordResetLinkResponse::class);
         $this->app->bind(FailedPasswordResetLinkRequestResponse::class, PasswordResetLinkResponse::class);
         $this->app->bind(RegisterResponse::class, VerificationLinkResponse::class);

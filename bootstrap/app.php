@@ -20,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        // Quem já entrou e abre o login ou o cadastro volta para o início, onde
+        // o menu da conta tem "Sair", em vez de cair numa tela da conta.
+        $middleware->redirectUsersTo(fn () => route('home'));
+
         $middleware->web(append: [
             HandleAppearance::class,
             SetLocale::class,

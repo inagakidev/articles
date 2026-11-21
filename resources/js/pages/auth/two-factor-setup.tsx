@@ -1,13 +1,7 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import {
-    Check,
-    Copy,
-    Download,
-    KeyRound,
-    QrCode,
-    ShieldCheck,
-} from 'lucide-react';
+import { Check, Copy, KeyRound, QrCode, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
+import RecoveryCodes from '@/components/account/recovery-codes';
 import { AuthCardHeader } from '@/layouts/auth-layout';
 import type { AuthLayoutProps } from '@/layouts/auth-layout';
 import { Button } from '@/components/ui/button';
@@ -222,22 +216,6 @@ function Scan({
 function Recovery({ codes }: { codes: string[] }) {
     const { t } = useTranslation();
     const [saved, setSaved] = useState(false);
-    const [copied, copy] = useClipboard();
-    const text = codes.join('\n');
-
-    function download() {
-        const file = new Blob(
-            [
-                `${t('account.two_factor.setup.recovery.file_title')}\n\n${text}\n`,
-            ],
-            { type: 'text/plain' },
-        );
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(file);
-        link.download = 'he4rt-ink-recovery-codes.txt';
-        link.click();
-        URL.revokeObjectURL(link.href);
-    }
 
     return (
         <>
@@ -247,44 +225,7 @@ function Recovery({ codes }: { codes: string[] }) {
                 description={t('account.two_factor.setup.recovery.description')}
             />
 
-            <div className="w-full rounded-lg bg-surface-muted p-4">
-                <ul
-                    aria-label={t('account.two_factor.setup.recovery.list')}
-                    className="grid grid-cols-1 gap-x-4 gap-y-2 font-mono text-meta font-bold sm:grid-cols-2"
-                >
-                    {codes.map((code) => (
-                        <li key={code}>{code}</li>
-                    ))}
-                </ul>
-                <div className="mt-4 flex justify-center gap-2">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => void copy(text)}
-                    >
-                        {copied === text ? (
-                            <Check aria-hidden="true" />
-                        ) : (
-                            <Copy aria-hidden="true" />
-                        )}
-                        {t(
-                            copied === text
-                                ? 'account.two_factor.setup.recovery.copied'
-                                : 'account.two_factor.setup.recovery.copy',
-                        )}
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={download}
-                    >
-                        <Download aria-hidden="true" />
-                        {t('account.two_factor.setup.recovery.download')}
-                    </Button>
-                </div>
-            </div>
+            <RecoveryCodes codes={codes} />
 
             <p className="text-meta text-text-secondary">
                 {t('account.two_factor.setup.recovery.once')}

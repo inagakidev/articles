@@ -40,11 +40,18 @@ describe('cabeçalho do site', () => {
         ).toHaveTextContent('EN');
     });
 
-    it('mostra Meus artigos para quem está logado', () => {
-        renderIn('pt_BR', { id: 1 });
+    it('para quem entrou, mostra Meus artigos e o menu da conta', () => {
+        renderIn('pt_BR', {
+            id: 1,
+            name: 'Lia Martins',
+            email: 'lia@exemplo.dev',
+        });
         expect(
             screen.getByRole('link', { name: 'Meus artigos' }),
         ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', { name: 'Menu da conta: Lia Martins' }),
+        ).toHaveTextContent('LM');
         expect(screen.queryByRole('link', { name: 'Entrar' })).toBeNull();
     });
 });
