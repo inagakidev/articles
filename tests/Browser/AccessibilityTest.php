@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Tag;
 use App\Models\User;
 
 /*
@@ -127,4 +128,20 @@ it('não tem problemas de acessibilidade no perfil público', function () {
     visit('/@rafa-moreira')->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
     visit('/@rafa-moreira')->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
     visit('/@rafa-moreira')->on()->mobile()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+});
+
+it('não tem problemas de acessibilidade em categorias e tags', function () {
+    $this->actingAs(User::factory()->admin()->withTwoFactor()->create());
+    Tag::factory()->create(['name' => 'react']);
+    Tag::factory()->create(['name' => 'reactjs']);
+    Tag::factory()->blocked()->create(['name' => 'ganhe-dinheiro']);
+
+    visit('/admin/taxonomy')->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    visit('/admin/taxonomy')->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    visit('/admin/taxonomy')->on()->mobile()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    visit('/admin/taxonomy')
+        ->withLocale('pt-BR')
+        ->click('[aria-label="Excluir Mobile"]')
+        ->wait(1)
+        ->assertNoAccessibilityIssues();
 });

@@ -4,7 +4,7 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-import { dashboard } from '@/routes/admin';
+import { dashboard, taxonomy } from '@/routes/admin';
 
 type Item = {
     label: TranslationKey;
@@ -15,9 +15,12 @@ type Item = {
 
 /**
  * Seções do painel. Cada uma entra aqui com a fatia dela (D75): Fila de
- * aprovação, Denúncias, Usuários, Contestações, Categorias e tags e Auditoria.
+ * aprovação, Denúncias, Usuários, Contestações e Auditoria.
  */
-const items: Item[] = [{ label: 'admin.nav.dashboard', href: dashboard() }];
+const items: Item[] = [
+    { label: 'admin.nav.dashboard', href: dashboard() },
+    { label: 'admin.nav.taxonomy', href: taxonomy() },
+];
 
 /** Lista lateral no desktop; faixa rolável acima do conteúdo no celular. */
 export default function AdminNav() {

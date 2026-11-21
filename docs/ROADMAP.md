@@ -221,7 +221,7 @@ A fase está concluída quando todas as tarefas estão concluídas e todos os cr
 
 | ID    | Tarefa                                                | Cat. | Prioridade | Depende de          | Critério de conclusão                                                                                                            |
 | ----- | ----------------------------------------------------- | ---- | ---------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| p4-01 | Modelar artigos, versões e imagens                    | DB   | Alta       | p2-03, p1-04        | Migrations reversíveis conforme o modelo de dois estados.                                                                        |
+| p4-01 | Modelar artigos, versões e imagens                    | DB   | Alta       | p2-03, p1-04        | Migrations reversíveis conforme o modelo de dois estados. As tabelas de imagens entram com a p4-07 (D79).                        |
 | p4-02 | Estados do artigo e da versão                         | BE   | Alta       | p4-01               | Transições inválidas rejeitadas e cobertas por teste.                                                                            |
 | p4-03 | Categorias e tags                                     | BE   | Alta       | p4-01, p3-08        | Categoria com artigos não é excluída sem transferência; tags duplicadas são unificadas.                                          |
 | p4-04 | Criação e edição com rascunho e salvamento automático | BE   | Alta       | p4-02, p3-09        | Rascunho salvo automaticamente; não autor recebe 403.                                                                            |
