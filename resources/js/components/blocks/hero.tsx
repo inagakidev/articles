@@ -99,7 +99,7 @@ export default function Hero({
                         <Button
                             asChild
                             size="xl"
-                            className="shimmer rounded-[14px] shadow-primary"
+                            className="shimmer shadow-primary"
                         >
                             <Link href={register()}>
                                 <PenLine
@@ -140,7 +140,7 @@ export default function Hero({
                         </MascotOrbit>
                         <div
                             aria-hidden="true"
-                            className="absolute bottom-[14%] left-0 flex animate-rise items-center gap-2 rounded-[14px] border border-border bg-surface px-3.5 py-2.5 text-meta font-bold shadow-lg [animation-delay:450ms]"
+                            className="absolute bottom-[14%] left-0 flex animate-rise items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5 text-meta font-bold shadow-lg [animation-delay:450ms]"
                         >
                             <CloudCheck
                                 aria-hidden="true"
@@ -150,7 +150,7 @@ export default function Hero({
                         </div>
                         <div
                             aria-hidden="true"
-                            className="absolute top-[12%] right-0 animate-rise rounded-md shadow-lg [animation-delay:600ms]"
+                            className="absolute top-[12%] right-0 animate-rise rounded-full shadow-lg [animation-delay:600ms]"
                         >
                             <StatusBadge status="published" />
                         </div>

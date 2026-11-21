@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils"
 
 /** Estrutura comum aos avisos tingidos: só a cor muda entre as variantes. */
 const tinted =
-  "rounded-[14px] border-0 px-4 py-3.5 has-[>svg]:grid-cols-[calc(var(--spacing)*5)_1fr] [&>svg]:size-5 [&>svg]:translate-y-px *:data-[slot=alert-title]:text-label *:data-[slot=alert-title]:leading-[1.375rem] *:data-[slot=alert-title]:font-bold *:data-[slot=alert-description]:text-meta *:data-[slot=alert-description]:leading-[1.3125rem] *:data-[slot=alert-description]:text-current dark:shadow-[inset_0_0_0_1px_currentColor]"
+  "rounded-card border-0 px-5 py-4 has-[>svg]:grid-cols-[calc(var(--spacing)*5)_1fr] [&>svg]:size-5 [&>svg]:translate-y-px *:data-[slot=alert-title]:text-label *:data-[slot=alert-title]:leading-[1.375rem] *:data-[slot=alert-title]:font-bold *:data-[slot=alert-description]:text-meta *:data-[slot=alert-description]:leading-[1.3125rem] *:data-[slot=alert-description]:text-current dark:shadow-[inset_0_0_0_1px_currentColor]"
 
 const alertVariants = cva(
-  "relative w-full rounded-lg border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  "relative w-full rounded-card border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
   {
     variants: {
       variant: {

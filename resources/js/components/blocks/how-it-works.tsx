@@ -76,13 +76,13 @@ export default function HowItWorks() {
                             >
                                 <span
                                     aria-hidden="true"
-                                    className="step-number relative z-1 inline-flex size-14 items-center justify-center rounded-[18px] bg-primary font-display text-[1.375rem] font-extrabold text-text-on-primary shadow-primary"
+                                    className="step-number relative z-1 inline-flex size-14 items-center justify-center rounded-full bg-primary font-display text-[1.375rem] font-extrabold text-text-on-primary shadow-primary"
                                 >
                                     {index + 1}
                                 </span>
                                 <div
                                     onPointerMove={followPointer}
-                                    className="lift-card spotlight relative flex flex-wrap items-center gap-6 rounded-[28px] border border-border bg-surface p-[clamp(20px,3vw,32px)]"
+                                    className="lift-card spotlight relative flex flex-wrap items-center gap-6 rounded-card border border-border bg-surface p-[clamp(20px,3vw,32px)]"
                                 >
                                     <div className="flex min-w-0 flex-[999_1_300px] flex-col gap-3">
                                         <StatusBadge status={step.status} />

@@ -39,7 +39,7 @@ export default function AdminNav() {
                                 href={href}
                                 aria-current={current ? 'page' : undefined}
                                 className={cn(
-                                    'flex h-10.5 items-center gap-2.5 rounded-md px-3 text-label whitespace-nowrap',
+                                    'flex h-10.5 items-center gap-2.5 rounded-full px-3.5 text-label whitespace-nowrap',
                                     current
                                         ? 'bg-surface-selected font-extrabold text-text-on-selected'
                                         : 'font-semibold text-text-primary hover:bg-surface-hover',

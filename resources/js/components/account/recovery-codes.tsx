@@ -27,7 +27,7 @@ export default function RecoveryCodes({ codes }: { codes: string[] }) {
     }
 
     return (
-        <div className="w-full rounded-lg bg-surface-muted p-4">
+        <div className="w-full rounded-inner bg-surface-muted p-4">
             <ul
                 aria-label={t('account.two_factor.setup.recovery.list')}
                 className="grid grid-cols-1 gap-x-4 gap-y-2 font-mono text-meta font-bold sm:grid-cols-2"

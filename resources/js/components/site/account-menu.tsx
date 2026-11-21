@@ -65,11 +65,11 @@ export default function AccountMenu({
         <DropdownMenu>
             <DropdownMenuTrigger
                 aria-label={t('site.account.menu', { name: user.name })}
-                className={cn('shrink-0 rounded-[9px]', className)}
+                className={cn('shrink-0 rounded-full', className)}
             >
                 <span
                     aria-hidden="true"
-                    className="inline-flex size-9 items-center justify-center rounded-[9px] bg-pastel-lavender font-display text-caption font-extrabold text-pastel-lavender-fg"
+                    className="inline-flex size-9 items-center justify-center rounded-full bg-pastel-lavender font-display text-caption font-extrabold text-pastel-lavender-fg"
                 >
                     {getInitials(user.name)}
                 </span>

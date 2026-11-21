@@ -105,7 +105,7 @@ function PanelLayout({
                 )}
             </div>
 
-            <main className="relative -mt-6 flex flex-1 items-start justify-center rounded-t-xl bg-bg px-5 pt-7 pb-8 lg:mt-0 lg:items-center lg:rounded-none lg:px-8 lg:py-12">
+            <main className="relative -mt-6 flex flex-1 items-start justify-center rounded-t-section bg-bg px-5 pt-7 pb-8 lg:mt-0 lg:items-center lg:rounded-none lg:px-8 lg:py-12">
                 <div className="stagger flex w-full max-w-[440px] flex-col gap-[18px] lg:gap-6">
                     <h1 className="font-display text-[2rem]/10 font-extrabold tracking-[-0.02em]">
                         {t(title)}
@@ -130,7 +130,7 @@ function CardLayout({ children }: CardProps & { children: ReactNode }) {
                 <SiteLogo height={36} className="hidden sm:flex" />
             </header>
             <main className="flex flex-1 items-start justify-center px-5 pt-2 pb-8 sm:px-6 sm:pt-16 sm:pb-24">
-                <div className="stagger flex w-full max-w-[520px] flex-col items-center gap-[18px] text-center sm:gap-5 sm:rounded-[28px] sm:border sm:border-border sm:bg-surface sm:px-11 sm:py-10 sm:shadow-md">
+                <div className="stagger flex w-full max-w-[520px] flex-col items-center gap-[18px] text-center sm:gap-5 sm:rounded-section sm:border sm:border-border sm:bg-surface sm:px-11 sm:py-10 sm:shadow-md">
                     {children}
                 </div>
             </main>

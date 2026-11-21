@@ -40,7 +40,7 @@ export default function StatusBadge({
     return (
         <span
             className={cn(
-                'inline-flex w-fit max-w-full items-center gap-1.5 rounded-sm py-0.5 pr-2.5 pl-2 leading-5 font-bold whitespace-nowrap',
+                'inline-flex w-fit max-w-full items-center gap-1.5 rounded-full py-0.5 pr-2.5 pl-2 leading-5 font-bold whitespace-nowrap',
                 'dark:ring-1 dark:ring-current dark:ring-inset',
                 size === 'md' ? 'text-meta' : 'text-badge',
                 color,

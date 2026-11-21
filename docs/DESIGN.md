@@ -728,21 +728,21 @@ peso vêm de `font-display`/`font-sans` e `font-*`.
 - Linguagem geral arredondada.
 - Botões, campos, cards, avatares e modais devem compartilhar uma
   escala coerente de raios.
-- Elementos em formato pill são reservados principalmente para tags,
-  categorias e itens de navegação selecionados.
+- Tudo bem redondo (D76): controles em pílula e cards com raio grande.
 
-Escala de raios (aprovada na prancha de estilo):
+Escala de raios por papel (D76, substitui a da prancha de estilo):
 
-| Token          | Valor | Uso                                        |
-| -------------- | ----- | ------------------------------------------ |
-| `rounded-sm`   | 6 px  | Etiquetas de status, código inline         |
-| `rounded-md`   | 12 px | Botões, campos                             |
-| `rounded-lg`   | 16 px | Blocos internos, capas dentro do card      |
-| `rounded-xl`   | 24 px | Cards, diálogos, painéis                   |
-| `rounded-full` | ---   | Tags, chips, abas e navegação ativa (pill) |
+| Token             | Valor  | Uso                                                                                          |
+| ----------------- | ------ | -------------------------------------------------------------------------------------------- |
+| `rounded-full`    | pílula | Botões, campos de uma linha, selects, abas, selos de status, tags, avatares, caixas de ícone |
+| `rounded-inner`   | 20 px  | Blocos dentro de um card (capa, exemplo do editor, lista de códigos), menus, área de texto   |
+| `rounded-card`    | 28 px  | Cards, avisos, tabelas                                                                       |
+| `rounded-section` | 36 px  | Painéis grandes, diálogos e o cartão das telas de conta                                      |
 
-As telas de referência ainda usam alguns raios fora da escala (8, 10,
-14, 18 e 20 px); na implementação, valem os da tabela.
+Detalhes pequenos que não são componentes (marca-texto, linhas de
+esqueleto, a linha do tempo) ficam com raios pequenos. Nenhuma tela usa
+raio escrito à mão (`rounded-[14px]`); quem precisar de um papel novo
+acrescenta um token aqui.
 
 ### 4.2 Cards de artigos
 
@@ -922,7 +922,7 @@ não for evidente. Não usar apenas a cor para distinguir estados.
 
 ### 6.2 Avatares
 
-- Fotos em formato quadrado com cantos arredondados.
+- Fotos em círculo (D76), recortadas no centro em formato quadrado.
 - Manter proporção e enquadramento consistentes.
 - Sem foto: iniciais do nome sobre fundo pastel (§2.2), com texto
   `#292638` (≥ 9,8:1). A cor do fundo é derivada do usuário, para
@@ -1033,7 +1033,7 @@ projeto (`components/ui/`).
 | ----------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Button                  | primary, secondary, outline, tertiary, danger; tamanhos sm 40, md 44, lg 52 px | Texto sempre verbo + objeto. `loading` troca o ícone por spinner, mostra o verbo no gerúndio ("Enviando…"), marca `aria-busy` e trava; o Cancelar ao lado também trava. O danger é rosa (`danger-bg`) com texto `danger-on-bg` |
 | IconButton              | 36 e 40 px                                                                     | `aria-label` obrigatório; área de toque de 44 px por pseudo-elemento, sem mudar o desenho                                                                                                                                      |
-| Badge / Status          | rascunho, pendente, publicado, rejeitado, aberta, prioridade, novo             | Etiqueta com ícone, raio de 6 px, texto 12/18 700 (`text-badge`), largura do conteúdo                                                                                                                                          |
+| Badge / Status          | rascunho, pendente, publicado, rejeitado, aberta, prioridade, novo             | Etiqueta com ícone, em pílula, texto 12/18 700 (`text-badge`), largura do conteúdo                                                                                                                                             |
 | Tag / Category pill     | 7 pastéis + tag livre                                                          | Pill sem ícone. O "x" de remover tem alvo mínimo de 24 px e nome "Remover tag X"                                                                                                                                               |
 | Input, Textarea, Select | padrão, foco, inválido, desabilitado                                           | Altura de 44 a 48 px, borda `border-strong`. Erro com borda de 2 px, ícone e texto, ligado por `aria-describedby`. Contador colado ao fim do campo                                                                             |
 | Card de artigo          | padrão, favorito, indisponível                                                 | Ver §8.4. Indisponível (favorito removido do ar) é um card tracejado                                                                                                                                                           |
@@ -1205,7 +1205,7 @@ Modelo híbrido:
 Estilo editorial:
 
 - Cabeçalho personalizado.
-- Avatar quadrado com cantos arredondados.
+- Avatar em círculo.
 - Nome e biografia.
 - Detalhes visuais sutis.
 - Artigos publicados organizados em cards.
@@ -1493,7 +1493,7 @@ Grupos necessários:
 | Ilustrações       | Doodles equilibrados                                                             |
 | Mascote           | Ilustração em WEBP; estados vazios, boas-vindas e conquistas (§5.3)              |
 | Paleta do editor  | 6 cores por nome, texto e destaque por tema (§2.11)                              |
-| Avatares          | Quadrados com cantos arredondados; iniciais sem foto                             |
+| Avatares          | Em círculo; iniciais sem foto                                                    |
 | Tags e status     | Pills para tags; etiquetas para metadados/status                                 |
 | Formulários       | Neutros, com foco em lavanda                                                     |
 | Editor            | Área ampla e limpa, com barra de ferramentas própria                             |

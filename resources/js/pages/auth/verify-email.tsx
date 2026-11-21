@@ -151,7 +151,7 @@ export default function VerifyEmail({ email, resendAfter }: Props) {
                     href={logout()}
                     as="button"
                     onClick={() => router.flushAll()}
-                    className="cursor-pointer rounded-sm text-primary-text underline underline-offset-4 hover:text-text-primary"
+                    className="cursor-pointer rounded-full text-primary-text underline underline-offset-4 hover:text-text-primary"
                 >
                     {t('account.verify.logout')}
                 </Link>

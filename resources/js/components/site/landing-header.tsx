@@ -57,7 +57,7 @@ export default function LandingHeader() {
                             <Button
                                 asChild
                                 size="md"
-                                className="hidden rounded-[14px] shadow-primary sm:inline-flex"
+                                className="hidden shadow-primary sm:inline-flex"
                             >
                                 <Link href={dashboard()}>
                                     {t('site.nav.my_articles')}
@@ -69,14 +69,14 @@ export default function LandingHeader() {
                         <>
                             <Link
                                 href={login()}
-                                className="hidden rounded-md px-2.5 text-label font-bold text-primary-text hover:underline min-[561px]:inline"
+                                className="hidden rounded-full px-2.5 text-label font-bold text-primary-text hover:underline min-[561px]:inline"
                             >
                                 {t('site.nav.login')}
                             </Link>
                             <Button
                                 asChild
                                 size="md"
-                                className="rounded-[14px] font-bold shadow-primary"
+                                className="font-bold shadow-primary"
                             >
                                 <Link href={register()}>
                                     <span className="sm:hidden">

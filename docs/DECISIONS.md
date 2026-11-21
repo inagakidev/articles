@@ -637,3 +637,11 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Painel só com o que existe:** a lateral tem só "Painel"; Fila de aprovação, Denúncias, Usuários, Contestações, Categorias e tags e Auditoria entram com as fatias delas. Das métricas, só "Usuários cadastrados", que já tem dado; "Precisa da sua atenção" mostra "Tudo em dia" até os avisos existirem. No celular, a lateral vira uma faixa acima do conteúdo.
 - **Alternativas descartadas:** esperar pranchas de 2FA (a fatia ficaria sem as telas que a protegem); mostrar as seções futuras desativadas ou com zero (links que não levam a nada e números falsos); ligar o 2FA ao abrir a página, num GET (um prefetch poderia trocar o segredo já escaneado); pedir o 2FA para usar o site, e não só o painel (a D56 restringe ao painel).
 - **Pendente:** o painel ganha seções, métricas e avisos com as fatias 7, 16, 20 e 21; a troca de administradora pelo painel fica para depois do MVP (RF-245).
+
+### D76 — Curvatura por papel
+
+- **Status:** Aprovada (21/11/2026).
+- **Contexto:** as telas usavam mais de 15 raios diferentes, muitos escritos à mão (de 2 a 40 px), e a escala da prancha de estilo (6 a 24 px) já não era seguida. Foi pedido que tudo fosse redondo.
+- **Decisão:** "bem redondo", com quatro papéis (`DESIGN.md` §4.1): controles, selos, avatares e caixas de ícone em pílula ou círculo (`rounded-full`); blocos dentro de cards, menus e a área de texto com 20 px (`rounded-inner`); cards e avisos com 28 px (`rounded-card`); painéis grandes e diálogos com 36 px (`rounded-section`). Os tokens ficam no `@theme` e todas as telas foram migradas. Avatares passam a ser círculos, em vez de quadrados arredondados.
+- **Alternativas descartadas:** botões e campos com 16 px (menos redondo do que o pedido); pílula só nos botões, com campos de 16 px (inconsistente entre controles vizinhos).
+- **Impacto:** a área de texto de várias linhas (bio) fica com 20 px, porque em pílula o texto encostaria nas curvas.

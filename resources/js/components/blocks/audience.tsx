@@ -165,7 +165,7 @@ export default function Audience() {
                     role="tabpanel"
                     id={`painel-${journey.id}`}
                     aria-labelledby={`tab-${journey.id}`}
-                    className="flex flex-wrap items-center gap-[clamp(24px,5vw,56px)] rounded-[32px] border border-border bg-surface p-[clamp(24px,4vw,48px)]"
+                    className="flex flex-wrap items-center gap-[clamp(24px,5vw,56px)] rounded-section border border-border bg-surface p-[clamp(24px,4vw,48px)]"
                 >
                     <div className="flex flex-[1_1_220px] animate-rise justify-center">
                         <Mascot art={journey.art} size={200} float grounded />
@@ -182,7 +182,7 @@ export default function Audience() {
                                 >
                                     <span
                                         aria-hidden="true"
-                                        className="inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-surface-muted text-primary-text"
+                                        className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-muted text-primary-text"
                                     >
                                         <Icon className="size-[18px]" />
                                     </span>
@@ -202,7 +202,7 @@ export default function Audience() {
                                 <Button
                                     asChild
                                     size="xl"
-                                    className="rounded-[14px] shadow-primary"
+                                    className="shadow-primary"
                                 >
                                     <Link href={register()}>
                                         <PenLine
