@@ -296,7 +296,7 @@ export default function PolicyShow({
 
                         <section
                             aria-labelledby="resumo-h"
-                            className="flex items-start gap-6 rounded-xl bg-surface-muted p-5 sm:px-7 sm:py-6"
+                            className="flex items-start gap-6 rounded-card bg-surface-muted p-5 sm:px-7 sm:py-6"
                         >
                             <div className="flex min-w-0 flex-1 flex-col gap-3.5">
                                 <div className="flex flex-col gap-0.5">
@@ -322,7 +322,7 @@ export default function PolicyShow({
                                             >
                                                 <span
                                                     aria-hidden="true"
-                                                    className="inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-surface text-primary-text"
+                                                    className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-surface text-primary-text"
                                                 >
                                                     <Icon className="size-[18px]" />
                                                 </span>
@@ -418,7 +418,7 @@ function HelpCard({ email }: { email: string }) {
     return (
         <aside
             aria-labelledby="ajuda-h"
-            className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-4 rounded-xl border border-border bg-surface px-7 py-6 print:hidden"
+            className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-4 rounded-card border border-border bg-surface px-7 py-6 print:hidden"
         >
             <Mascot art="esperando" size={96} />
             <div className="flex flex-[1_1_260px] flex-col gap-1">

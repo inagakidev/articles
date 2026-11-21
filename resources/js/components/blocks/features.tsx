@@ -52,14 +52,14 @@ export default function Features() {
                     >
                         <div
                             aria-hidden="true"
-                            className="border-beam mt-auto flex flex-col gap-3 rounded-[20px] border border-border bg-bg p-4"
+                            className="border-beam mt-auto flex flex-col gap-3 rounded-inner border border-border bg-bg p-4"
                         >
                             <div className="flex flex-wrap items-center gap-1">
                                 {toolbar.map((Tool, index) => (
                                     <span
                                         key={index}
                                         className={cn(
-                                            'inline-flex size-8 items-center justify-center rounded-[9px]',
+                                            'inline-flex size-8 items-center justify-center rounded-full',
                                             index === 0 &&
                                                 'bg-surface-selected',
                                         )}
@@ -84,7 +84,7 @@ export default function Features() {
                                 {t('landing.features.preview.sample_after')}
                                 <span className="caret" />
                             </div>
-                            <div className="dark overflow-x-auto rounded-md bg-bg px-3.5 py-3 font-mono text-caption whitespace-pre text-text-primary">
+                            <div className="dark overflow-x-auto rounded-full bg-bg px-3.5 py-3 font-mono text-caption whitespace-pre text-text-primary">
                                 <span className="text-primary-text">
                                     php
                                 </span>{' '}
@@ -125,7 +125,7 @@ export default function Features() {
                             className="mt-auto flex items-end gap-2.5"
                         >
                             <Mascot art="rosto" size={44} />
-                            <div className="relative flex flex-1 flex-col gap-1 rounded-[18px] rounded-bl-sm bg-surface-muted p-3.5">
+                            <div className="relative flex flex-1 flex-col gap-1 rounded-inner rounded-bl-sm bg-surface-muted p-3.5">
                                 <span className="text-badge font-bold text-text-secondary">
                                     {t('landing.features.review.label')}
                                 </span>
@@ -203,7 +203,7 @@ export default function Features() {
                                 <span
                                     key={color}
                                     className={cn(
-                                        'h-8.5 flex-1 rounded-[10px] md:h-12',
+                                        'h-8.5 flex-1 rounded-full md:h-12',
                                         color,
                                     )}
                                 />
@@ -235,14 +235,14 @@ function FeatureCard({
         <article
             onPointerMove={followPointer}
             className={cn(
-                'lift-card spotlight reveal relative flex min-w-0 flex-col gap-3.5 overflow-hidden rounded-[28px] border border-border bg-surface p-7 text-text-primary',
+                'lift-card spotlight reveal relative flex min-w-0 flex-col gap-3.5 overflow-hidden rounded-card border border-border bg-surface p-7 text-text-primary',
                 className,
             )}
         >
             <span
                 aria-hidden="true"
                 className={cn(
-                    'card-icon inline-flex size-11 items-center justify-center rounded-[14px]',
+                    'card-icon inline-flex size-11 items-center justify-center rounded-full',
                     iconClassName,
                 )}
             >
@@ -270,7 +270,7 @@ function ContrastSample({
     return (
         <span
             className={cn(
-                'inline-flex h-8.5 items-center rounded-[10px] px-3 text-caption font-bold',
+                'inline-flex h-8.5 items-center rounded-full px-3 text-caption font-bold',
                 className,
             )}
         >

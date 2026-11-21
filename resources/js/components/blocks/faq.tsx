@@ -59,7 +59,7 @@ export default function Faq() {
                         return (
                             <div
                                 key={id}
-                                className="overflow-hidden rounded-[20px] border border-border bg-surface"
+                                className="overflow-hidden rounded-card border border-border bg-surface"
                             >
                                 <h3>
                                     <button
@@ -78,7 +78,7 @@ export default function Faq() {
                                         <span
                                             aria-hidden="true"
                                             className={cn(
-                                                'inline-flex size-8 shrink-0 items-center justify-center rounded-[10px] transition-[transform,background-color] duration-(--duration-slow) ease-emphasized',
+                                                'inline-flex size-8 shrink-0 items-center justify-center rounded-full transition-[transform,background-color] duration-(--duration-slow) ease-emphasized',
                                                 expanded
                                                     ? 'rotate-45 bg-surface-selected'
                                                     : 'bg-surface-muted',

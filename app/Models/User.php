@@ -10,6 +10,7 @@ use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -25,6 +26,11 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string $email
  * @property string $locale
  * @property bool $is_admin
+ * @property string|null $bio
+ * @property string|null $avatar_path
+ * @property-read string|null $avatar
+ * @property string|null $pending_email
+ * @property Carbon|null $pending_email_expires_at
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $two_factor_secret
@@ -34,8 +40,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'username', 'email', 'password', 'locale'])]
-#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
+#[Fillable(['name', 'username', 'bio', 'email', 'password', 'locale'])]
+#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'avatar_path', 'pending_email', 'pending_email_expires_at'])]
 class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
@@ -45,6 +51,12 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     protected $attributes = [
         'is_admin' => false,
     ];
+
+    /** @var list<string> */
+    protected $appends = ['avatar'];
+
+    /** Horas para confirmar um e-mail novo; depois disso, a troca cai (RF-030). */
+    public const EMAIL_CHANGE_HOURS = 24;
 
     /** Prazo para confirmar o e-mail; no dia seguinte a conta é excluída (RF-023). */
     public const VERIFICATION_DAYS = 7;
@@ -62,6 +74,25 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     public function hasConfirmedTwoFactor(): bool
     {
         return $this->two_factor_secret !== null && $this->two_factor_confirmed_at !== null;
+    }
+
+    /**
+     * Endereço da foto de perfil, servido pela rota de mídia (D53); null sem foto.
+     *
+     * @return Attribute<string|null, never>
+     */
+    protected function avatar(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->avatar_path === null
+            ? null
+            : route('media.show', ['path' => $this->avatar_path], absolute: false));
+    }
+
+    /** Troca de e-mail esperando o link, ainda dentro do prazo (RF-030). */
+    public function hasPendingEmail(): bool
+    {
+        return $this->pending_email !== null
+            && $this->pending_email_expires_at?->isFuture() === true;
     }
 
     /** @return HasMany<PolicyAcceptance, $this> */
@@ -109,6 +140,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'is_admin' => 'boolean',
+            'pending_email_expires_at' => 'datetime',
         ];
     }
 }

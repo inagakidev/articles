@@ -21,7 +21,7 @@ test('exibe a tela de verificação de e-mail', function () {
 test('usuários não verificados vão para a verificação de e-mail', function () {
     $user = User::factory()->unverified()->create();
 
-    $response = $this->actingAs($user)->get(route('appearance.edit'));
+    $response = $this->actingAs($user)->get(route('security.edit'));
 
     $response->assertRedirect(route('verification.notice'));
 });

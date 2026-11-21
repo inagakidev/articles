@@ -1,6 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
-import { CircleCheck } from 'lucide-react';
 import { useState } from 'react';
+import UsernameHint from '@/components/account/username-hint';
 import { useUsernameAvailability } from '@/hooks/use-username-availability';
 import type { AuthLayoutProps } from '@/layouts/auth-layout';
 import { Button } from '@/components/ui/button';
@@ -173,39 +173,6 @@ export default function Register({ passwordRules }: Props) {
             </p>
         </>
     );
-}
-
-function UsernameHint({
-    check,
-}: {
-    check: ReturnType<typeof useUsernameAvailability>;
-}) {
-    const { t } = useTranslation();
-
-    switch (check.status) {
-        case 'checking':
-            return <span>{t('account.username.checking')}</span>;
-        case 'available':
-            return (
-                <span className="flex items-center gap-1.5 text-meta font-semibold text-success-fg">
-                    <CircleCheck
-                        aria-hidden="true"
-                        className="size-4 shrink-0"
-                    />
-                    {t('account.username.available', {
-                        username: check.username,
-                    })}
-                </span>
-            );
-        case 'unavailable':
-            return (
-                <span className="text-meta font-semibold text-danger-fg">
-                    {check.message}
-                </span>
-            );
-        default:
-            return null;
-    }
 }
 
 /** Caixa de declaração das pranchas: obrigatória, com o erro logo abaixo. */

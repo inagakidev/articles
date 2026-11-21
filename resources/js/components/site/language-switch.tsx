@@ -6,7 +6,7 @@ import { canAnimateTransition, markTransition } from '@/lib/view-transition';
 import { update } from '@/routes/locale';
 
 /** O texto troca com um esmaecer suave da página (View Transitions, D74). */
-function changeLocale(locale: Locale) {
+export function changeLocale(locale: Locale) {
     router.put(
         update().url,
         { locale },
@@ -55,7 +55,7 @@ export function LanguageSelect() {
                 id="idioma"
                 value={locale}
                 onChange={(event) => changeLocale(event.target.value as Locale)}
-                className="h-10 rounded-md border border-border-strong bg-surface px-3 text-meta text-text-primary"
+                className="h-10 rounded-full border border-border-strong bg-surface px-3 text-meta text-text-primary"
             >
                 {locales.map((option) => (
                     <option

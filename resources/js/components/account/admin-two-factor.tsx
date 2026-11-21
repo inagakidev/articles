@@ -1,6 +1,7 @@
 import { Form, Link } from '@inertiajs/react';
 import { KeyRound, ShieldCheck, ShieldAlert } from 'lucide-react';
 import RecoveryCodes from '@/components/account/recovery-codes';
+import SettingsSection from '@/components/account/settings-section';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/lib/i18n';
@@ -23,22 +24,11 @@ export default function AdminTwoFactor({
     const { t } = useTranslation();
 
     return (
-        <section
-            aria-labelledby="two-factor-title"
-            className="flex flex-col gap-4"
+        <SettingsSection
+            id="two-factor"
+            title={t('settings.two_factor.title')}
+            description={t('settings.two_factor.required')}
         >
-            <div className="flex flex-col gap-1">
-                <h2
-                    id="two-factor-title"
-                    className="font-display text-[1.125rem] font-extrabold"
-                >
-                    {t('settings.two_factor.title')}
-                </h2>
-                <p className="text-meta text-text-secondary">
-                    {t('settings.two_factor.required')}
-                </p>
-            </div>
-
             {enabled ? (
                 <>
                     <p className="inline-flex items-center gap-2 text-meta font-bold text-success-fg">
@@ -98,6 +88,6 @@ export default function AdminTwoFactor({
                     </Button>
                 </div>
             )}
-        </section>
+        </SettingsSection>
     );
 }

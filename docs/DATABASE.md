@@ -24,11 +24,15 @@ A anonimização de registros de contas excluídas (12 meses, `REQUIREMENTS.md` 
 
 A conta (D72). Além das colunas do Laravel e do Fortify (`name`, `email`, `email_verified_at`, `password`, `remember_token` e as de 2FA):
 
-| Coluna     | Tipo               | Observação                                                                       |
-| ---------- | ------------------ | -------------------------------------------------------------------------------- |
-| `username` | string(30), único  | Minúsculas sem acento, números, `-` e `_`, começando por letra (RF-027 a RF-029) |
-| `locale`   | string(5), `pt_BR` | Idioma da conta, usado nos e-mails enviados sem requisição (D62)                 |
-| `is_admin` | boolean, `false`   | A administradora da instalação (D56, D75); fora do preenchimento em massa        |
+| Coluna                     | Tipo               | Observação                                                                       |
+| -------------------------- | ------------------ | -------------------------------------------------------------------------------- |
+| `username`                 | string(30), único  | Minúsculas sem acento, números, `-` e `_`, começando por letra (RF-027 a RF-029) |
+| `locale`                   | string(5), `pt_BR` | Idioma da conta, usado nos e-mails enviados sem requisição (D62)                 |
+| `is_admin`                 | boolean, `false`   | A administradora da instalação (D56, D75); fora do preenchimento em massa        |
+| `bio`                      | string(300), nulo  | Bio do perfil público (RF-025)                                                   |
+| `avatar_path`              | string, nulo       | Caminho da foto no disco de mídia (`avatars/<uuid>.webp`, D77)                   |
+| `pending_email`            | string, nulo       | E-mail novo esperando a confirmação (RF-030)                                     |
+| `pending_email_expires_at` | timestamp, nulo    | Fim do prazo de 24 h da troca                                                    |
 
 **Retenção:** conta que não confirma o e-mail em 7 dias é apagada no 8º dia (`User::prunable()`, RF-023), e username e e-mail ficam livres na hora. Nenhuma data de nascimento é guardada (RF-012).
 

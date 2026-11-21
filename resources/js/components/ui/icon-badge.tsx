@@ -16,7 +16,7 @@ export default function IconBadge({
         <span
             aria-hidden="true"
             className={cn(
-                'inline-flex size-16 items-center justify-center rounded-[20px] bg-surface-muted text-primary-text ring-1 ring-pastel-lavender ring-inset dark:ring-border',
+                'inline-flex size-16 items-center justify-center rounded-full bg-surface-muted text-primary-text ring-1 ring-pastel-lavender ring-inset dark:ring-border',
                 className,
             )}
         >

@@ -28,7 +28,7 @@ export default function EmptyState({
         >
             <span
                 aria-hidden="true"
-                className="mb-1 inline-flex size-12 items-center justify-center rounded-[14px] bg-pastel-mint text-pastel-mint-fg"
+                className="mb-1 inline-flex size-12 items-center justify-center rounded-full bg-pastel-mint text-pastel-mint-fg"
             >
                 <Icon className="size-6" />
             </span>

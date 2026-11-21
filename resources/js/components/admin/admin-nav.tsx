@@ -29,7 +29,7 @@ export default function AdminNav() {
             aria-label={t('admin.nav.label')}
             className="border-b border-border px-3 py-2 lg:w-65 lg:shrink-0 lg:border-b-0 lg:px-3 lg:py-5"
         >
-            <ul className="flex gap-0.5 overflow-x-auto lg:flex-col">
+            <ul className="flex [scrollbar-width:none] gap-0.5 overflow-x-auto lg:flex-col">
                 {items.map(({ label, href, count }) => {
                     const current = isCurrentUrl(href);
 
@@ -39,7 +39,7 @@ export default function AdminNav() {
                                 href={href}
                                 aria-current={current ? 'page' : undefined}
                                 className={cn(
-                                    'flex h-10.5 items-center gap-2.5 rounded-md px-3 text-label whitespace-nowrap',
+                                    'flex h-10.5 items-center gap-2.5 rounded-full px-3.5 text-label whitespace-nowrap',
                                     current
                                         ? 'bg-surface-selected font-extrabold text-text-on-selected'
                                         : 'font-semibold text-text-primary hover:bg-surface-hover',

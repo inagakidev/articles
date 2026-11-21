@@ -64,7 +64,7 @@ export function ThemeSelect() {
                     const value = event.target.value as Appearance;
                     revealFrom(event.target, () => updateAppearance(value));
                 }}
-                className="h-10 rounded-md border border-border-strong bg-surface px-3 text-meta text-text-primary"
+                className="h-10 rounded-full border border-border-strong bg-surface px-3 text-meta text-text-primary"
             >
                 {themes.map((theme) => (
                     <option key={theme.value} value={theme.value}>
