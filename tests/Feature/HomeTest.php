@@ -9,10 +9,10 @@ test('a página de apresentação é pública', function () {
         ->assertInertia(fn (Assert $page) => $page->component('home'));
 });
 
-test('sem conteúdo publicado, as seções que dependem dele vêm vazias', function () {
+test('sem conteúdo publicado, artigos e autores vêm vazios; as categorias já existem', function () {
     $this->get(route('home'))->assertInertia(fn (Assert $page) => $page
         ->component('home')
-        ->where('categories', [])
+        ->has('categories', 10)
         ->where('recentArticles', [])
         ->where('authors', ['count' => 0, 'people' => []])
     );

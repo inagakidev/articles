@@ -1,6 +1,6 @@
 # DATABASE — he4rt ink
 
-**Atualizado em:** 20/11/2026
+**Atualizado em:** 22/11/2026
 
 As tabelas do domínio e as convenções de modelagem. As convenções gerais do banco (UTC, collation, datas, migrations reversíveis) estão na seção 3.6 do `DECISIONS.md`. Este documento cresce a cada fatia. O perfil (bio e foto) entra na fatia 6.
 
@@ -80,3 +80,57 @@ Eventos de segurança da conta (RF-022, RF-024, D68, D69).
 Índice em `(type, created_at)`, usado pela retenção e pela análise do administrador.
 
 **Retenção:** `login_blocked` some depois de 90 dias; os demais tipos ficam enquanto a conta existir.
+
+### `categories`
+
+Categorias fixas, administradas pela administradora (RF-124, D79). As dez iniciais são criadas pela migration.
+
+| Coluna       | Tipo              | Observação                                                        |
+| ------------ | ----------------- | ----------------------------------------------------------------- |
+| `slug`       | string(60), único | Não muda ao renomear, para os links de filtro seguirem válidos    |
+| `name_pt_br` | string(40), único | Nome em português                                                 |
+| `name_en`    | string(40), único | Nome em inglês                                                    |
+| `color`      | string(20)        | Pastel do DESIGN §2.7 → `App\Domain\Taxonomy\Enums\CategoryColor` |
+
+### `tags`
+
+| Coluna           | Tipo              | Observação                                        |
+| ---------------- | ----------------- | ------------------------------------------------- |
+| `name`           | string(40), único | Já normalizado (`TagName::normalize`, RF-128)     |
+| `blocked_at`     | timestamp, nulo   | Bloqueada não pode ser usada (RF-129)             |
+| `merged_into_id` | `tags.id`, nulo   | Unida a outra: vira apelido dela (`nullOnDelete`) |
+
+### `articles`
+
+O artigo, independente das versões (REQUIREMENTS §5.1, D79).
+
+| Coluna               | Tipo                        | Observação                                                              |
+| -------------------- | --------------------------- | ----------------------------------------------------------------------- |
+| `user_id`            | `users.id`, nulo            | Autoria; o artigo sobrevive à conta (`nullOnDelete`)                    |
+| `state`              | string(20)                  | `unpublished` ou `published` → `ArticleState`                           |
+| `current_version_id` | `article_versions.id`, nulo | A versão aprovada em vigor, a que o público lê                          |
+| `first_published_at` | timestamp, nulo             | Primeira publicação (RF-137)                                            |
+| `deleted_at`         | timestamp, nulo             | Na lixeira; o `state` fica guardado para a restauração (RF-340, RF-341) |
+
+### `article_versions`
+
+Uma cópia completa do conteúdo, com o próprio estado (REQUIREMENTS §5.2, D79).
+
+| Coluna                                        | Tipo                        | Observação                                                                 |
+| --------------------------------------------- | --------------------------- | -------------------------------------------------------------------------- |
+| `article_id`                                  | `articles.id`               | Apagada junto com o artigo (`cascadeOnDelete`)                             |
+| `status`                                      | string(20)                  | `draft`, `pending`, `approved`, `rejected`, `superseded` → `VersionStatus` |
+| `title`                                       | string(150), nulo           | RF-078; o rascunho pode ficar vazio (RF-318)                               |
+| `content`                                     | JSON, nulo                  | Documento do Tiptap (D51)                                                  |
+| `content_text`                                | longtext, nulo              | Texto puro, para busca e contagens                                         |
+| `language`                                    | string(5), nulo             | `pt_BR` ou `en` (RF-094)                                                   |
+| `category_id`                                 | `categories.id`, nulo       | Não deixa apagar a categoria em uso (`restrictOnDelete`, RF-126)           |
+| `based_on_id`                                 | `article_versions.id`, nulo | A versão de onde o rascunho partiu                                         |
+| `submitted_at`, `decided_at`                  | timestamp, nulo             | Envio e decisão da revisão                                                 |
+| `decided_by_id`                               | `users.id`, nulo            | Quem decidiu (`nullOnDelete`)                                              |
+| `decision_reason`                             | text, nulo                  | Justificativa da rejeição ou despublicação                                 |
+| `draft_slot`, `pending_slot`, `approved_slot` | gerada, única               | `article_id` quando o status bate; garante RF-351 no banco                 |
+
+### `article_version_tag`
+
+Tags de cada versão (chave composta). Apagar a versão ou a tag apaga a ligação.

@@ -304,13 +304,12 @@ Esta lista é conceitual e não representa o modelo definitivo do banco de dados
 
 ### 3.5. Pontos técnicos não definidos
 
-- Estratégia de versionamento do conteúdo.
 - Estratégia de cache.
 - Provedor de e-mail transacional (p8-01, D71). A hospedagem foi decidida na D78.
 - Política técnica de exclusão e retenção.
 - Processamento de visualizações.
 
-Editor, imagens, busca, backup e identificação do administrador foram decididos em D51 a D56.
+Editor, imagens, busca, backup e identificação do administrador foram decididos em D51 a D56; o versionamento do conteúdo, na D79.
 
 ### 3.6. Convenções do banco de dados
 
@@ -674,3 +673,18 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - Hospedagem compartilhada: não permite worker permanente.
 - **Riscos:** as atualizações de segurança do servidor ficam com o projeto (o Ploi automatiza parte); o banco e a aplicação dividem o mesmo servidor, então um pico de uso afeta os dois.
 - **Pendente:** o provedor de e-mail (p8-01, D71), sem o qual a conta não é confirmada; o backup e a restauração (p8-05).
+
+### D79 — Artigos, versões, categorias e tags
+
+- **Status:** Aprovada (22/11/2026).
+- **Contexto:** a fatia 7 modela artigos e versões (p4-01), os estados (p4-02) e categorias e tags (p4-03). A estratégia de versionamento do conteúdo estava em aberto (seção 3.5).
+- **Decisão:**
+    - **Versionamento por cópia completa:** cada versão guarda título, conteúdo (JSON do Tiptap e o texto puro extraído), idioma, categoria e tags. A versão enviada fica congelada, a publicada segue no ar durante uma edição (RF-330) e o histórico é a lista de versões. Diferenças entre versões não são guardadas: o conteúdo tem até 50.000 caracteres (RF-078), e a cópia é o modelo mais simples de aprovar, rejeitar e restaurar.
+    - **Artigo:** guarda o estado (não publicado ou publicado), a versão em vigor e a primeira publicação. A lixeira é a exclusão suave do Laravel (`deleted_at`): o estado continua guardado, e a restauração o devolve sem regra extra (RF-340, RF-341). O artigo sobrevive à exclusão da conta, sem autoria, até a anonimização (fatia 22).
+    - **Limites no banco (RF-351):** colunas geradas únicas garantem no máximo um rascunho, uma pendente e uma em vigor por artigo, mesmo com dois pedidos ao mesmo tempo. Rejeitadas e substituídas se acumulam.
+    - **Estados:** `ArticleState` e `VersionStatus`, com as transições em regras puras (`VersionTransitions`, `ArticleTransitions`), testadas para cada par permitido e recusado. A correção de uma versão rejeitada é um rascunho novo baseado nela (`based_on_id`), e a versão rejeitada não muda. As ações que usam as regras (enviar, retirar, aprovar, rejeitar, despublicar) entram com as fatias 8, 10 e 16.
+    - **Categorias:** nome em português e em inglês, um dos pastéis do DESIGN e um slug que não muda ao renomear. As dez iniciais são as da página de apresentação. Excluir uma categoria em uso exige escolher o destino, e todas as versões que a usam são transferidas na mesma transação (RF-126); o banco também impede a exclusão direta.
+    - **Tags:** guardadas já na forma normalizada (minúsculas, sem acento, hífen no lugar de espaço, mantendo `#`, `+` e `.`), com até 40 caracteres. Unir leva as versões para a tag certa e transforma a antiga em apelido, então quem digitá-la depois cai na tag certa. A tela sugere uniões por uma chave aproximada ("reactjs" e "react-js" parecem "react"), mas quem une é a administradora. Tag bloqueada não pode ser usada (RF-129); excluir tira a tag de todas as versões.
+    - **Tela:** "Categorias e tags" no painel, no desenho da prancha, com o nome nos dois idiomas e a cor no criar e renomear. As categorias reais passam a aparecer na página de apresentação (D74).
+- **Alternativas descartadas:** guardar diferenças entre versões (complexo para aprovar e restaurar, sem ganho no tamanho dos artigos); um campo de estado "na lixeira" (exigiria guardar o estado anterior à parte); a categoria no artigo em vez da versão (mudar a categoria de um artigo publicado não passaria pela revisão); nome de categoria só em português.
+- **Pendente:** as tabelas de imagens entram com a fatia 9, porque o formato delas depende do processamento de lá; o registro de auditoria das ações da administradora em categorias e tags entra com a auditoria (p6-15); o slug e o endereço do artigo, com a leitura (fatia 12).

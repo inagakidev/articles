@@ -89,6 +89,7 @@ Cada ação dos perfis de `REQUIREMENTS.md` §3 tem uma regra no servidor. As li
 | Ver as próprias notificações                                               | `auth`; só as da pessoa                                                                   | fatia 19                         |
 | Pedir a exclusão da conta                                                  | `auth` + sem suspensão ativa                                                              | fatia 22                         |
 | Ativar o 2FA (administradora); desligar (ninguém no MVP)                   | `EnableTwoFactor` e `DisableTwoFactor` no lugar das ações do Fortify (RF-017, RF-019)     | `Domain/Accounts/Actions`, feito |
+| Gerenciar categorias e tags (administradora)                               | Rotas do painel + `CategoryPolicy` e `TagPolicy` (RF-124, RF-129)                         | `routes/admin.php`, feito        |
 | Abrir o painel da administração                                            | `verified` + Gate `access-admin` + 2FA confirmado (`EnsureTwoFactorConfirmed`)            | `routes/admin.php`, feito        |
 | Aprovar, rejeitar, despublicar, penalizar, julgar denúncias e contestações | Rotas do painel + Policies de cada modelo, com as restrições da administradora (P05, R08) | fatias 16, 20 e 21               |
 
