@@ -56,4 +56,15 @@ describe('botão de pausar animações', () => {
             screen.getAllByRole('button', { name: 'Retomar animações' }),
         ).toHaveLength(2);
     });
+
+    it('na versão só com ícone, o nome acessível diz o que o botão faz', () => {
+        Object.assign(testPage.props, { locale: 'pt_BR' });
+        render(<MotionToggle variant="icon" />);
+
+        fireEvent.click(screen.getByRole('button', { name: 'Pausar animações' }));
+
+        expect(
+            screen.getByRole('button', { name: 'Retomar animações' }),
+        ).toBeInTheDocument();
+    });
 });

@@ -4,6 +4,7 @@ import type { Appearance } from '@/hooks/use-appearance';
 import { useAppearance } from '@/hooks/use-appearance';
 import type { TranslationKey } from '@/lib/i18n';
 import { useTranslation } from '@/lib/i18n';
+import { revealFrom } from '@/lib/view-transition';
 
 export const themes: { value: Appearance; key: TranslationKey }[] = [
     { value: 'system', key: 'theme.system' },
@@ -14,7 +15,7 @@ export const themes: { value: Appearance; key: TranslationKey }[] = [
 const icons = { system: Monitor, light: Sun, dark: Moon };
 
 /** Botão do cabeçalho: alterna entre dispositivo, claro e escuro. */
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
     const { appearance, updateAppearance } = useAppearance();
     const { t } = useTranslation();
     const current = themes.findIndex((theme) => theme.value === appearance);
@@ -25,14 +26,23 @@ export function ThemeToggle() {
         <Button
             type="button"
             variant="ghost"
+            className={className}
             size="icon"
             aria-label={t('theme.toggle', {
                 current: t(themes[current].key).toLowerCase(),
                 next: t(next.key).toLowerCase(),
             })}
-            onClick={() => updateAppearance(next.value)}
+            onClick={(event) =>
+                revealFrom(event.currentTarget, () =>
+                    updateAppearance(next.value),
+                )
+            }
         >
-            <Icon aria-hidden="true" className="size-5" />
+            <Icon
+                key={appearance}
+                aria-hidden="true"
+                className="size-5 animate-icon-swap"
+            />
         </Button>
     );
 }
@@ -50,9 +60,10 @@ export function ThemeSelect() {
             <select
                 id="tema"
                 value={appearance}
-                onChange={(event) =>
-                    updateAppearance(event.target.value as Appearance)
-                }
+                onChange={(event) => {
+                    const value = event.target.value as Appearance;
+                    revealFrom(event.target, () => updateAppearance(value));
+                }}
                 className="h-10 rounded-md border border-border-strong bg-surface px-3 text-meta text-text-primary"
             >
                 {themes.map((theme) => (

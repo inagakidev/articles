@@ -2,14 +2,25 @@ import { router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import type { Locale } from '@/lib/i18n';
 import { locales, localeNames, useTranslation } from '@/lib/i18n';
+import { canAnimateTransition, markTransition } from '@/lib/view-transition';
 import { update } from '@/routes/locale';
 
+/** O texto troca com um esmaecer suave da página (View Transitions, D74). */
 function changeLocale(locale: Locale) {
-    router.put(update().url, { locale }, { preserveScroll: true });
+    router.put(
+        update().url,
+        { locale },
+        {
+            preserveScroll: true,
+            viewTransition: canAnimateTransition()
+                ? (transition) => markTransition('vt-locale', transition)
+                : false,
+        },
+    );
 }
 
 /** Botão do cabeçalho: alterna entre os dois idiomas. */
-export function LanguageToggle() {
+export function LanguageToggle({ className }: { className?: string }) {
     const { locale, t } = useTranslation();
     const next = locales[(locales.indexOf(locale) + 1) % locales.length];
 
@@ -17,13 +28,16 @@ export function LanguageToggle() {
         <Button
             type="button"
             variant="ghost"
+            className={className}
             aria-label={t('language.toggle', {
                 current: localeNames[locale].name,
                 next: localeNames[next].name,
             })}
             onClick={() => changeLocale(next)}
         >
-            {localeNames[locale].code}
+            <span key={locale} className="animate-icon-swap">
+                {localeNames[locale].code}
+            </span>
         </Button>
     );
 }

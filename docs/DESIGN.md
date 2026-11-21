@@ -223,12 +223,14 @@ componentes do shadcn continuarem funcionando sem edição.
 
 Tokens acrescentados na implementação (status **Preliminar**):
 
-| Token                                      | Claro                      | Escuro                      | Uso                                       |
-| ------------------------------------------ | -------------------------- | --------------------------- | ----------------------------------------- |
-| `--color-overlay`                          | `rgb(41 38 56 / 0.6)`      | `rgb(15 13 22 / 0.7)`       | Fundo atrás de modais e painéis           |
-| `--color-pastel-*` e `--color-pastel-*-fg` | pares de §2.7              | iguais                      | Tags, categorias, capas e avatar sem foto |
-| `--color-tint-*-bg` e `--color-tint-*-fg`  | `*-bg` e `*-on-bg` de §2.4 | pastel a 16% e texto pastel | Avisos grandes (§2.7)                     |
-| `--color-editor-*`                         | §2.11                      | §2.11                       | Paleta do editor                          |
+| Token                                      | Claro                                      | Escuro                      | Uso                                       |
+| ------------------------------------------ | ------------------------------------------ | --------------------------- | ----------------------------------------- |
+| `--color-overlay`                          | `rgb(41 38 56 / 0.6)`                      | `rgb(15 13 22 / 0.7)`       | Fundo atrás de modais e painéis           |
+| `--color-pastel-*` e `--color-pastel-*-fg` | pares de §2.7                              | iguais                      | Tags, categorias, capas e avatar sem foto |
+| `--color-tint-*-bg` e `--color-tint-*-fg`  | `*-bg` e `*-on-bg` de §2.4                 | pastel a 16% e texto pastel | Avisos grandes (§2.7)                     |
+| `--color-editor-*`                         | §2.11                                      | §2.11                       | Paleta do editor                          |
+| `--color-brand-*`                          | `#FFFFFF`, `#292638`, `#875CCB`, `#C6ACFA` | iguais                      | Amostras de contraste da página inicial   |
+| `--shadow-primary`                         | `0 6px 18px` lavanda / 32%                 | igual                       | Chamadas principais da página inicial     |
 
 #### 2.6.1 Tema claro
 
@@ -811,35 +813,39 @@ a própria paleta da marca (§2.1 e §2.2).
 **Papel:** acolher em momentos de espera, vazio ou conquista. Nunca
 compete com o texto, nunca carrega informação sozinho.
 
-| Contexto                                                             | Usa o mascote?               | Ilustração     |
-| -------------------------------------------------------------------- | ---------------------------- | -------------- |
-| Logo, favicon e ícones do site                                       | **Não** (logo própria, §5.4) | ---            |
-| Página inicial, login e cadastro                                     | Sim                          | `apresentando` |
-| Chamada "publicar aqui" na página inicial                            | Sim                          | `escrevendo`   |
-| Confirmação de e-mail e link de recuperação enviado                  | Sim                          | `esperando`    |
-| Recuperar senha                                                      | Sim                          | `pensativo`    |
-| E-mail confirmado                                                    | Sim                          | `comemorando`  |
-| Troca obrigatória de username                                        | Sim                          | `pensativo`    |
-| Resumo das páginas de políticas                                      | Sim, pequeno                 | `lendo`        |
-| "Ficou com alguma dúvida?" nas políticas                             | Sim, pequeno                 | `esperando`    |
-| Novo aceite dos Termos                                               | Sim                          | `lendo`        |
-| Editor vazio                                                         | Sim, pequeno                 | `escrevendo`   |
-| Artigo enviado para revisão                                          | Sim, discreto                | `esperando`    |
-| Artigo aprovado (Meus artigos, notificação, e-mail)                  | Sim                          | `comemorando`  |
-| Fim do artigo, depois do texto                                       | Sim, pequeno                 | `lendo`        |
-| Busca carregando                                                     | Sim                          | `procurando`   |
-| Busca sem resultados                                                 | Sim                          | `pensativo`    |
-| Nenhum favorito                                                      | Sim                          | `lendo`        |
-| Nenhum rascunho ou artigo                                            | Sim                          | `escrevendo`   |
-| Notificações em dia                                                  | Sim                          | `dormindo`     |
-| Erro 404                                                             | Sim                          | `procurando`   |
-| Erro 500                                                             | Sim                          | `dormindo`     |
-| Manutenção                                                           | Sim                          | `dormindo`     |
-| Durante a leitura e a escrita (corpo do artigo, editor com conteúdo) | **Não**                      | ---            |
-| Painel administrativo                                                | **Não**                      | ---            |
-| Artigo não aprovado ou despublicado                                  | **Não**                      | ---            |
-| Suspensão, banimento, contestação, exclusão de conta, denúncias      | **Não**                      | ---            |
-| Foto padrão de usuário                                               | **Não** (ver §6.2)           | ---            |
+| Contexto                                                             | Usa o mascote?               | Ilustração                               |
+| -------------------------------------------------------------------- | ---------------------------- | ---------------------------------------- |
+| Logo, favicon e ícones do site                                       | **Não** (logo própria, §5.4) | ---                                      |
+| Página inicial, login e cadastro                                     | Sim                          | `apresentando`                           |
+| Chamada "publicar aqui" na página inicial                            | Sim                          | `escrevendo`                             |
+| Três passos da página inicial                                        | Sim                          | `escrevendo`, `esperando`, `comemorando` |
+| "Para quem lê" e "Para quem escreve" na página inicial               | Sim                          | `lendo`, `escrevendo`                    |
+| Perguntas frequentes da página inicial                               | Sim                          | `pensativo`                              |
+| Chamada final da página inicial                                      | Sim                          | `comemorando`                            |
+| Confirmação de e-mail e link de recuperação enviado                  | Sim                          | `esperando`                              |
+| Recuperar senha                                                      | Sim                          | `pensativo`                              |
+| E-mail confirmado                                                    | Sim                          | `comemorando`                            |
+| Troca obrigatória de username                                        | Sim                          | `pensativo`                              |
+| Resumo das páginas de políticas                                      | Sim, pequeno                 | `lendo`                                  |
+| "Ficou com alguma dúvida?" nas políticas                             | Sim, pequeno                 | `esperando`                              |
+| Novo aceite dos Termos                                               | Sim                          | `lendo`                                  |
+| Editor vazio                                                         | Sim, pequeno                 | `escrevendo`                             |
+| Artigo enviado para revisão                                          | Sim, discreto                | `esperando`                              |
+| Artigo aprovado (Meus artigos, notificação, e-mail)                  | Sim                          | `comemorando`                            |
+| Fim do artigo, depois do texto                                       | Sim, pequeno                 | `lendo`                                  |
+| Busca carregando                                                     | Sim                          | `procurando`                             |
+| Busca sem resultados                                                 | Sim                          | `pensativo`                              |
+| Nenhum favorito                                                      | Sim                          | `lendo`                                  |
+| Nenhum rascunho ou artigo                                            | Sim                          | `escrevendo`                             |
+| Notificações em dia                                                  | Sim                          | `dormindo`                               |
+| Erro 404                                                             | Sim                          | `procurando`                             |
+| Erro 500                                                             | Sim                          | `dormindo`                               |
+| Manutenção                                                           | Sim                          | `dormindo`                               |
+| Durante a leitura e a escrita (corpo do artigo, editor com conteúdo) | **Não**                      | ---                                      |
+| Painel administrativo                                                | **Não**                      | ---                                      |
+| Artigo não aprovado ou despublicado                                  | **Não**                      | ---                                      |
+| Suspensão, banimento, contestação, exclusão de conta, denúncias      | **Não**                      | ---                                      |
+| Foto padrão de usuário                                               | **Não** (ver §6.2)           | ---                                      |
 
 Os estados vazios de §5.2 continuam contextuais: cada um com mensagem e
 ação próprias, e a pose da tabela como apoio visual.
@@ -855,6 +861,10 @@ entre o leitor e o conteúdo.
 
 **Regras de uso**
 
+- Sem quadro ou fundo atrás do mascote. Na página de apresentação, ele
+  fica sobre uma sombra elíptica no chão (`grounded`), para parecer
+  apoiado em vez de solto; quando flutua, a sombra encolhe no mesmo
+  ritmo.
 - Sempre decorativo: `alt=""` e `aria-hidden="true"`. O texto ao lado
   comunica a mensagem sem depender da imagem.
 - Sem texto dentro da arte, para a interface funcionar igual em PT e EN.
@@ -1283,10 +1293,12 @@ mola `cubic-bezier(.3, 1.4, .5, 1)` (`ease-spring`), para pulos e
 confete. Durações: 150 ms para hover e foco, 250 a 450 ms para
 entradas, até 1,6 s para contagens e linhas.
 
-**Toda animação para sozinha em até 5 s** (WCAG 2.2.2). A única exceção
-é o marquee da página de apresentação, que pausa no hover, no foco e no
-botão "Pausar animações". Com `prefers-reduced-motion`, nada se move, e
-o elemento aparece já no estado final.
+**Toda animação para sozinha em até 5 s** (WCAG 2.2.2), exceto onde
+houver o botão "Pausar animações" (RF-383): a órbita e a flutuação do
+mascote (D72) e os efeitos da página de apresentação (D74), que são
+contínuos. O marquee também pausa no hover e no foco. Pausado ou com
+`prefers-reduced-motion`, nada se move, e o elemento aparece já no
+estado final.
 
 ### 9.3 Aplicações
 

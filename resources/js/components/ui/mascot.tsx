@@ -40,6 +40,13 @@ type Props = {
     art: MascotArt;
     /** Largura em pixels. */
     size: number;
+    /** Flutua devagar, sem parar (pausa com "Pausar animações"). */
+    float?: boolean;
+    /**
+     * Sombra no chão, para o mascote parecer apoiado em vez de solto. Com
+     * `float`, a sombra encolhe quando ele sobe.
+     */
+    grounded?: boolean;
     className?: string;
 };
 
@@ -47,18 +54,48 @@ type Props = {
  * O mascote é sempre decorativo: o texto ao lado comunica a mensagem.
  * Abaixo de 96 px usa só o rosto.
  */
-export default function Mascot({ art, size, className }: Props) {
+export default function Mascot({
+    art,
+    size,
+    float = false,
+    grounded = false,
+    className,
+}: Props) {
     const name = size < FULL_BODY ? 'rosto' : art;
-
-    return (
+    const image = (
         <img
             src={mascotUrls[name]}
             alt=""
             aria-hidden="true"
             width={size}
-            className={cn('block h-auto shrink-0 select-none', className)}
-            style={{ width: size }}
+            className={cn(
+                'block h-auto shrink-0 select-none',
+                float && 'animate-float',
+                grounded ? 'relative w-full' : className,
+            )}
+            style={grounded ? undefined : { width: size }}
             draggable={false}
         />
+    );
+
+    if (!grounded) {
+        return image;
+    }
+
+    return (
+        <span
+            aria-hidden="true"
+            className={cn('inline-flex shrink-0 flex-col items-center', className)}
+            style={{ width: size }}
+        >
+            {image}
+            <span
+                className={cn('mascot-shadow', float && 'mascot-shadow-float')}
+                style={{
+                    height: Math.max(10, Math.round(size * 0.12)),
+                    marginTop: -Math.round(size * 0.07),
+                }}
+            />
+        </span>
     );
 }
