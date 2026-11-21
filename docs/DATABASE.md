@@ -94,11 +94,12 @@ Categorias fixas, administradas pela administradora (RF-124, D79). As dez inicia
 
 ### `tags`
 
-| Coluna           | Tipo              | Observação                                        |
-| ---------------- | ----------------- | ------------------------------------------------- |
-| `name`           | string(40), único | Já normalizado (`TagName::normalize`, RF-128)     |
-| `blocked_at`     | timestamp, nulo   | Bloqueada não pode ser usada (RF-129)             |
-| `merged_into_id` | `tags.id`, nulo   | Unida a outra: vira apelido dela (`nullOnDelete`) |
+| Coluna           | Tipo               | Observação                                                      |
+| ---------------- | ------------------ | --------------------------------------------------------------- |
+| `name`           | string(40), único  | Já normalizado (`TagName::normalize`, RF-128)                   |
+| `loose_key`      | string(40), índice | Chave aproximada para sugerir uniões (`TagName::looseKey`, D79) |
+| `blocked_at`     | timestamp, nulo    | Bloqueada não pode ser usada (RF-129)                           |
+| `merged_into_id` | `tags.id`, nulo    | Unida a outra: vira apelido dela (`nullOnDelete`)               |
 
 ### `articles`
 

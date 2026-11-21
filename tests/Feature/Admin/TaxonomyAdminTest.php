@@ -5,6 +5,7 @@ use App\Models\ArticleVersion;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 
 /*
@@ -146,4 +147,43 @@ test('artigo na lixeira continua contando no uso da categoria', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->where('categories', fn ($categories) => collect($categories)->firstWhere('id', $category->id)['articles'] === 1),
         );
+});
+
+test('guardar o nome guarda a chave aproximada da tag', function () {
+    expect(Tag::factory()->create(['name' => 'react-js'])->loose_key)->toBe('react');
+});
+
+test('a sugestão aparece também para tags de outras páginas', function () {
+    Tag::factory()->count(30)->create();
+    $react = Tag::factory()->create(['name' => 'react']);
+    $reactjs = Tag::factory()->create(['name' => 'reactjs']);
+    $version = ArticleVersion::factory()->create();
+    $version->tags()->attach($react->id);
+
+    $suggestion = collect(range(1, 2))
+        ->flatMap(fn (int $page) => $this->actingAs($this->admin)
+            ->get(route('admin.taxonomy', ['page' => $page]))
+            ->viewData('page')['props']['tags']['data'])
+        ->firstWhere('name', 'reactjs')['mergeInto'];
+
+    expect($suggestion)->toBe(['id' => $react->id, 'name' => 'react']);
+});
+
+test('o custo da tela não cresce com o total de tags', function () {
+    $queries = function () {
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        $this->actingAs($this->admin)->get(route('admin.taxonomy'))->assertOk();
+        DB::disableQueryLog();
+
+        return count(DB::getQueryLog());
+    };
+
+    Tag::factory()->count(30)->create();
+    $few = $queries();
+
+    Tag::factory()->count(300)->create();
+    $many = $queries();
+
+    expect($many)->toBe($few);
 });

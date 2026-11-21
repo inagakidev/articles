@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Domain\Taxonomy\Rules\TagName;
 use Database\Factories\TagFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +19,7 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property string $name
+ * @property string $loose_key
  * @property Carbon|null $blocked_at
  * @property int|null $merged_into_id
  * @property Carbon|null $created_at
@@ -27,6 +30,18 @@ class Tag extends Model
 {
     /** @use HasFactory<TagFactory> */
     use HasFactory;
+
+    /**
+     * Guardar o nome guarda também a chave aproximada das sugestões (D79).
+     *
+     * @return Attribute<string, string>
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => ['name' => $value, 'loose_key' => TagName::looseKey($value)],
+        );
+    }
 
     public function isBlocked(): bool
     {
