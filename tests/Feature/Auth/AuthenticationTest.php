@@ -69,3 +69,9 @@ test('usuários saem da conta', function () {
 
     $this->assertGuest();
 });
+
+test('quem já entrou e abre o login ou o cadastro volta para o início', function (string $route) {
+    $this->actingAs(User::factory()->unverified()->create())
+        ->get(route($route))
+        ->assertRedirect(route('home'));
+})->with(['login', 'register']);

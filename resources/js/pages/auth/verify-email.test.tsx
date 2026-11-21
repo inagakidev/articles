@@ -61,4 +61,15 @@ describe('confira seu e-mail', () => {
 
         expect(screen.queryByLabelText('Novo e-mail')).toBeNull();
     });
+
+    it('deixa voltar ao início ou sair para entrar com outra conta', () => {
+        render(<VerifyEmail email="lia@exemplo.dev" />);
+
+        expect(
+            screen.getByRole('link', { name: 'Voltar ao início' }),
+        ).toHaveAttribute('href', '/');
+        expect(
+            screen.getByRole('link', { name: 'Sair e entrar com outra conta' }),
+        ).toHaveAttribute('href', '/logout');
+    });
 });

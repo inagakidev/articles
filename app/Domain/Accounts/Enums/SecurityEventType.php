@@ -17,6 +17,9 @@ enum SecurityEventType: string
     /** O e-mail da conta foi trocado. */
     case EmailChanged = 'email_changed';
 
+    /** O 2FA da administradora foi apagado pelo comando no servidor (RF-018). */
+    case TwoFactorReset = 'two_factor_reset';
+
     /**
      * Tipos que contam como tentativa suspeita de login e somem depois de
      * 90 dias (REQUIREMENTS.md §2.23). Os outros ficam enquanto a conta existir.

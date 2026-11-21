@@ -55,3 +55,44 @@ it('não tem problemas de acessibilidade no novo aceite das políticas', functio
     visit('/policies/accept')->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
     visit('/policies/accept')->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
 });
+
+it('não tem problemas de acessibilidade no painel da administração', function () {
+    $this->actingAs(User::factory()->admin()->withTwoFactor()->create());
+
+    visit('/admin')->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    visit('/admin')->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    visit('/admin')->on()->mobile()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+});
+
+it('não tem problemas de acessibilidade na confirmação de senha e na ativação do 2FA', function () {
+    $this->actingAs(User::factory()->admin()->create());
+
+    visit('/admin')
+        ->withLocale('pt-BR')
+        ->wait(ENTRANCE_SECONDS)
+        ->assertNoAccessibilityIssues()
+        ->type('password', 'password')
+        ->press('Confirmar')
+        ->wait(ENTRANCE_SECONDS)
+        ->assertSee('Proteja o painel')
+        ->assertNoAccessibilityIssues()
+        ->press('Ativar agora')
+        ->wait(ENTRANCE_SECONDS)
+        ->assertSee('Escaneie o QR code')
+        ->assertNoAccessibilityIssues();
+});
+
+it('não tem problemas de acessibilidade no código do 2FA ao entrar', function () {
+    $admin = User::factory()->admin()->withTwoFactor()->create();
+
+    visit('/login')
+        ->withLocale('pt-BR')
+        ->type('email', $admin->email)
+        ->type('password', 'password')
+        ->click('button[type="submit"]')
+        ->wait(3)
+        ->assertSee('Verificação em duas etapas')
+        ->assertNoAccessibilityIssues()
+        ->press('Usar um código de recuperação')
+        ->assertNoAccessibilityIssues();
+});

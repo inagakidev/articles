@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import AccountMenu from '@/components/site/account-menu';
 import { Button } from '@/components/ui/button';
 import { LanguageToggle } from '@/components/site/language-switch';
 import SiteLogo from '@/components/site/site-logo';
@@ -18,11 +19,14 @@ export default function SiteHeader() {
                     <ThemeToggle />
                     <LanguageToggle />
                     {auth.user ? (
-                        <Button asChild size="lg">
-                            <Link href={dashboard()}>
-                                {t('site.nav.my_articles')}
-                            </Link>
-                        </Button>
+                        <>
+                            <Button asChild size="lg">
+                                <Link href={dashboard()}>
+                                    {t('site.nav.my_articles')}
+                                </Link>
+                            </Button>
+                            <AccountMenu />
+                        </>
                     ) : (
                         <>
                             <Button asChild variant="ghost" size="lg">

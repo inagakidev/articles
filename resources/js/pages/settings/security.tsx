@@ -7,12 +7,15 @@ import PasswordInput from '@/components/ui/password-input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { edit } from '@/routes/security';
-import type { Props as ManageTwoFactorProps } from '@/components/manage-two-factor';
-import ManageTwoFactor from '@/components/manage-two-factor';
+import AdminTwoFactor from '@/components/account/admin-two-factor';
 
 type Props = {
     passwordRules: string;
-} & ManageTwoFactorProps;
+    /** Só a administradora tem 2FA no MVP (RF-017, RF-019). */
+    canManageTwoFactor: boolean;
+    twoFactorEnabled?: boolean;
+    recoveryCodes?: string[];
+};
 
 export default function Security(props: Props) {
     const passwordInput = useRef<HTMLInputElement>(null);
@@ -120,11 +123,12 @@ export default function Security(props: Props) {
                 </Form>
             </div>
 
-            <ManageTwoFactor
-                canManageTwoFactor={props.canManageTwoFactor}
-                requiresConfirmation={props.requiresConfirmation}
-                twoFactorEnabled={props.twoFactorEnabled}
-            />
+            {props.canManageTwoFactor && (
+                <AdminTwoFactor
+                    enabled={props.twoFactorEnabled ?? false}
+                    recoveryCodes={props.recoveryCodes ?? []}
+                />
+            )}
         </>
     );
 }

@@ -1,4 +1,4 @@
-import { Form, Head, usePage } from '@inertiajs/react';
+import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { Info } from 'lucide-react';
 import { useState } from 'react';
 import { useCountdown } from '@/hooks/use-countdown';
@@ -9,7 +9,9 @@ import { Button } from '@/components/ui/button';
 import FormField from '@/components/ui/form-field';
 import EmailInput from '@/components/ui/email-input';
 import { Spinner } from '@/components/ui/spinner';
+import TextLink from '@/components/ui/text-link';
 import { useTranslation } from '@/lib/i18n';
+import { home, logout } from '@/routes';
 import { send } from '@/routes/verification';
 import { update } from '@/routes/verification/email';
 
@@ -141,6 +143,19 @@ export default function VerifyEmail({ email, resendAfter }: Props) {
             <p className="text-meta text-text-secondary">
                 {t('account.verify.spam')}
             </p>
+
+            {/* Sem confirmar, dá para ler; e quem entrou na conta errada sai daqui. */}
+            <div className="flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-border pt-4 text-meta font-bold">
+                <TextLink href={home()}>{t('account.verify.home')}</TextLink>
+                <Link
+                    href={logout()}
+                    as="button"
+                    onClick={() => router.flushAll()}
+                    className="cursor-pointer rounded-sm text-primary-text underline underline-offset-4 hover:text-text-primary"
+                >
+                    {t('account.verify.logout')}
+                </Link>
+            </div>
         </>
     );
 }

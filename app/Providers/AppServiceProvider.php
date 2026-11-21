@@ -3,12 +3,14 @@
 namespace App\Providers;
 
 use App\Domain\Accounts\Listeners\RecordLoginLockout;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\DevCommands;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -30,6 +32,17 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureDevProcesses();
         $this->configureEvents();
+        $this->configureAuthorization();
+    }
+
+    /**
+     * Regras de autorização sem modelo. Não há liberação geral para a
+     * administradora (`Gate::before`), porque ela também tem restrições
+     * (D56); as regras de cada modelo ficam nas Policies.
+     */
+    protected function configureAuthorization(): void
+    {
+        Gate::define('access-admin', fn (User $user): bool => $user->is_admin);
     }
 
     /**
