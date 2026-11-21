@@ -1,51 +1,71 @@
 import { Form, Head } from '@inertiajs/react';
+import { LockKeyhole } from 'lucide-react';
 import { AuthCardHeader } from '@/layouts/auth-layout';
 import type { AuthLayoutProps } from '@/layouts/auth-layout';
-import InputError from '@/components/ui/input-error';
-import PasswordInput from '@/components/ui/password-input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import FormField from '@/components/ui/form-field';
+import IconBadge from '@/components/ui/icon-badge';
+import PasswordInput from '@/components/ui/password-input';
 import { Spinner } from '@/components/ui/spinner';
+import TextLink from '@/components/ui/text-link';
+import { useTranslation } from '@/lib/i18n';
 import { store } from '@/routes/password/confirm';
+import { request } from '@/routes/password';
 
+/** Senha de novo antes de uma área sensível, como ativar o 2FA (D75). */
 export default function ConfirmPassword() {
+    const { t } = useTranslation();
+
     return (
         <>
-            <Head title="Confirm password" />
+            <Head title={t('account.confirm_password.title')} />
 
-            {/* Textos traduzidos na fatia desta tela */}
+            <IconBadge Icon={LockKeyhole} />
             <AuthCardHeader
-                title="Confirm password"
-                description="This is a secure area of the application. Please confirm your password before continuing."
+                title={t('account.confirm_password.title')}
+                description={t('account.confirm_password.description')}
             />
 
-            <Form {...store.form()} resetOnSuccess={['password']}>
+            <Form
+                {...store.form()}
+                resetOnSuccess={['password']}
+                className="flex w-full flex-col gap-4 text-left"
+            >
                 {({ processing, errors }) => (
-                    <div className="space-y-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <PasswordInput
-                                id="password"
-                                name="password"
-                                placeholder="Password"
-                                autoComplete="current-password"
-                                autoFocus
-                            />
+                    <>
+                        <FormField
+                            id="password"
+                            label={t('account.confirm_password.label')}
+                            error={errors.password}
+                        >
+                            {(field) => (
+                                <PasswordInput
+                                    {...field}
+                                    name="password"
+                                    required
+                                    autoFocus
+                                    autoComplete="current-password"
+                                />
+                            )}
+                        </FormField>
 
-                            <InputError message={errors.password} />
-                        </div>
+                        <Button
+                            type="submit"
+                            size="xl"
+                            className="w-full"
+                            disabled={processing}
+                        >
+                            {processing && <Spinner />}
+                            {t('account.confirm_password.submit')}
+                        </Button>
 
-                        <div className="flex items-center">
-                            <Button
-                                className="w-full"
-                                disabled={processing}
-                                data-test="confirm-password-button"
-                            >
-                                {processing && <Spinner />}
-                                Confirm password
-                            </Button>
-                        </div>
-                    </div>
+                        <TextLink
+                            href={request()}
+                            className="self-center text-meta font-bold"
+                        >
+                            {t('account.login.forgot')}
+                        </TextLink>
+                    </>
                 )}
             </Form>
         </>

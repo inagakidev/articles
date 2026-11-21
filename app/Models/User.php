@@ -24,6 +24,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string $username
  * @property string $email
  * @property string $locale
+ * @property bool $is_admin
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $two_factor_secret
@@ -40,6 +41,11 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     /** @use HasFactory<UserFactory> */
     use HasFactory, MassPrunable, Notifiable, TwoFactorAuthenticatable;
 
+    /** @var array<string, mixed> */
+    protected $attributes = [
+        'is_admin' => false,
+    ];
+
     /** Prazo para confirmar o e-mail; no dia seguinte a conta é excluída (RF-023). */
     public const VERIFICATION_DAYS = 7;
 
@@ -47,6 +53,15 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     public function preferredLocale(): string
     {
         return $this->locale;
+    }
+
+    /**
+     * O painel só abre com o 2FA confirmado (RF-017). Com a confirmação
+     * ligada no Fortify, ter o segredo não basta: é preciso ter confirmado.
+     */
+    public function hasConfirmedTwoFactor(): bool
+    {
+        return $this->two_factor_secret !== null && $this->two_factor_confirmed_at !== null;
     }
 
     /** @return HasMany<PolicyAcceptance, $this> */
@@ -93,6 +108,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'is_admin' => 'boolean',
         ];
     }
 }

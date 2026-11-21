@@ -69,6 +69,17 @@ class UserFactory extends Factory
     }
 
     /**
+     * A administradora (D56). Sem o 2FA confirmado, o painel pede a ativação;
+     * combine com withTwoFactor() para entrar direto.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_admin' => true,
+        ]);
+    }
+
+    /**
      * Indicate that the model has two-factor authentication configured.
      */
     public function withTwoFactor(): static

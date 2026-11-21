@@ -29,6 +29,7 @@ vi.mock('@inertiajs/react', async (original) => ({
         children: (state: {
             processing: boolean;
             errors: Record<string, string>;
+            clearErrors: () => void;
         }) => ReactNode;
         className?: string;
         action?: string;
@@ -37,6 +38,10 @@ vi.mock('@inertiajs/react', async (original) => ({
         createElement(
             'form',
             { className, action, method },
-            children({ processing: false, errors: testForm.errors }),
+            children({
+                processing: false,
+                errors: testForm.errors,
+                clearErrors: () => {},
+            }),
         ),
 }));

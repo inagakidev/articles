@@ -65,6 +65,14 @@ Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24, MariaDB 11 e, para ver o
 
     A aplicação fica em http://localhost:8000. Depois de mudar o `.env`, reinicie o `composer dev`: a fila e o agendador guardam a configuração de quando subiram.
 
+6. Crie a administradora da instalação (só uma no MVP). O comando pede nome, username e senha; com o e-mail de uma conta que já existe, ele a promove:
+
+    ```bash
+    php artisan admin:create voce@exemplo.dev
+    ```
+
+    No primeiro acesso a http://localhost:8000/admin, o painel pede a ativação do 2FA e mostra os códigos de recuperação. Se ela perder o aparelho e os códigos, o último recurso é rodar no servidor `php artisan admin:reset-2fa`, que apaga o 2FA e encerra as sessões dela.
+
 ## Testes e verificações
 
 | Comando                 | O que faz                                                                                           |

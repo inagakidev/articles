@@ -813,39 +813,40 @@ a própria paleta da marca (§2.1 e §2.2).
 **Papel:** acolher em momentos de espera, vazio ou conquista. Nunca
 compete com o texto, nunca carrega informação sozinho.
 
-| Contexto                                                             | Usa o mascote?               | Ilustração                               |
-| -------------------------------------------------------------------- | ---------------------------- | ---------------------------------------- |
-| Logo, favicon e ícones do site                                       | **Não** (logo própria, §5.4) | ---                                      |
-| Página inicial, login e cadastro                                     | Sim                          | `apresentando`                           |
-| Chamada "publicar aqui" na página inicial                            | Sim                          | `escrevendo`                             |
-| Três passos da página inicial                                        | Sim                          | `escrevendo`, `esperando`, `comemorando` |
-| "Para quem lê" e "Para quem escreve" na página inicial               | Sim                          | `lendo`, `escrevendo`                    |
-| Perguntas frequentes da página inicial                               | Sim                          | `pensativo`                              |
-| Chamada final da página inicial                                      | Sim                          | `comemorando`                            |
-| Confirmação de e-mail e link de recuperação enviado                  | Sim                          | `esperando`                              |
-| Recuperar senha                                                      | Sim                          | `pensativo`                              |
-| E-mail confirmado                                                    | Sim                          | `comemorando`                            |
-| Troca obrigatória de username                                        | Sim                          | `pensativo`                              |
-| Resumo das páginas de políticas                                      | Sim, pequeno                 | `lendo`                                  |
-| "Ficou com alguma dúvida?" nas políticas                             | Sim, pequeno                 | `esperando`                              |
-| Novo aceite dos Termos                                               | Sim                          | `lendo`                                  |
-| Editor vazio                                                         | Sim, pequeno                 | `escrevendo`                             |
-| Artigo enviado para revisão                                          | Sim, discreto                | `esperando`                              |
-| Artigo aprovado (Meus artigos, notificação, e-mail)                  | Sim                          | `comemorando`                            |
-| Fim do artigo, depois do texto                                       | Sim, pequeno                 | `lendo`                                  |
-| Busca carregando                                                     | Sim                          | `procurando`                             |
-| Busca sem resultados                                                 | Sim                          | `pensativo`                              |
-| Nenhum favorito                                                      | Sim                          | `lendo`                                  |
-| Nenhum rascunho ou artigo                                            | Sim                          | `escrevendo`                             |
-| Notificações em dia                                                  | Sim                          | `dormindo`                               |
-| Erro 404                                                             | Sim                          | `procurando`                             |
-| Erro 500                                                             | Sim                          | `dormindo`                               |
-| Manutenção                                                           | Sim                          | `dormindo`                               |
-| Durante a leitura e a escrita (corpo do artigo, editor com conteúdo) | **Não**                      | ---                                      |
-| Painel administrativo                                                | **Não**                      | ---                                      |
-| Artigo não aprovado ou despublicado                                  | **Não**                      | ---                                      |
-| Suspensão, banimento, contestação, exclusão de conta, denúncias      | **Não**                      | ---                                      |
-| Foto padrão de usuário                                               | **Não** (ver §6.2)           | ---                                      |
+| Contexto                                                             | Usa o mascote?                | Ilustração                               |
+| -------------------------------------------------------------------- | ----------------------------- | ---------------------------------------- |
+| Logo, favicon e ícones do site                                       | **Não** (logo própria, §5.4)  | ---                                      |
+| Página inicial, login e cadastro                                     | Sim                           | `apresentando`                           |
+| Chamada "publicar aqui" na página inicial                            | Sim                           | `escrevendo`                             |
+| Três passos da página inicial                                        | Sim                           | `escrevendo`, `esperando`, `comemorando` |
+| "Para quem lê" e "Para quem escreve" na página inicial               | Sim                           | `lendo`, `escrevendo`                    |
+| Perguntas frequentes da página inicial                               | Sim                           | `pensativo`                              |
+| Chamada final da página inicial                                      | Sim                           | `comemorando`                            |
+| Confirmação de e-mail e link de recuperação enviado                  | Sim                           | `esperando`                              |
+| Recuperar senha                                                      | Sim                           | `pensativo`                              |
+| E-mail confirmado                                                    | Sim                           | `comemorando`                            |
+| Troca obrigatória de username                                        | Sim                           | `pensativo`                              |
+| Resumo das páginas de políticas                                      | Sim, pequeno                  | `lendo`                                  |
+| "Ficou com alguma dúvida?" nas políticas                             | Sim, pequeno                  | `esperando`                              |
+| Novo aceite dos Termos                                               | Sim                           | `lendo`                                  |
+| Editor vazio                                                         | Sim, pequeno                  | `escrevendo`                             |
+| Artigo enviado para revisão                                          | Sim, discreto                 | `esperando`                              |
+| Artigo aprovado (Meus artigos, notificação, e-mail)                  | Sim                           | `comemorando`                            |
+| Fim do artigo, depois do texto                                       | Sim, pequeno                  | `lendo`                                  |
+| Busca carregando                                                     | Sim                           | `procurando`                             |
+| Busca sem resultados                                                 | Sim                           | `pensativo`                              |
+| Nenhum favorito                                                      | Sim                           | `lendo`                                  |
+| Nenhum rascunho ou artigo                                            | Sim                           | `escrevendo`                             |
+| Notificações em dia                                                  | Sim                           | `dormindo`                               |
+| Erro 404                                                             | Sim                           | `procurando`                             |
+| Erro 500                                                             | Sim                           | `dormindo`                               |
+| Manutenção                                                           | Sim                           | `dormindo`                               |
+| Durante a leitura e a escrita (corpo do artigo, editor com conteúdo) | **Não**                       | ---                                      |
+| Painel administrativo                                                | **Não**                       | ---                                      |
+| Confirmar senha, ativação e código do 2FA                            | **Não** (ícone no lugar, D75) | ---                                      |
+| Artigo não aprovado ou despublicado                                  | **Não**                       | ---                                      |
+| Suspensão, banimento, contestação, exclusão de conta, denúncias      | **Não**                       | ---                                      |
+| Foto padrão de usuário                                               | **Não** (ver §6.2)            | ---                                      |
 
 Os estados vazios de §5.2 continuam contextuais: cada um com mensagem e
 ação próprias, e a pose da tabela como apoio visual.

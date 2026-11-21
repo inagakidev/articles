@@ -28,6 +28,7 @@ A conta (D72). Além das colunas do Laravel e do Fortify (`name`, `email`, `emai
 | ---------- | ------------------ | -------------------------------------------------------------------------------- |
 | `username` | string(30), único  | Minúsculas sem acento, números, `-` e `_`, começando por letra (RF-027 a RF-029) |
 | `locale`   | string(5), `pt_BR` | Idioma da conta, usado nos e-mails enviados sem requisição (D62)                 |
+| `is_admin` | boolean, `false`   | A administradora da instalação (D56, D75); fora do preenchimento em massa        |
 
 **Retenção:** conta que não confirma o e-mail em 7 dias é apagada no 8º dia (`User::prunable()`, RF-023), e username e e-mail ficam livres na hora. Nenhuma data de nascimento é guardada (RF-012).
 

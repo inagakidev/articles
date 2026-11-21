@@ -172,20 +172,20 @@ A fase está concluída quando todas as tarefas estão concluídas e todos os cr
 
 **Tarefas**
 
-| ID    | Tarefa                                                     | Cat. | Prioridade | Depende de          | Critério de conclusão                                                            |
-| ----- | ---------------------------------------------------------- | ---- | ---------- | ------------------- | -------------------------------------------------------------------------------- |
-| p3-01 | Modelar usuários, perfis, políticas e eventos de segurança | DB   | Alta       | p2-03, p1-08        | Migrations reversíveis e campos documentados em DATABASE.md.                     |
-| p3-02 | Cadastro com idade mínima e aceite das políticas           | BE   | Alta       | p3-01, p2-06        | Cadastro registra data e versão aceita; sem a declaração, o cadastro é recusado. |
-| p3-03 | Aplicar as regras de username                              | BE   | Alta       | p3-01               | Usernames inválidos ou reservados são recusados com mensagem clara.              |
-| p3-04 | Login, logout, rate limiting e eventos de segurança        | BE   | Alta       | p3-01               | Tentativas repetidas são limitadas e registradas como eventos de segurança.      |
-| p3-05 | Verificação de e-mail e exclusão de contas não verificadas | BE   | Alta       | p3-02, p2-07        | Conta não verificada é excluída no 8º dia; username e e-mail ficam livres.       |
-| p3-06 | Recuperação de senha e troca de senha e de e-mail          | BE   | Alta       | p3-05               | O usuário segue verificado até confirmar o novo e-mail; avisos enviados.         |
-| p3-07 | Administrador da instalação com 2FA                        | BE   | Alta       | p3-04               | Admin não acessa o painel sem 2FA; códigos de recuperação funcionam.             |
-| p3-08 | Perfis de acesso e Policies                                | BE   | Alta       | p3-07               | Cada ação da seção 3 mapeada para uma regra de autorização.                      |
-| p3-09 | Proteger rotas e validar permissões no backend             | BE   | Alta       | p3-08               | Visitante redirecionado ao login; usuário comum recebe 403 em rotas de admin.    |
-| p3-10 | Perfil público e edição de perfil                          | FE   | Alta       | p3-03, p3-08, p2-09 | Perfil público exibido; edição validada; foto sem metadados.                     |
-| p3-11 | Páginas de Termos e políticas com aceite versionado        | FE   | Média      | p3-01, p2-06        | Nova versão publicada exige aceite no próximo login.                             |
-| p3-12 | Testar acesso por perfil                                   | TS   | Alta       | p3-09, p2-11        | Testes Pest executados e passando.                                               |
+| ID    | Tarefa                                                     | Cat. | Prioridade | Depende de          | Critério de conclusão                                                                                                        |
+| ----- | ---------------------------------------------------------- | ---- | ---------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| p3-01 | Modelar usuários, perfis, políticas e eventos de segurança | DB   | Alta       | p2-03, p1-08        | Migrations reversíveis e campos documentados em DATABASE.md.                                                                 |
+| p3-02 | Cadastro com idade mínima e aceite das políticas           | BE   | Alta       | p3-01, p2-06        | Cadastro registra data e versão aceita; sem a declaração, o cadastro é recusado.                                             |
+| p3-03 | Aplicar as regras de username                              | BE   | Alta       | p3-01               | Usernames inválidos ou reservados são recusados com mensagem clara.                                                          |
+| p3-04 | Login, logout, rate limiting e eventos de segurança        | BE   | Alta       | p3-01               | Tentativas repetidas são limitadas e registradas como eventos de segurança.                                                  |
+| p3-05 | Verificação de e-mail e exclusão de contas não verificadas | BE   | Alta       | p3-02, p2-07        | Conta não verificada é excluída no 8º dia; username e e-mail ficam livres.                                                   |
+| p3-06 | Recuperação de senha e troca de senha e de e-mail          | BE   | Alta       | p3-05               | O usuário segue verificado até confirmar o novo e-mail; avisos enviados.                                                     |
+| p3-07 | Administrador da instalação com 2FA                        | BE   | Alta       | p3-04               | Admin não acessa o painel sem 2FA; códigos de recuperação funcionam.                                                         |
+| p3-08 | Perfis de acesso e Policies                                | BE   | Alta       | p3-07               | Cada ação da seção 3 mapeada para uma regra de autorização (`ARCHITECTURE.md` §2.3; as Policies entram com cada fatia, D75). |
+| p3-09 | Proteger rotas e validar permissões no backend             | BE   | Alta       | p3-08               | Visitante redirecionado ao login; usuário comum recebe 403 em rotas de admin.                                                |
+| p3-10 | Perfil público e edição de perfil                          | FE   | Alta       | p3-03, p3-08, p2-09 | Perfil público exibido; edição validada; foto sem metadados.                                                                 |
+| p3-11 | Páginas de Termos e políticas com aceite versionado        | FE   | Média      | p3-01, p2-06        | Nova versão publicada exige aceite no próximo login.                                                                         |
+| p3-12 | Testar acesso por perfil                                   | TS   | Alta       | p3-09, p2-11        | Testes Pest executados e passando.                                                                                           |
 
 ---
 
