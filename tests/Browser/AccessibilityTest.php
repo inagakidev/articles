@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Article;
+use App\Models\ArticleVersion;
+use App\Models\Category;
 use App\Models\Tag;
 use App\Models\User;
 
@@ -144,4 +147,30 @@ it('não tem problemas de acessibilidade em categorias e tags', function () {
         ->click('[aria-label="Excluir Mobile"]')
         ->wait(1)
         ->assertNoAccessibilityIssues();
+});
+
+it('não tem problemas de acessibilidade no editor e na prévia', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+    $article = Article::factory()->for($user, 'author')->create();
+    ArticleVersion::factory()->for($article)->create([
+        'title' => 'Filas no Laravel',
+        'category_id' => Category::query()->value('id'),
+        'content' => ['type' => 'doc', 'content' => [
+            ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [['type' => 'text', 'text' => 'Quem tira o job']]],
+            ['type' => 'paragraph', 'content' => [
+                ['type' => 'text', 'text' => 'Um texto com '],
+                ['type' => 'text', 'text' => 'destaque', 'marks' => [['type' => 'highlight', 'attrs' => ['color' => 'amarelo']]]],
+                ['type' => 'text', 'text' => ' e '],
+                ['type' => 'text', 'text' => 'link', 'marks' => [['type' => 'link', 'attrs' => ['href' => 'https://laravel.com']]]],
+            ]],
+            ['type' => 'codeBlock', 'attrs' => ['language' => 'php'], 'content' => [['type' => 'text', 'text' => "// fila\ndispatch(new SendInvoice(\$order));"]]],
+        ]],
+    ]);
+
+    foreach (['/write', "/articles/{$article->id}/edit", "/articles/{$article->id}/preview"] as $url) {
+        visit($url)->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+        visit($url)->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+        visit($url)->on()->mobile()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    }
 });

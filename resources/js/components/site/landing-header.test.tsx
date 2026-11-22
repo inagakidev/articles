@@ -57,16 +57,20 @@ describe('cabeçalho da apresentação', () => {
         ).toBeInTheDocument();
     });
 
-    it('para quem já entrou, leva aos próprios artigos', () => {
+    it('para quem já entrou, chama para escrever e mostra o menu da conta', () => {
         Object.assign(testPage.props, {
             locale: 'pt_BR',
-            auth: { user: { name: 'Lia' } },
+            auth: { user: { name: 'Lia Martins', email: 'lia@exemplo.dev' } },
         });
         render(<LandingHeader />);
 
+        expect(screen.getByRole('link', { name: 'Escrever' })).toHaveAttribute(
+            'href',
+            '/write',
+        );
         expect(
-            screen.getByRole('link', { name: 'Meus artigos' }),
-        ).toHaveAttribute('href', '/dashboard');
+            screen.getByRole('button', { name: 'Menu da conta: Lia Martins' }),
+        ).toBeInTheDocument();
         expect(screen.queryByRole('link', { name: 'Entrar' })).toBeNull();
     });
 });

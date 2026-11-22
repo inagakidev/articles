@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import MotionToggle from '@/components/ui/motion-toggle';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
-import { dashboard, login, register } from '@/routes';
+import { login, register } from '@/routes';
+import { create } from '@/routes/articles';
 
 /** Âncoras das seções da página de apresentação. */
 const sections: { id: string; label: TranslationKey }[] = [
@@ -57,10 +58,10 @@ export default function LandingHeader() {
                             <Button
                                 asChild
                                 size="md"
-                                className="hidden shadow-primary sm:inline-flex"
+                                className="font-bold shadow-primary"
                             >
-                                <Link href={dashboard()}>
-                                    {t('site.nav.my_articles')}
+                                <Link href={create()}>
+                                    {t('site.nav.write')}
                                 </Link>
                             </Button>
                             <AccountMenu />

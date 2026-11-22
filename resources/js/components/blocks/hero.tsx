@@ -12,9 +12,9 @@ import { Button } from '@/components/ui/button';
 import Mascot from '@/components/ui/mascot';
 import MascotOrbit from '@/components/ui/mascot-orbit';
 import StatusBadge from '@/components/ui/status-badge';
+import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
-import { register } from '@/routes';
 import type { CategorySummary } from '@/types';
 
 const perks: TranslationKey[] = [
@@ -34,6 +34,7 @@ export default function Hero({
     categories: CategorySummary[];
 }) {
     const { t } = useTranslation();
+    const writeHref = useWriteHref();
 
     return (
         <section
@@ -101,7 +102,7 @@ export default function Hero({
                             size="xl"
                             className="shimmer shadow-primary"
                         >
-                            <Link href={register()}>
+                            <Link href={writeHref}>
                                 <PenLine
                                     aria-hidden="true"
                                     className="size-[18px]"

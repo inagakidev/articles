@@ -1,9 +1,9 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { PenLine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Mascot from '@/components/ui/mascot';
+import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
-import { register } from '@/routes';
 
 const ripples = [260, 360, 460, 560];
 
@@ -13,6 +13,8 @@ const ripples = [260, 360, 460, 560];
  */
 export default function FinalCta() {
     const { t } = useTranslation();
+    const writeHref = useWriteHref();
+    const { auth } = usePage().props;
 
     return (
         <section
@@ -39,12 +41,14 @@ export default function FinalCta() {
                     </p>
                     <div className="flex flex-wrap gap-3">
                         <Button asChild size="xl">
-                            <Link href={register()}>
+                            <Link href={writeHref}>
                                 <PenLine
                                     aria-hidden="true"
                                     className="size-[18px]"
                                 />
-                                {t('landing.final.cta')}
+                                {auth.user
+                                    ? t('landing.cta.write')
+                                    : t('landing.final.cta')}
                             </Link>
                         </Button>
                     </div>

@@ -18,9 +18,9 @@ import SectionHeading, {
 import { Button } from '@/components/ui/button';
 import Mascot from '@/components/ui/mascot';
 import type { MascotArt } from '@/components/ui/mascot';
+import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
-import { register } from '@/routes';
 
 type Journey = {
     id: 'ler' | 'escrever';
@@ -89,6 +89,7 @@ const journeys: Journey[] = [
  */
 export default function Audience() {
     const { t } = useTranslation();
+    const writeHref = useWriteHref();
     const [active, setActive] = useState(0);
     const tabs = useRef<(HTMLButtonElement | null)[]>([]);
     const journey = journeys[active];
@@ -204,7 +205,7 @@ export default function Audience() {
                                     size="xl"
                                     className="shadow-primary"
                                 >
-                                    <Link href={register()}>
+                                    <Link href={writeHref}>
                                         <PenLine
                                             aria-hidden="true"
                                             className="size-[18px]"

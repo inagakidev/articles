@@ -1,0 +1,294 @@
+{
+    "_comment": "Paridade do editor (D51): o que o Tiptap produz o servidor guarda igual. Lido pelo Pest e pelo Vitest.",
+    "nodes": [
+        "doc",
+        "paragraph",
+        "heading",
+        "text",
+        "hardBreak",
+        "bulletList",
+        "orderedList",
+        "listItem",
+        "blockquote",
+        "codeBlock",
+        "horizontalRule",
+        "table",
+        "tableRow",
+        "tableHeader",
+        "tableCell"
+    ],
+    "marks": ["bold", "italic", "code", "link", "textColor", "highlight"],
+    "documents": {
+        "todos os elementos": {
+            "type": "doc",
+            "content": [
+                {
+                    "type": "heading",
+                    "attrs": {
+                        "level": 2
+                    },
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Filas"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Texto "
+                        },
+                        {
+                            "type": "text",
+                            "text": "forte",
+                            "marks": [
+                                {
+                                    "type": "bold"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "text": " e "
+                        },
+                        {
+                            "type": "text",
+                            "text": "itálico",
+                            "marks": [
+                                {
+                                    "type": "italic"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "text": ", "
+                        },
+                        {
+                            "type": "text",
+                            "text": "código",
+                            "marks": [
+                                {
+                                    "type": "code"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "hardBreak"
+                        },
+                        {
+                            "type": "text",
+                            "text": "link",
+                            "marks": [
+                                {
+                                    "type": "link",
+                                    "attrs": {
+                                        "href": "https://laravel.com"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "text": " "
+                        },
+                        {
+                            "type": "text",
+                            "text": "cor",
+                            "marks": [
+                                {
+                                    "type": "textColor",
+                                    "attrs": {
+                                        "color": "rosa"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "text": " "
+                        },
+                        {
+                            "type": "text",
+                            "text": "destaque",
+                            "marks": [
+                                {
+                                    "type": "highlight",
+                                    "attrs": {
+                                        "color": "amarelo"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "heading",
+                    "attrs": {
+                        "level": 3,
+                        "textAlign": "center"
+                    },
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Centro"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "attrs": {
+                        "textAlign": "right"
+                    },
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "À direita"
+                        }
+                    ]
+                },
+                {
+                    "type": "bulletList",
+                    "content": [
+                        {
+                            "type": "listItem",
+                            "content": [
+                                {
+                                    "type": "paragraph",
+                                    "content": [
+                                        {
+                                            "type": "text",
+                                            "text": "um"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "orderedList",
+                    "attrs": {
+                        "start": 3
+                    },
+                    "content": [
+                        {
+                            "type": "listItem",
+                            "content": [
+                                {
+                                    "type": "paragraph",
+                                    "content": [
+                                        {
+                                            "type": "text",
+                                            "text": "três"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "blockquote",
+                    "content": [
+                        {
+                            "type": "paragraph",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "citação"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "codeBlock",
+                    "attrs": {
+                        "language": "php"
+                    },
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "echo 1;"
+                        }
+                    ]
+                },
+                {
+                    "type": "horizontalRule"
+                },
+                {
+                    "type": "table",
+                    "content": [
+                        {
+                            "type": "tableRow",
+                            "content": [
+                                {
+                                    "type": "tableHeader",
+                                    "attrs": {
+                                        "colspan": 2
+                                    },
+                                    "content": [
+                                        {
+                                            "type": "paragraph",
+                                            "content": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "Cabeçalho"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "tableRow",
+                            "content": [
+                                {
+                                    "type": "tableCell",
+                                    "content": [
+                                        {
+                                            "type": "paragraph",
+                                            "content": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "a"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "tableCell",
+                                    "content": [
+                                        {
+                                            "type": "paragraph",
+                                            "content": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "b"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "vazio": {
+            "type": "doc",
+            "content": [
+                {
+                    "type": "paragraph"
+                }
+            ]
+        }
+    }
+}
