@@ -58,7 +58,8 @@ passo a passo cobre a p8-02 e a p8-04; o backup (p8-05) e a validação
    `--tries=3 --max-time=3600`. O deploy reinicia o worker sozinho.
 2. Em **Scheduler**, adicione `php artisan schedule:run` a cada minuto. Ele
    apaga as contas não confirmadas, as trocas de e-mail vencidas, as imagens
-   de artigo sem uso há 24 horas e os registros antigos.
+   de artigo sem uso há 24 horas, as versões substituídas além das cinco
+   mais recentes de cada artigo e os registros antigos.
 
 ## 6. Primeiro deploy
 
