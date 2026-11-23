@@ -1,7 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
+import { EditorContent, useEditor } from '@tiptap/react';
 import type { Editor } from '@tiptap/react';
-import { ArrowLeft, Eye, SlidersHorizontal } from 'lucide-react';
+import { ArrowLeft, Eye, Send, SlidersHorizontal } from 'lucide-react';
+import { toast } from 'sonner';
 import { useEffect, useRef, useState } from 'react';
 import CoverField from '@/components/editor/cover-field';
 import type { Cover } from '@/components/editor/cover-field';
@@ -12,6 +13,7 @@ import EmptyTips from '@/components/editor/empty-tips';
 import { editorExtensions } from '@/components/editor/extensions';
 import type { PaletteColor } from '@/components/editor/palette-marks';
 import SubmitChecklist from '@/components/editor/submit-checklist';
+import type { ChecklistItem } from '@/components/editor/submit-checklist';
 import Toolbar from '@/components/editor/toolbar';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
@@ -21,12 +23,14 @@ import { useAutosave } from '@/hooks/use-autosave';
 import type { DraftFields, SaveStatus } from '@/hooks/use-autosave';
 import { IMAGE_ACCEPT, useImageUpload } from '@/hooks/use-image-upload';
 import { useTranslation } from '@/lib/i18n';
-import { dashboard } from '@/routes';
-import { preview } from '@/routes/articles';
+import { mine, preview } from '@/routes/articles';
+import * as submission from '@/routes/articles/submission';
 
 type Props = {
     articleId: number | null;
     published: boolean;
+    /** Outra versão já está na fila: esta só vai depois da retirada (RF-102). */
+    hasPending: boolean;
     draft: {
         title: string;
         content: unknown;
@@ -76,6 +80,7 @@ export default function Edit(props: Props) {
     });
     const [detailsOpen, setDetailsOpen] = useState(false);
     const [cover, setCover] = useState(draft.cover);
+    const [submitting, setSubmitting] = useState(false);
     // Lido pelo nó de imagem a cada desenho; cresce a cada envio.
     const sources = useRef<Record<string, string>>({ ...props.images });
     const imageInput = useRef<HTMLInputElement>(null);
@@ -105,21 +110,7 @@ export default function Edit(props: Props) {
         onUpdate: ({ editor: current }) =>
             autosave.change({ content: current.getJSON() }),
     });
-    const counts = useEditorState({
-        editor,
-        selector: ({ editor: current }) => ({
-            words:
-                (current?.storage.characterCount.words() as
-                    | number
-                    | undefined) ?? 0,
-            characters:
-                (current?.storage.characterCount.characters() as
-                    | number
-                    | undefined) ?? 0,
-            empty: current?.isEmpty ?? true,
-            ...imageCounts(current),
-        }),
-    }) ?? { words: 0, characters: 0, empty: true, images: 0, missingAlt: 0 };
+    const counts = useEditorCounts(editor);
 
     async function insertImage(file: File | undefined) {
         const image = file ? await images.upload(file) : null;
@@ -171,6 +162,63 @@ export default function Edit(props: Props) {
               ]
             : []),
     ];
+
+    const missing: ChecklistItem[] = checklist.filter((item) => !item.done);
+
+    /**
+     * Envia para a revisão (RF-303, RF-318). O que falta é conferido aqui,
+     * para não esperar uma recusa, e de novo no servidor. O botão ignora o
+     * segundo clique enquanto envia (estado `form.submitting`).
+     */
+    async function submit() {
+        if (missing.length > 0) {
+            toast.error(
+                missing.length === 1
+                    ? t('editor.checklist.missing_one')
+                    : t('editor.checklist.missing', { count: missing.length }),
+            );
+            missing[0].fix?.();
+            setDetailsOpen(window.matchMedia('(max-width: 1023px)').matches);
+
+            return;
+        }
+
+        // Um campo recusado pelo salvamento (título longo demais) não foi
+        // salvo: enviar agora mandaria a versão anterior dele.
+        if (Object.keys(autosave.errors).length > 0) {
+            toast.error(t('editor.submit.fix_errors'));
+
+            return;
+        }
+
+        if (props.hasPending) {
+            toast.error(t('submission.refused.pending'));
+
+            return;
+        }
+
+        setSubmitting(true);
+        const id = await autosave.ensureArticle();
+
+        if (id === null) {
+            setSubmitting(false);
+            toast.error(t('editor.submit.failed'));
+
+            return;
+        }
+
+        router.post(
+            submission.store(id).url,
+            {},
+            {
+                onError: (errors) =>
+                    toast.error(
+                        Object.values(errors)[0] ?? t('editor.submit.failed'),
+                    ),
+                onFinish: () => setSubmitting(false),
+            },
+        );
+    }
 
     /** Leva ao primeiro campo de texto alternativo vazio, no texto ou na capa. */
     function focusMissingAlt() {
@@ -233,7 +281,7 @@ export default function Edit(props: Props) {
             <header className="sticky top-0 z-30 border-b border-border bg-bg/90 backdrop-blur-md">
                 <div className="mx-auto flex h-16 max-w-page items-center gap-3 px-4 sm:px-6">
                     <Link
-                        href={dashboard()}
+                        href={mine()}
                         aria-label={t('editor.back')}
                         className="inline-flex items-center gap-1.5 rounded-full text-meta font-bold text-primary-text hover:underline"
                     >
@@ -272,7 +320,29 @@ export default function Edit(props: Props) {
                             }}
                         >
                             <Eye aria-hidden="true" />
-                            {t('editor.preview')}
+                            <span className="sr-only sm:not-sr-only">
+                                {t('editor.preview')}
+                            </span>
+                        </Button>
+                        <Button
+                            type="button"
+                            size="sm"
+                            disabled={submitting}
+                            onClick={() => void submit()}
+                        >
+                            <Send aria-hidden="true" />
+                            {submitting ? (
+                                t('editor.submit.sending')
+                            ) : (
+                                <>
+                                    <span className="hidden sm:inline">
+                                        {t('editor.submit.action')}
+                                    </span>
+                                    <span className="sm:hidden">
+                                        {t('editor.submit.short')}
+                                    </span>
+                                </>
+                            )}
                         </Button>
                     </div>
                 </div>
@@ -470,6 +540,54 @@ function TitleField({
             {error && <span className="text-meta text-danger-fg">{error}</span>}
         </div>
     );
+}
+
+type Counts = {
+    words: number;
+    characters: number;
+    empty: boolean;
+    images: number;
+    missingAlt: number;
+};
+
+function countsOf(editor: Editor): Counts {
+    return {
+        words: editor.storage.characterCount.words() as number,
+        characters: editor.storage.characterCount.characters() as number,
+        empty: editor.isEmpty,
+        ...imageCounts(editor),
+    };
+}
+
+/**
+ * Contagens do texto, refeitas a cada mudança. Lê o editor atual, e não um
+ * retrato guardado: no StrictMode o Tiptap cria o editor duas vezes, e o
+ * `useEditorState` ficava preso ao primeiro (zerado) até a primeira edição.
+ */
+function useEditorCounts(editor: Editor | null): Counts {
+    const [counts, setCounts] = useState<Counts>({
+        words: 0,
+        characters: 0,
+        empty: true,
+        images: 0,
+        missingAlt: 0,
+    });
+
+    useEffect(() => {
+        if (!editor) {
+            return;
+        }
+
+        const update = () => setCounts(countsOf(editor));
+        update();
+        editor.on('update', update);
+
+        return () => {
+            editor.off('update', update);
+        };
+    }, [editor]);
+
+    return counts;
 }
 
 /** Quantas imagens o texto tem e quantas ainda sem texto alternativo. */

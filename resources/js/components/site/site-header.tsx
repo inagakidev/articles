@@ -6,8 +6,8 @@ import { LanguageToggle } from '@/components/site/language-switch';
 import SiteLogo from '@/components/site/site-logo';
 import { ThemeToggle } from '@/components/site/theme-toggle';
 import { useTranslation } from '@/lib/i18n';
-import { dashboard, login, register } from '@/routes';
-import { create } from '@/routes/articles';
+import { login, register } from '@/routes';
+import { create, mine } from '@/routes/articles';
 
 export default function SiteHeader() {
     const { auth } = usePage().props;
@@ -28,7 +28,7 @@ export default function SiteHeader() {
                                 size="lg"
                                 className="hidden sm:inline-flex"
                             >
-                                <Link href={dashboard()}>
+                                <Link href={mine()}>
                                     {t('site.nav.my_articles')}
                                 </Link>
                             </Button>

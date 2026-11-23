@@ -138,7 +138,7 @@ test('artigo na lixeira não é editado', function () {
     $this->actingAs($user)->get(route('articles.edit', $article))->assertNotFound();
 });
 
-test('editar um artigo publicado abre um rascunho copiado da versão em vigor', function () {
+test('editar um artigo publicado mostra a versão em vigor; o rascunho nasce no primeiro salvamento (D82)', function () {
     $user = User::factory()->create();
     $article = Article::factory()->for($user, 'author')->published()->create();
     $current = $article->currentVersion;
@@ -149,17 +149,25 @@ test('editar um artigo publicado abre um rascunho copiado da versão em vigor', 
         ->assertInertia(fn (Assert $page) => $page
             ->where('published', true)
             ->where('draft.title', $current->title)
-            ->where('draft.tags', ['php']),
+            ->where('draft.tags', ['php'])
+            ->where('draft.updatedAt', null),
         );
+
+    expect($article->versions()->where('status', VersionStatus::Draft)->exists())->toBeFalse();
+
+    $this->actingAs($user)->putJson(route('articles.draft.update', $article), ['title' => 'Novo título'])->assertOk();
 
     $draft = $article->versions()->where('status', VersionStatus::Draft)->sole();
 
     expect($draft->based_on_id)->toBe($current->id)
+        ->and($draft->title)->toBe('Novo título')
         ->and($draft->category_id)->toBe($current->category_id)
+        ->and($draft->tags()->pluck('name')->all())->toBe(['php'])
+        ->and($current->fresh()->title)->not->toBe('Novo título')
         ->and($article->fresh()->current_version_id)->toBe($current->id);
 
-    // Abrir de novo usa o mesmo rascunho.
-    $this->actingAs($user)->get(route('articles.edit', $article));
+    // Salvar de novo usa o mesmo rascunho.
+    $this->actingAs($user)->putJson(route('articles.draft.update', $article), ['title' => 'Outro']);
     expect($article->versions()->where('status', VersionStatus::Draft)->count())->toBe(1);
 });
 
@@ -168,7 +176,11 @@ test('com uma versão pendente, o rascunho parte dela (RF-103)', function () {
     $article = Article::factory()->for($user, 'author')->create();
     $pending = ArticleVersion::factory()->for($article)->create(['status' => VersionStatus::Pending, 'title' => 'Enviada']);
 
-    $this->actingAs($user)->get(route('articles.edit', $article));
+    $this->actingAs($user)->get(route('articles.edit', $article))
+        ->assertInertia(fn (Assert $page) => $page->where('draft.title', 'Enviada')->where('hasPending', true));
+    expect($article->versions()->count())->toBe(1);
+
+    $this->actingAs($user)->putJson(route('articles.draft.update', $article), ['tags' => ['php']])->assertOk();
 
     $draft = $article->versions()->where('status', VersionStatus::Draft)->sole();
 

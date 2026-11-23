@@ -3,14 +3,11 @@
 use App\Models\User;
 
 test('visitantes são redirecionados para entrar', function () {
-    $response = $this->get(route('dashboard'));
-    $response->assertRedirect(route('login'));
+    $this->get(route('dashboard'))->assertRedirect(route('login'));
 });
 
-test('usuários autenticados acessam o painel', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user);
-
-    $response = $this->get(route('dashboard'));
-    $response->assertOk();
+test('o painel do kit inicial leva a Meus artigos (D82)', function () {
+    $this->actingAs(User::factory()->create())
+        ->get(route('dashboard'))
+        ->assertRedirect('/my-articles');
 });

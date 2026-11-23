@@ -167,10 +167,18 @@ export function useAutosave({
         };
     }, []);
 
-    /** O id do artigo, criando-o antes se ainda não foi salvo. */
+    /**
+     * Salva o que estiver pendente e devolve o id do artigo, criando-o se
+     * ainda não existe (antes de enviar imagem ou mandar para a revisão).
+     */
     const ensureArticle = useCallback(async (): Promise<number | null> => {
+        if (timer.current) {
+            clearTimeout(timer.current);
+        }
+
+        await save();
+
         if (idRef.current === null) {
-            await save();
             await save(true);
         }
 

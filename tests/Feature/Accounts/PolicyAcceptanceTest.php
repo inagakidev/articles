@@ -26,7 +26,7 @@ test('quem não aceitou a versão em vigor é levado ao novo aceite', function (
     $user = User::factory()->withoutAcceptedPolicies()->create();
 
     $this->actingAs($user)
-        ->get(route('dashboard'))
+        ->get(route('articles.mine'))
         ->assertRedirect(route('policies.acceptance.show'));
 });
 
@@ -40,13 +40,13 @@ test('ler as políticas e sair continuam livres antes do aceite', function () {
 test('aceitar registra as versões em vigor e volta para onde a pessoa ia', function () {
     $user = User::factory()->withoutAcceptedPolicies()->create();
 
-    $this->actingAs($user)->get(route('dashboard'));
+    $this->actingAs($user)->get(route('articles.mine'));
     $this->actingAs($user)
         ->post(route('policies.acceptance.store'), ['accepted' => '1'])
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('articles.mine'));
 
     expect($user->policyAcceptances()->count())->toBe(2);
-    $this->actingAs($user)->get(route('dashboard'))->assertOk();
+    $this->actingAs($user)->get(route('articles.mine'))->assertOk();
 });
 
 test('sem marcar a caixa o aceite é recusado', function () {
@@ -64,7 +64,7 @@ test('uma versão nova dos Termos pede novo aceite e mostra o que mudou', functi
     publishNewTerms();
 
     $this->actingAs($user)
-        ->get(route('dashboard'))
+        ->get(route('articles.mine'))
         ->assertRedirect(route('policies.acceptance.show'));
 
     $this->actingAs($user)

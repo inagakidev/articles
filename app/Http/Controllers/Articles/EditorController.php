@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Articles;
 
-use App\Domain\Articles\Actions\StartDraft;
+use App\Domain\Articles\Enums\VersionStatus;
+use App\Domain\Articles\Queries\WorkingVersion;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Articles\ArticleImageRequest;
 use App\Http\Requests\Articles\DraftRequest;
@@ -32,11 +33,12 @@ class EditorController extends Controller
         return $this->render(null, null, $request);
     }
 
-    public function edit(Request $request, Article $article, StartDraft $start): Response
+    /** Abrir não cria rascunho: ele nasce no primeiro salvamento (D82). */
+    public function edit(Request $request, Article $article, WorkingVersion $working): Response
     {
         Gate::authorize('update', $article);
 
-        return $this->render($article, $start->handle($article), $request);
+        return $this->render($article, $working->for($article), $request);
     }
 
     private function render(?Article $article, ?ArticleVersion $draft, Request $request): Response
@@ -44,6 +46,8 @@ class EditorController extends Controller
         return Inertia::render('articles/edit', [
             'articleId' => $article?->id,
             'published' => $article?->current_version_id !== null,
+            // Com outra versão na fila, o envio desta espera a retirada (RF-102)
+            'hasPending' => $article !== null && $article->versions()->where('status', VersionStatus::Pending)->exists(),
             'draft' => [
                 'title' => $draft->title ?? '',
                 'content' => $draft?->content,
@@ -57,8 +61,9 @@ class EditorController extends Controller
                     'alt' => $draft->cover_alt,
                     'decorative' => $draft->cover_decorative,
                 ],
-                'updatedAt' => $draft?->updated_at?->toIso8601String(),
-                'createdAt' => $draft?->created_at?->toIso8601String(),
+                // "Salvo às" só vale para o rascunho; a versão enviada não é salva aqui
+                'updatedAt' => $draft?->status === VersionStatus::Draft ? $draft->updated_at?->toIso8601String() : null,
+                'createdAt' => $draft?->status === VersionStatus::Draft ? $draft->created_at?->toIso8601String() : null,
             ],
             'categories' => Category::query()->orderBy('id')->get()
                 ->map(fn (Category $category) => [

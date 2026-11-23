@@ -207,6 +207,8 @@ test('editar artigo publicado copia a capa e as imagens, sem duplicar arquivos',
             ->has('images.'.$image->uuid),
         );
 
+    $this->actingAs($user)->putJson(route('articles.draft.update', $article), ['title' => 'Edição'])->assertOk();
+
     $draft = $article->versions()->where('status', VersionStatus::Draft)->sole();
 
     expect($draft->cover_image_id)->toBe($image->id)

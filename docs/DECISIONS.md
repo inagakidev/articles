@@ -1,6 +1,6 @@
 # DECISIONS — he4rt ink
 
-**Atualizado em:** 22/11/2026
+**Atualizado em:** 23/11/2026
 
 Registro das decisões de produto e de arquitetura, com contexto, alternativas consideradas e impacto. Os requisitos resultantes estão em `REQUIREMENTS.md`; a visão do produto está em `PRODUCT.md`.
 
@@ -699,7 +699,7 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Renderização:** o `ArticleRenderer` gera, no servidor, o HTML, o sumário (títulos com âncora), o texto puro, as contagens e o tempo de leitura (200 palavras por minuto, mínimo de 1). A prévia e a página pública (fatia 12) usam o mesmo resultado. Cor e destaque saem como classes com o nome da paleta, com valor por tema no CSS.
     - **Código colorido no servidor:** `tempest/highlight` (MIT), sem JavaScript de coloração no navegador. As 37 linguagens oferecidas estão no esquema; o bloco de código é sempre escuro, nos dois temas.
     - **Salvamento automático:** o editor manda só os campos alterados, 1,2 s depois da última mudança, por JSON (`POST /articles` cria; `PUT /articles/{id}/draft` atualiza), com nova tentativa a cada 8 s em falha de rede e aviso ao sair com algo não salvo. O artigo só é criado no primeiro salvamento: abrir "Escrever" e sair não deixa rascunho vazio. Depois dele, a URL vira a de edição sem recarregar.
-    - **Rascunho de artigo já enviado ou publicado:** abrir a edição cria o rascunho copiado da versão pendente, senão da aprovada, senão da rejeitada (`StartDraft`, RF-103, RF-330), com `based_on_id`. A versão em vigor continua no ar.
+    - **Rascunho de artigo já enviado ou publicado:** o rascunho é copiado da versão pendente, senão da aprovada, senão da rejeitada (`StartDraft`, RF-103, RF-330), com `based_on_id`. Revisto na D82: a cópia acontece no primeiro salvamento, não ao abrir. A versão em vigor continua no ar.
     - **Espaços do conteúdo:** o `TrimStrings` do Laravel não roda nas rotas de rascunho, porque cortaria os espaços entre trechos de texto do JSON. Só o título é aparado, na própria validação.
     - **Limites:** título de 150 caracteres, conteúdo de 50.000 (medido no texto puro depois da limpeza), até 10 tags, idioma entre os da interface. Tag bloqueada é recusada com o nome dela.
 - **Fora desta fatia:** o painel "o que falta" já aparece, mas o botão de envio fica oculto até a fatia 10; capa e imagens no editor, na fatia 9. A prancha mostra um subtítulo, que não existe nos requisitos e ficou de fora.
@@ -720,3 +720,16 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Limpeza:** imagem enviada há mais de 24 horas que nenhuma versão cita (no texto ou na capa) é apagada pelo `model:prune` diário, com os arquivos (REQUIREMENTS §7). Apagar o artigo de vez também apaga os arquivos das imagens dele, porque o banco só apaga as linhas.
 - **Fora desta fatia:** a retenção das versões substituídas (p4-11), que depende da aprovação (fatia 16); quando ela apagar versões, as imagens que ficarem sem uso caem na limpeza acima. As recomendações de dimensões (RF-091) aparecem só como "JPG, PNG ou WebP · até 10 MB", como na prancha.
 - **Alternativas descartadas:** imagem por versão (duplicaria arquivos a cada edição); guardar a URL no documento (a URL muda com a entrega da D53 e não carrega a regra de acesso); gerar os tamanhos durante o envio (a resposta demoraria vários segundos em fotos grandes).
+
+### D82 — Envio para revisão, Meus artigos e lixeira
+
+- **Status:** Aprovada (23/11/2026).
+- **Contexto:** a fatia 10 entrega o envio e a retirada da fila (p4-08), Meus artigos (p4-09) e a lixeira (p4-10), nas pranchas "Meus artigos" e nos estados de envio, retirada e lixeira. A D80 criava o rascunho ao abrir o editor; com as seções de Meus artigos, isso mudaria o artigo de seção sem nenhuma edição.
+- **Decisão:**
+    - **O rascunho nasce no primeiro salvamento.** Abrir o editor ou a prévia mostra a versão de trabalho (`WorkingVersion`: o rascunho; senão a pendente, a em vigor ou a última rejeitada), sem criar nada. O `StartDraft` só roda quando chega um salvamento. Revisa a D80 nesse ponto.
+    - **Envio (`SubmitDraft`):** só o rascunho vai à fila, e só sem outra pendente (RF-102, RF-344). A lista do que falta (`SubmissionChecklist`) confere título, conteúdo, categoria, idioma, texto alternativo em todas as imagens e na capa (RF-318), e se o conteúdo está dentro do esquema: aqui o servidor recusa em vez de limpar (D51). O editor confere a mesma lista antes de enviar, para não esperar a recusa. Depois do envio, o autor vai para Meus artigos, com o aviso "Enviado para revisão" e a estimativa de até 6 horas (RF-377).
+    - **Retirada (`WithdrawPending`):** a pendente volta a rascunho (RF-345). Com um rascunho mais novo, o autor escolhe qual manter, e a outra é descartada (RF-104); é o único caso com confirmação. A retirada simples tem "Desfazer", que reenvia.
+    - **Meus artigos (`AuthorArticles`):** cada artigo em uma única seção. Publicado fica em Publicados, com o selo "Edição aguardando revisão" ou "Edição rejeitada". Os demais vão pela versão mais recente: rascunho, aguardando revisão ou não aprovado (RF-112 a RF-115). Uma pendente com rascunho mais novo fica em Rascunhos, com "Versão anterior na fila" e a retirada à mão. Seções vazias não aparecem. A página substitui o painel do kit inicial (`/dashboard` redireciona para `/my-articles`).
+    - **Lixeira:** "Mover para a lixeira" fica em "Mais ações", sem "Tem certeza?", com "Desfazer" no aviso. A restauração vale por 7 dias e devolve o estado de antes (RF-336). Depois disso, o `model:prune` diário apaga o artigo de vez, com as versões e os arquivos das imagens (RF-119).
+- **Fora desta fatia:** "Ver" o artigo publicado e "Copiar link" (página de leitura, fatia 12); curtidas na linha; o item da Política de conteúdo na justificativa e o aviso de aprovação (fatia 16); o registro da exclusão definitiva na auditoria (p6-15); pausar o prazo da lixeira durante uma suspensão (A24, fatia 21).
+- **Alternativas descartadas:** tratar um rascunho nunca editado como inexistente nas seções (a regra ficaria escondida na consulta); pedir confirmação para mandar à lixeira (a restauração de 7 dias e o "Desfazer" já protegem); exclusão definitiva pelo autor antes dos 7 dias (os requisitos a deixam para a rotina e para a administradora, RF-342).

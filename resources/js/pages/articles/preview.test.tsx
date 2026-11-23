@@ -26,7 +26,7 @@ describe('prévia do artigo', () => {
     });
 
     it('mostra o artigo como vai ao ar, com volta para a edição', () => {
-        render(<Preview articleId={7} article={article} />);
+        render(<Preview articleId={7} canSubmit={false} article={article} />);
 
         expect(
             screen.getByRole('heading', { level: 1, name: 'Filas no Laravel' }),
@@ -46,7 +46,13 @@ describe('prévia do artigo', () => {
     });
 
     it('sem título, usa o aviso de rascunho sem título', () => {
-        render(<Preview articleId={7} article={{ ...article, title: null }} />);
+        render(
+            <Preview
+                articleId={7}
+                canSubmit={false}
+                article={{ ...article, title: null }}
+            />,
+        );
 
         expect(screen.getByRole('heading', { level: 1 })).not.toHaveTextContent(
             /^$/,
@@ -57,6 +63,7 @@ describe('prévia do artigo', () => {
         render(
             <Preview
                 articleId={7}
+                canSubmit={false}
                 article={{
                     ...article,
                     cover: {
@@ -76,5 +83,13 @@ describe('prévia do artigo', () => {
             'srcset',
             '/media/images/a/480.webp 480w, /media/images/a/960.webp 960w',
         );
+    });
+
+    it('do rascunho, dá para enviar para a revisão daqui', () => {
+        render(<Preview articleId={7} canSubmit article={article} />);
+
+        expect(
+            screen.getByRole('button', { name: /Enviar para revisão/ }),
+        ).toBeInTheDocument();
     });
 });

@@ -1,5 +1,7 @@
-import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, Clock, Eye } from 'lucide-react';
+import { Head, Link, router } from '@inertiajs/react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { ArrowLeft, Clock, Eye, Send } from 'lucide-react';
 import ArticleBody from '@/components/articles/article-body';
 import ArticleToc from '@/components/articles/article-toc';
 import type { TocItem } from '@/components/articles/article-toc';
@@ -8,11 +10,14 @@ import Pill from '@/components/ui/pill';
 import UserAvatar from '@/components/ui/user-avatar';
 import { useTranslation } from '@/lib/i18n';
 import { edit } from '@/routes/articles';
+import * as submission from '@/routes/articles/submission';
 import { show as profile } from '@/routes/profiles';
 import type { PastelTone } from '@/types';
 
 type Props = {
     articleId: number;
+    /** O que está na tela é o rascunho, e nada espera na fila (RF-102). */
+    canSubmit: boolean;
     article: {
         title: string | null;
         language: string | null;
@@ -41,8 +46,25 @@ type Props = {
  * Prévia (prancha "Prévia", RF-072): a mesma renderização da página
  * pública (p4-06). Nada é publicado daqui; o envio entra na fatia 10.
  */
-export default function Preview({ articleId, article }: Props) {
+export default function Preview({ articleId, canSubmit, article }: Props) {
     const { t } = useTranslation();
+    const [submitting, setSubmitting] = useState(false);
+
+    function submit() {
+        setSubmitting(true);
+        router.post(
+            submission.store(articleId).url,
+            {},
+            {
+                onError: (errors) =>
+                    toast.error(
+                        Object.values(errors)[0] ?? t('editor.submit.failed'),
+                    ),
+                onFinish: () => setSubmitting(false),
+            },
+        );
+    }
+
     const { author } = article;
 
     return (
@@ -63,12 +85,31 @@ export default function Preview({ articleId, article }: Props) {
                     <span className="text-meta text-text-secondary">
                         {t('preview.banner')}
                     </span>
-                    <Button asChild size="sm" className="ml-auto">
-                        <Link href={edit(articleId)}>
-                            <ArrowLeft aria-hidden="true" />
-                            {t('preview.back')}
-                        </Link>
-                    </Button>
+                    <div className="ml-auto flex flex-wrap gap-2">
+                        <Button
+                            asChild
+                            size="sm"
+                            variant={canSubmit ? 'outline' : 'default'}
+                        >
+                            <Link href={edit(articleId)}>
+                                <ArrowLeft aria-hidden="true" />
+                                {t('preview.back')}
+                            </Link>
+                        </Button>
+                        {canSubmit && (
+                            <Button
+                                type="button"
+                                size="sm"
+                                disabled={submitting}
+                                onClick={submit}
+                            >
+                                <Send aria-hidden="true" />
+                                {submitting
+                                    ? t('editor.submit.sending')
+                                    : t('editor.submit.action')}
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </div>
 
