@@ -1,10 +1,12 @@
 <?php
 
 use App\Models\Article;
+use App\Models\ArticleImage;
 use App\Models\ArticleVersion;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 /*
  * Cada tela pública passa pelo axe nos dois temas, nos dois idiomas e no
@@ -150,11 +152,18 @@ it('não tem problemas de acessibilidade em categorias e tags', function () {
 });
 
 it('não tem problemas de acessibilidade no editor e na prévia', function () {
+    Storage::fake('media');
     $user = User::factory()->create();
     $this->actingAs($user);
     $article = Article::factory()->for($user, 'author')->create();
-    ArticleVersion::factory()->for($article)->create([
+    [$figure, $cover] = ArticleImage::factory()->for($article)->count(2)->create(['width' => 2, 'height' => 1])->all();
+    $pixel = (string) base64_decode('UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoCAAEAAUAmJaQAA3AA/vuUAAA=');
+    Storage::disk('media')->put($figure->path(), $pixel);
+    Storage::disk('media')->put($cover->path(), $pixel);
+    $version = ArticleVersion::factory()->for($article)->create([
         'title' => 'Filas no Laravel',
+        'cover_image_id' => $cover->id,
+        'cover_alt' => 'Fila de jobs',
         'category_id' => Category::query()->value('id'),
         'content' => ['type' => 'doc', 'content' => [
             ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [['type' => 'text', 'text' => 'Quem tira o job']]],
@@ -165,8 +174,11 @@ it('não tem problemas de acessibilidade no editor e na prévia', function () {
                 ['type' => 'text', 'text' => 'link', 'marks' => [['type' => 'link', 'attrs' => ['href' => 'https://laravel.com']]]],
             ]],
             ['type' => 'codeBlock', 'attrs' => ['language' => 'php'], 'content' => [['type' => 'text', 'text' => "// fila\ndispatch(new SendInvoice(\$order));"]]],
+            // Sem texto alternativo: o editor mostra o erro, que também passa pelo axe
+            ['type' => 'image', 'attrs' => ['id' => $figure->uuid, 'caption' => 'Figura 1']],
         ]],
     ]);
+    $version->images()->attach([$figure->id, $cover->id]);
 
     foreach (['/write', "/articles/{$article->id}/edit", "/articles/{$article->id}/preview"] as $url) {
         visit($url)->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();

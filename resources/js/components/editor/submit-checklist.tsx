@@ -4,11 +4,16 @@ import type { TranslationKey } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { content } from '@/routes/policies';
 
-export type ChecklistItem = { key: TranslationKey; done: boolean };
+export type ChecklistItem = {
+    key: TranslationKey;
+    done: boolean;
+    /** Leva ao que falta corrigir ("Corrigir" na prancha). */
+    fix?: () => void;
+};
 
 /**
- * O que falta para enviar (RF-318): título, conteúdo, categoria e idioma.
- * O texto alternativo das imagens entra com as imagens (fatia 9).
+ * O que falta para enviar (RF-318): título, conteúdo, categoria, idioma e,
+ * havendo imagens, o texto alternativo de todas (RF-087).
  */
 export default function SubmitChecklist({ items }: { items: ChecklistItem[] }) {
     const { t } = useTranslation();
@@ -64,6 +69,15 @@ export default function SubmitChecklist({ items }: { items: ChecklistItem[] }) {
                                     : 'editor.checklist.pending',
                             )}
                         </span>
+                        {!item.done && item.fix && (
+                            <button
+                                type="button"
+                                onClick={item.fix}
+                                className="ml-auto rounded-full text-caption font-bold text-primary-text hover:underline"
+                            >
+                                {t('editor.checklist.fix')}
+                            </button>
+                        )}
                     </li>
                 ))}
             </ul>

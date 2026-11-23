@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Articles;
 
+use App\Models\Article;
+use App\Models\ArticleImage;
 use App\Support\Editor\ArticleRenderer;
 use App\Support\Editor\DocumentSanitizer;
 use App\Support\Editor\EditorSchema;
@@ -33,11 +35,15 @@ class DraftRequest extends FormRequest
     {
         return [
             'title' => ['sometimes', 'nullable', 'string', 'max:150'],
-            'content' => ['sometimes', 'nullable', 'array', $this->contentLimit()],
+            'content' => ['sometimes', 'nullable', 'array', $this->contentLimit(), $this->contentImages()],
             'language' => ['sometimes', 'nullable', Rule::in(config('app.locales'))],
             'category_id' => ['sometimes', 'nullable', 'integer', 'exists:categories,id'],
             'tags' => ['sometimes', 'array', 'max:'.self::MAX_TAGS],
             'tags.*' => ['string', 'max:60'],
+            // A capa é uma imagem já enviada para este artigo (RF-079)
+            'cover_image' => ['sometimes', 'nullable', 'string', Rule::in($this->articleImageIds())],
+            'cover_alt' => ['sometimes', 'nullable', 'string', 'max:'.EditorSchema::IMAGE_TEXT_MAX],
+            'cover_decorative' => ['sometimes', 'boolean'],
         ];
     }
 
@@ -49,7 +55,37 @@ class DraftRequest extends FormRequest
             'content' => __('editor.content'),
             'category_id' => __('editor.details.category'),
             'tags' => __('editor.details.tags'),
+            'cover_image' => __('editor.cover.label'),
+            'cover_alt' => __('editor.image.alt'),
         ];
+    }
+
+    /**
+     * Imagens do texto: até cinco (RF-080), todas deste artigo.
+     */
+    private function contentImages(): Closure
+    {
+        return function (string $attribute, mixed $value, Closure $fail) {
+            $ids = DocumentSanitizer::imageIds(app(DocumentSanitizer::class)->sanitize($value));
+
+            if (count($ids) > EditorSchema::MAX_IMAGES) {
+                $fail(__('editor.image.too_many', ['max' => EditorSchema::MAX_IMAGES]));
+            } elseif (array_diff($ids, $this->articleImageIds()) !== []) {
+                $fail(__('editor.image.unknown'));
+            }
+        };
+    }
+
+    /** @return list<string> */
+    private function articleImageIds(): array
+    {
+        $article = $this->route('article');
+
+        if (! $article instanceof Article) {
+            return [];
+        }
+
+        return array_values($article->images()->get(['uuid'])->map(fn (ArticleImage $image) => $image->uuid)->all());
     }
 
     private function contentLimit(): Closure

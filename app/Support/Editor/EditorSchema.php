@@ -39,6 +39,7 @@ final class EditorSchema
         'blockquote' => [],
         'codeBlock' => ['language'],
         'horizontalRule' => [],
+        'image' => ['id', 'alt', 'caption', 'decorative'],
         'table' => [],
         'tableRow' => [],
         'tableHeader' => ['colspan', 'rowspan'],
@@ -47,6 +48,12 @@ final class EditorSchema
 
     /** Marcas de texto; sublinhado não existe (RF-066). */
     public const MARKS = ['bold', 'italic', 'code', 'link', 'textColor', 'highlight'];
+
+    /** Imagens no texto de uma versão (RF-080); a capa não conta. */
+    public const MAX_IMAGES = 5;
+
+    /** Texto alternativo e legenda de imagem. */
+    public const IMAGE_TEXT_MAX = 250;
 
     /** Conteúdo: até 50.000 caracteres (RF-078). */
     public const MAX_CHARACTERS = 50_000;

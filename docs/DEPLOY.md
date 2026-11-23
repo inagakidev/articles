@@ -20,6 +20,10 @@ passo a passo cobre a p8-02 e a p8-04; o backup (p8-05) e a validação
       `mbstring`, `pdo_mysql`, `bcmath`, `curl`, `xml` e `zip`;
     - **MariaDB**;
     - Node.js 22 ou mais novo (para o build do frontend).
+3. Em **PHP Settings** do Ploi, deixe `upload_max_filesize` e
+   `post_max_size` em pelo menos **12M** (as imagens têm até 10 MB). O
+   `memory_limit` pode ficar no padrão: o processamento de imagens sobe para
+   512 MB só enquanto roda (D81), e o servidor de 2 GB comporta.
 
 ## 2. Site
 
@@ -53,8 +57,8 @@ passo a passo cobre a p8-02 e a p8-04; o backup (p8-05) e a validação
 1. Em **Queue**, crie um worker: conexão `database`, fila `default`,
    `--tries=3 --max-time=3600`. O deploy reinicia o worker sozinho.
 2. Em **Scheduler**, adicione `php artisan schedule:run` a cada minuto. Ele
-   apaga as contas não confirmadas, as trocas de e-mail vencidas e os
-   registros antigos.
+   apaga as contas não confirmadas, as trocas de e-mail vencidas, as imagens
+   de artigo sem uso há 24 horas e os registros antigos.
 
 ## 6. Primeiro deploy
 

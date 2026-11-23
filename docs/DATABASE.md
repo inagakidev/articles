@@ -135,3 +135,25 @@ Uma cópia completa do conteúdo, com o próprio estado (REQUIREMENTS §5.2, D79
 ### `article_version_tag`
 
 Tags de cada versão (chave composta). Apagar a versão ou a tag apaga a ligação.
+
+### `article_images`
+
+Imagens enviadas para um artigo (RF-079 a RF-091, D52, D81). Os arquivos ficam no disco de mídia em `images/<uuid>/original.webp` e `images/<uuid>/<largura>.webp`.
+
+| Coluna       | Tipo             | Observação                                                    |
+| ------------ | ---------------- | ------------------------------------------------------------- |
+| `uuid`       | uuid, único      | Nome no disco e na URL; o id numérico não aparece             |
+| `article_id` | `articles.id`    | Apagada junto com o artigo (`cascadeOnDelete`)                |
+| `user_id`    | `users.id`, nulo | Quem enviou (`nullOnDelete`)                                  |
+| `width`      | smallint         | Largura do original tratado (até 3.200 px)                    |
+| `height`     | smallint         | Altura do original tratado                                    |
+| `size`       | int              | Bytes do original tratado                                     |
+| `variants`   | JSON, nulo       | Larguras já geradas pela fila (480, 960, 1600, só as menores) |
+
+Índice em `created_at`, para a limpeza das imagens sem uso (p4-11).
+
+### `article_version_image`
+
+Imagens citadas por cada versão, no texto ou na capa (chave composta). Decide quem pode ver a imagem (RF-090) e o que a limpeza preserva. Recalculada a cada salvamento do rascunho.
+
+A versão ganhou `cover_image_id` (`article_images.id`, nulo, `nullOnDelete`), `cover_alt` (string(250), nulo) e `cover_decorative` (boolean, `false`).

@@ -17,6 +17,9 @@ const DEFAULTS: Record<string, unknown> = {
     rowspan: 1,
     colwidth: null,
     align: null,
+    alt: null,
+    caption: null,
+    decorative: false,
     language: null,
 };
 

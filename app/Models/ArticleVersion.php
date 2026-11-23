@@ -23,6 +23,9 @@ use Illuminate\Support\Carbon;
  * @property string|null $content_text
  * @property string|null $language
  * @property int|null $category_id
+ * @property int|null $cover_image_id
+ * @property string|null $cover_alt
+ * @property bool $cover_decorative
  * @property int|null $based_on_id
  * @property Carbon|null $submitted_at
  * @property Carbon|null $decided_at
@@ -31,7 +34,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['title', 'content', 'content_text', 'language', 'category_id'])]
+#[Fillable(['title', 'content', 'content_text', 'language', 'category_id', 'cover_image_id', 'cover_alt', 'cover_decorative'])]
 class ArticleVersion extends Model
 {
     /** @use HasFactory<ArticleVersionFactory> */
@@ -40,6 +43,7 @@ class ArticleVersion extends Model
     /** @var array<string, mixed> */
     protected $attributes = [
         'status' => 'draft',
+        'cover_decorative' => false,
     ];
 
     /** Colunas geradas pelo banco para os limites de RF-351; nunca escritas. */
@@ -63,6 +67,22 @@ class ArticleVersion extends Model
         return $this->belongsToMany(Tag::class);
     }
 
+    /** @return BelongsTo<ArticleImage, $this> */
+    public function coverImage(): BelongsTo
+    {
+        return $this->belongsTo(ArticleImage::class, 'cover_image_id');
+    }
+
+    /**
+     * Imagens citadas pela versão, no texto ou na capa (RF-089).
+     *
+     * @return BelongsToMany<ArticleImage, $this>
+     */
+    public function images(): BelongsToMany
+    {
+        return $this->belongsToMany(ArticleImage::class, 'article_version_image');
+    }
+
     /** @return BelongsTo<ArticleVersion, $this> */
     public function basedOn(): BelongsTo
     {
@@ -75,6 +95,7 @@ class ArticleVersion extends Model
         return [
             'status' => VersionStatus::class,
             'content' => 'array',
+            'cover_decorative' => 'boolean',
             'submitted_at' => 'datetime',
             'decided_at' => 'datetime',
         ];

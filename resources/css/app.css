@@ -1297,6 +1297,27 @@
         font-size: 0.875em;
         color: var(--color-text-on-selected);
     }
+    /* Imagem no texto (RF-080, RF-088); a legenda fica abaixo, discreta. */
+    .article-body .article-figure {
+        margin: 0 0 1.75rem;
+    }
+
+    .article-body .article-figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: var(--radius-inner);
+        background: var(--color-surface-muted);
+    }
+
+    .article-body .article-figure figcaption {
+        margin-top: 0.625rem;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 600;
+        color: var(--color-text-secondary);
+    }
+
     .article-body table {
         width: 100%;
         border-collapse: separate;

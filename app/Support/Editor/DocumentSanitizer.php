@@ -65,6 +65,11 @@ final class DocumentSanitizer
         $clean = ['type' => $type];
         $attrs = $this->attrs($type, is_array($node['attrs'] ?? null) ? $node['attrs'] : []);
 
+        if ($type === 'image') {
+            // Sem imagem não há figura; a imagem não tem conteúdo dentro.
+            return isset($attrs['id']) ? [...$clean, 'attrs' => $attrs] : null;
+        }
+
         if ($attrs !== []) {
             $clean['attrs'] = $attrs;
         }
@@ -150,10 +155,13 @@ final class DocumentSanitizer
                 'language' => in_array($value, EditorSchema::CODE_LANGUAGES, true),
                 'start' => is_int($value) && $value > 1 && $value < 10_000,
                 'colspan', 'rowspan' => is_int($value) && $value > 1 && $value <= 20,
+                'id' => is_string($value) && self::isUuid($value),
+                'alt', 'caption' => is_string($value) && trim($value) !== '' && mb_strlen($value) <= EditorSchema::IMAGE_TEXT_MAX,
+                'decorative' => $value === true,
             };
 
             if ($valid) {
-                $clean[$name] = $value;
+                $clean[$name] = is_string($value) && $name !== 'language' ? trim($value) : $value;
             }
         }
 
@@ -162,6 +170,36 @@ final class DocumentSanitizer
         }
 
         return $clean;
+    }
+
+    public static function isUuid(string $value): bool
+    {
+        return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $value) === 1;
+    }
+
+    /**
+     * Os ids das imagens citadas no texto, na ordem e sem repetição.
+     *
+     * @param  array<string, mixed>  $document  já limpo
+     * @return list<string>
+     */
+    public static function imageIds(array $document): array
+    {
+        $ids = [];
+        $walk = function (array $nodes) use (&$walk, &$ids): void {
+            foreach ($nodes as $node) {
+                if (($node['type'] ?? null) === 'image') {
+                    $ids[] = $node['attrs']['id'];
+                }
+
+                if (is_array($node['content'] ?? null)) {
+                    $walk($node['content']);
+                }
+            }
+        };
+        $walk($document['content'] ?? []);
+
+        return array_values(array_unique($ids));
     }
 
     /** Só http, https e mailto: nada de javascript: e afins. */
