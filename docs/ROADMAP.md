@@ -231,7 +231,7 @@ A fase está concluída quando todas as tarefas estão concluídas e todos os cr
 | p4-08 | Envio para aprovação e retirada da fila               | BE   | Alta       | p4-04, p4-07, p4-03 | Envio sem campos obrigatórios é recusado; retirada devolve a versão a rascunho; o envio mostra a estimativa de revisão (RF-377). |
 | p4-09 | Meus artigos                                          | FE   | Média      | p4-08               | Cada artigo aparece em uma única seção.                                                                                          |
 | p4-10 | Lixeira e exclusão permanente pelo autor              | BE   | Média      | p4-08               | Restauração em até 7 dias volta ao estado anterior; exclusão permanente auditada.                                                |
-| p4-11 | Retenção de versões e limpeza de imagens sem uso      | BE   | Média      | p4-07, p2-07        | Rotina agendada remove o excedente sem afetar a versão em vigor.                                                                 |
+| p4-11 | Retenção de versões e limpeza de imagens sem uso      | BE   | Média      | p4-07, p2-07        | Rotina agendada remove o excedente sem afetar a versão em vigor. A limpeza de imagens sem uso já roda (D81).                     |
 | p4-12 | Testar o gerenciamento de artigos                     | TS   | Alta       | p4-08, p4-10, p2-11 | Testes Pest executados e passando.                                                                                               |
 
 ---

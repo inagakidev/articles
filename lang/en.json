@@ -256,6 +256,7 @@
     "editor.image.remove": "Remove image",
     "editor.image.too_big": "The image is over :max MB. Upload a smaller one.",
     "editor.image.too_many": "The text can have up to :max images.",
+    "editor.image.too_many_pixels": "The image resolution is too large: up to :max megapixels.",
     "editor.image.unknown": "One of the images doesn't belong to this article. Upload it again.",
     "editor.image.uploading": "Uploading image…",
     "editor.image.wrong_type": "Upload a JPG, PNG or WebP image.",

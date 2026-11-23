@@ -22,7 +22,9 @@ PHP 8.4, Laravel 13, React 19 com TypeScript, Inertia.js, Tailwind CSS 4, MariaD
 
 ## Rodando localmente
 
-Requisitos: PHP 8.4 com `pdo_mysql`, Composer, Node 24, MariaDB 11 e, para ver os e-mails, Docker.
+Requisitos: PHP 8.4 com `pdo_mysql`, `gd` (com WebP) e `exif`, Composer, Node 24, MariaDB 11 e, para ver os e-mails, Docker.
+
+As imagens dos artigos têm até 10 MB, e o PHP costuma vir com limite de envio de 2 MB. No php.ini do PHP de linha de comando (`php --ini` mostra qual é), use `upload_max_filesize = 12M` e `post_max_size = 12M`.
 
 1. Crie os bancos e o usuário da aplicação (troque `SENHA` por uma senha local):
 

@@ -234,3 +234,46 @@ test('a prévia mostra a capa e as imagens com texto alternativo e legenda', fun
                 && str_contains($html, '/media/'.$image->path(480).' 480w')),
         );
 });
+
+test('imagem sem versão que a use some depois de 24 horas, com os arquivos', function () {
+    [, $article, $draft] = draftWithAuthor();
+    [$unused, $used, $cover, $recent] = ArticleImage::factory()->for($article)->count(4)->create(['created_at' => now()->subHours(25)])->all();
+    $recent->forceFill(['created_at' => now()->subHours(23)])->save();
+    $draft->forceFill(['cover_image_id' => $cover->id])->save();
+    $draft->images()->attach([$used->id, $cover->id]);
+
+    foreach ([$unused, $used, $cover, $recent] as $image) {
+        Storage::disk('media')->put($image->path(), 'original');
+        Storage::disk('media')->put($image->path(480), 'pequena');
+    }
+
+    $this->artisan('model:prune', ['--model' => [ArticleImage::class]])->assertSuccessful();
+
+    expect(ArticleImage::query()->pluck('id')->sort()->values()->all())
+        ->toBe(collect([$used->id, $cover->id, $recent->id])->sort()->values()->all())
+        ->and(Storage::disk('media')->exists($unused->path()))->toBeFalse()
+        ->and(Storage::disk('media')->exists($unused->path(480)))->toBeFalse()
+        ->and(Storage::disk('media')->exists($used->path()))->toBeTrue();
+});
+
+test('apagar o artigo de vez apaga os arquivos das imagens', function () {
+    [, $article] = draftWithAuthor();
+    $image = ArticleImage::factory()->for($article)->create();
+    Storage::disk('media')->put($image->path(), 'original');
+
+    $article->delete();
+    expect(Storage::disk('media')->exists($image->path()))->toBeTrue();
+
+    $article->forceDelete();
+    expect(Storage::disk('media')->exists($image->path()))->toBeFalse()
+        ->and(ArticleImage::query()->count())->toBe(0);
+});
+
+test('imagem com resolução acima de 50 megapixels é recusada', function () {
+    [$user, $article] = draftWithAuthor();
+
+    $this->actingAs($user)
+        ->postJson(route('articles.images.store', $article), ['image' => UploadedFile::fake()->image('panorama.png', 10_000, 5_001)])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('image');
+});

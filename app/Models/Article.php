@@ -36,6 +36,13 @@ class Article extends Model
         'state' => 'unpublished',
     ];
 
+    protected static function booted(): void
+    {
+        // O banco apaga as linhas das imagens junto com o artigo, mas não os
+        // arquivos: apagando pelo modelo, cada imagem leva os dela.
+        static::forceDeleting(fn (Article $article) => $article->images()->each(fn (ArticleImage $image) => $image->delete()));
+    }
+
     /** @return BelongsTo<User, $this> */
     public function author(): BelongsTo
     {
