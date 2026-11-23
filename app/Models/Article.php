@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Domain\Articles\Enums\ArticleState;
+use Carbon\CarbonInterface;
 use Database\Factories\ArticleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -29,7 +32,10 @@ use Illuminate\Support\Carbon;
 class Article extends Model
 {
     /** @use HasFactory<ArticleFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, Prunable, SoftDeletes;
+
+    /** Dias na lixeira antes da exclusão definitiva (RF-118, RF-119). */
+    public const TRASH_DAYS = 7;
 
     /** @var array<string, mixed> */
     protected $attributes = [
@@ -41,6 +47,23 @@ class Article extends Model
         // O banco apaga as linhas das imagens junto com o artigo, mas não os
         // arquivos: apagando pelo modelo, cada imagem leva os dela.
         static::forceDeleting(fn (Article $article) => $article->images()->each(fn (ArticleImage $image) => $image->delete()));
+    }
+
+    /**
+     * Na lixeira há mais de sete dias: sai de vez pelo `model:prune` diário
+     * (RF-119, RF-342), com os arquivos das imagens.
+     *
+     * @return Builder<static>
+     */
+    public function prunable(): Builder
+    {
+        return static::query()->onlyTrashed()->where('deleted_at', '<', now()->subDays(self::TRASH_DAYS));
+    }
+
+    /** Até quando a restauração vale (RF-118). */
+    public function restorableUntil(): ?CarbonInterface
+    {
+        return $this->deleted_at?->copy()->addDays(self::TRASH_DAYS);
     }
 
     /** @return BelongsTo<User, $this> */

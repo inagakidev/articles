@@ -219,20 +219,20 @@ A fase está concluída quando todas as tarefas estão concluídas e todos os cr
 
 **Tarefas**
 
-| ID    | Tarefa                                                | Cat. | Prioridade | Depende de          | Critério de conclusão                                                                                                            |
-| ----- | ----------------------------------------------------- | ---- | ---------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| p4-01 | Modelar artigos, versões e imagens                    | DB   | Alta       | p2-03, p1-04        | Migrations reversíveis conforme o modelo de dois estados. As tabelas de imagens entram com a p4-07 (D79).                        |
-| p4-02 | Estados do artigo e da versão                         | BE   | Alta       | p4-01               | Transições inválidas rejeitadas e cobertas por teste.                                                                            |
-| p4-03 | Categorias e tags                                     | BE   | Alta       | p4-01, p3-08        | Categoria com artigos não é excluída sem transferência; tags duplicadas são unificadas.                                          |
-| p4-04 | Criação e edição com rascunho e salvamento automático | BE   | Alta       | p4-02, p3-09        | Rascunho salvo automaticamente; não autor recebe 403. Salvamento por JSON, artigo criado no primeiro salvamento (D80).           |
-| p4-05 | Editor Rich Text com paleta acessível                 | FE   | Alta       | p4-04, p2-05, p2-08 | Editor usa só cores da paleta; contagem de palavras e limites funcionando.                                                       |
-| p4-06 | Prévia, sumário e tempo de leitura                    | FE   | Média      | p4-05               | Prévia e página pública produzem o mesmo resultado.                                                                              |
-| p4-07 | Upload de imagens                                     | BE   | Alta       | p4-01, p2-09, p2-07 | Imagens de versões pendentes só acessíveis ao autor e ao admin. Imagem pertence ao artigo; versões só a citam (D81).             |
-| p4-08 | Envio para aprovação e retirada da fila               | BE   | Alta       | p4-04, p4-07, p4-03 | Envio sem campos obrigatórios é recusado; retirada devolve a versão a rascunho; o envio mostra a estimativa de revisão (RF-377). |
-| p4-09 | Meus artigos                                          | FE   | Média      | p4-08               | Cada artigo aparece em uma única seção.                                                                                          |
-| p4-10 | Lixeira e exclusão permanente pelo autor              | BE   | Média      | p4-08               | Restauração em até 7 dias volta ao estado anterior; exclusão permanente auditada.                                                |
-| p4-11 | Retenção de versões e limpeza de imagens sem uso      | BE   | Média      | p4-07, p2-07        | Rotina agendada remove o excedente sem afetar a versão em vigor. A limpeza de imagens sem uso já roda (D81).                     |
-| p4-12 | Testar o gerenciamento de artigos                     | TS   | Alta       | p4-08, p4-10, p2-11 | Testes Pest executados e passando.                                                                                               |
+| ID    | Tarefa                                                | Cat. | Prioridade | Depende de          | Critério de conclusão                                                                                                                 |
+| ----- | ----------------------------------------------------- | ---- | ---------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| p4-01 | Modelar artigos, versões e imagens                    | DB   | Alta       | p2-03, p1-04        | Migrations reversíveis conforme o modelo de dois estados. As tabelas de imagens entram com a p4-07 (D79).                             |
+| p4-02 | Estados do artigo e da versão                         | BE   | Alta       | p4-01               | Transições inválidas rejeitadas e cobertas por teste.                                                                                 |
+| p4-03 | Categorias e tags                                     | BE   | Alta       | p4-01, p3-08        | Categoria com artigos não é excluída sem transferência; tags duplicadas são unificadas.                                               |
+| p4-04 | Criação e edição com rascunho e salvamento automático | BE   | Alta       | p4-02, p3-09        | Rascunho salvo automaticamente; não autor recebe 403. Salvamento por JSON, artigo criado no primeiro salvamento (D80).                |
+| p4-05 | Editor Rich Text com paleta acessível                 | FE   | Alta       | p4-04, p2-05, p2-08 | Editor usa só cores da paleta; contagem de palavras e limites funcionando.                                                            |
+| p4-06 | Prévia, sumário e tempo de leitura                    | FE   | Média      | p4-05               | Prévia e página pública produzem o mesmo resultado.                                                                                   |
+| p4-07 | Upload de imagens                                     | BE   | Alta       | p4-01, p2-09, p2-07 | Imagens de versões pendentes só acessíveis ao autor e ao admin. Imagem pertence ao artigo; versões só a citam (D81).                  |
+| p4-08 | Envio para aprovação e retirada da fila               | BE   | Alta       | p4-04, p4-07, p4-03 | Envio sem campos obrigatórios é recusado; retirada devolve a versão a rascunho; o envio mostra a estimativa de revisão (RF-377). D82. |
+| p4-09 | Meus artigos                                          | FE   | Média      | p4-08               | Cada artigo aparece em uma única seção. Substitui o painel do kit inicial (D82).                                                      |
+| p4-10 | Lixeira e exclusão permanente pelo autor              | BE   | Média      | p4-08               | Restauração em até 7 dias volta ao estado anterior; exclusão permanente auditada. A auditoria entra com a p6-15 (D82).                |
+| p4-11 | Retenção de versões e limpeza de imagens sem uso      | BE   | Média      | p4-07, p2-07        | Rotina agendada remove o excedente sem afetar a versão em vigor. A limpeza de imagens sem uso já roda (D81).                          |
+| p4-12 | Testar o gerenciamento de artigos                     | TS   | Alta       | p4-08, p4-10, p2-11 | Testes Pest executados e passando.                                                                                                    |
 
 ---
 

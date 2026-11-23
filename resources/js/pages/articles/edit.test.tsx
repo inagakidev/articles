@@ -13,6 +13,7 @@ import Edit from '@/pages/articles/edit';
 const props = {
     articleId: null,
     published: false,
+    hasPending: false,
     draft: {
         title: '',
         content: null,

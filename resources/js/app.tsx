@@ -18,7 +18,9 @@ void createInertiaApp({
         switch (true) {
             case name === 'home':
                 return LandingLayout;
-            case name.startsWith('policies/') || name.startsWith('profile/'):
+            case name.startsWith('policies/') ||
+                name.startsWith('profile/') ||
+                name.startsWith('my-articles/'):
                 return PublicLayout;
             case name.startsWith('admin/'):
                 return AdminLayout;

@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Articles\Enums\VersionStatus;
 use App\Models\Article;
 use App\Models\ArticleImage;
 use App\Models\ArticleVersion;
@@ -185,4 +186,35 @@ it('não tem problemas de acessibilidade no editor e na prévia', function () {
         visit($url)->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
         visit($url)->on()->mobile()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
     }
+});
+
+it('não tem problemas de acessibilidade em Meus artigos e na Lixeira', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    foreach ([VersionStatus::Draft, VersionStatus::Pending, VersionStatus::Rejected] as $status) {
+        ArticleVersion::factory()->for(Article::factory()->for($user, 'author'))->create([
+            'status' => $status,
+            'submitted_at' => now()->subHour(),
+            'decided_at' => $status === VersionStatus::Rejected ? now() : null,
+            'decision_reason' => $status === VersionStatus::Rejected ? 'Faltam as fontes.' : null,
+        ]);
+    }
+
+    $published = Article::factory()->for($user, 'author')->published()->create();
+    ArticleVersion::factory()->for($published)->create(['status' => VersionStatus::Pending, 'submitted_at' => now()]);
+    ArticleVersion::factory()->for(Article::factory()->for($user, 'author'))->create()->article->delete();
+
+    foreach (['/my-articles', '/my-articles/trash'] as $url) {
+        visit($url)->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+        visit($url)->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+        visit($url)->on()->mobile()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    }
+});
+
+it('não tem problemas de acessibilidade em Meus artigos vazio', function () {
+    $this->actingAs(User::factory()->create());
+
+    visit('/my-articles')->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    visit('/my-articles')->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
 });

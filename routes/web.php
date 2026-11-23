@@ -48,7 +48,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    // O painel do kit inicial deu lugar a Meus artigos (D82)
+    Route::redirect('dashboard', 'my-articles')->name('dashboard');
 });
 
 require __DIR__.'/settings.php';

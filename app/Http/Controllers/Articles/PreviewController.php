@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Articles;
 
-use App\Domain\Articles\Actions\StartDraft;
+use App\Domain\Articles\Enums\VersionStatus;
+use App\Domain\Articles\Queries\WorkingVersion;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Accounts\PublicProfileResource;
 use App\Models\Article;
@@ -11,21 +12,27 @@ use App\Support\Editor\ArticleRenderer;
 use App\Support\Editor\DocumentSanitizer;
 use App\Support\Editor\ImageSource;
 use App\Support\Media\ArticleImageSources;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Prévia do rascunho (RF-072, p4-06): a mesma renderização da página
- * pública, então o que se vê aqui é o que vai ao ar.
+ * Prévia (RF-072, p4-06): a mesma renderização da página pública, então
+ * o que se vê aqui é o que vai ao ar. Daqui também se envia (RF-323).
  */
 class PreviewController extends Controller
 {
-    public function __invoke(Article $article, StartDraft $start, ArticleRenderer $renderer, DocumentSanitizer $sanitizer, ArticleImageSources $sources): Response
+    public function __invoke(Request $request, Article $article, WorkingVersion $working, ArticleRenderer $renderer, DocumentSanitizer $sanitizer, ArticleImageSources $sources): Response
     {
         Gate::authorize('update', $article);
 
-        $draft = $start->handle($article);
+        // "Ver versão enviada" pede uma versão; sem ela, a que o autor tem em mãos.
+        $draft = $request->filled('version')
+            ? $article->versions()->findOrFail($request->integer('version'))
+            : $working->for($article);
+
+        abort_if($draft === null, 404);
         $images = $draft->images()->get();
         $rendered = $renderer->render($sanitizer->sanitize($draft->content ?? DocumentSanitizer::empty()), $sources->for($images));
         $category = $draft->category;
@@ -33,6 +40,9 @@ class PreviewController extends Controller
 
         return Inertia::render('articles/preview', [
             'articleId' => $article->id,
+            // Só o rascunho é enviado, e só sem outra versão na fila (RF-102)
+            'canSubmit' => $draft->status === VersionStatus::Draft
+                && ! $article->versions()->where('status', VersionStatus::Pending)->exists(),
             'article' => [
                 'title' => $draft->title,
                 'language' => $draft->language,

@@ -3,18 +3,20 @@
 namespace App\Domain\Articles\Actions;
 
 use App\Domain\Articles\Enums\VersionStatus;
+use App\Domain\Articles\Queries\WorkingVersion;
 use App\Models\Article;
 use App\Models\ArticleVersion;
 use Illuminate\Support\Facades\DB;
 
 /**
- * O rascunho que o editor abre (RF-343, RF-329, RF-349). Se ainda não
- * existe, nasce como cópia da versão mais útil: a pendente (o autor segue
- * editando enquanto ela espera, RF-103), a em vigor ou a última rejeitada.
+ * O rascunho que recebe um salvamento (RF-343, RF-329, RF-349). Se ainda
+ * não existe, nasce como cópia da versão de trabalho (`WorkingVersion`):
+ * a pendente (o autor segue editando enquanto ela espera, RF-103), a em
+ * vigor ou a última rejeitada. Só abrir o editor não cria nada (D82).
  */
 class StartDraft
 {
-    private const BASES = [VersionStatus::Pending, VersionStatus::Approved, VersionStatus::Rejected];
+    public function __construct(private WorkingVersion $working) {}
 
     public function handle(Article $article): ArticleVersion
     {
@@ -25,7 +27,7 @@ class StartDraft
                 return $existing;
             }
 
-            $base = $this->base($article);
+            $base = $this->working->base($article);
             $draft = $article->versions()->create($base === null ? [] : [
                 'title' => $base->title,
                 'content' => $base->content,
@@ -46,18 +48,5 @@ class StartDraft
 
             return $draft;
         });
-    }
-
-    private function base(Article $article): ?ArticleVersion
-    {
-        foreach (self::BASES as $status) {
-            $version = $article->versions()->where('status', $status)->latest('id')->first();
-
-            if ($version !== null) {
-                return $version;
-            }
-        }
-
-        return null;
     }
 }
