@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { edit, store } from '@/routes/articles';
+import { xsrfToken } from '@/lib/xsrf';
 import { update as updateDraft } from '@/routes/articles/draft';
 
 /** Campos do rascunho que o editor manda; só os que mudaram vão em cada envio. */
@@ -10,6 +11,9 @@ export type DraftFields = {
     language: string | null;
     category_id: number | null;
     tags: string[];
+    cover_image: string | null;
+    cover_alt: string | null;
+    cover_decorative: boolean;
 };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error' | 'invalid';
@@ -19,14 +23,6 @@ const DELAY_MS = 1200;
 
 /** Em falha de rede ou servidor, tenta de novo depois disso. */
 const RETRY_MS = 8000;
-
-function xsrfToken(): string {
-    const cookie = document.cookie
-        .split('; ')
-        .find((part) => part.startsWith('XSRF-TOKEN='));
-
-    return cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
-}
 
 /**
  * Salvamento automático do rascunho (RF-071). Junta as mudanças, espera a
@@ -48,12 +44,27 @@ export function useAutosave({
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const saving = useRef(false);
     const idRef = useRef(initialId);
+    const current = useRef<Promise<void> | null>(null);
 
-    const save = useCallback(async (): Promise<void> => {
-        if (saving.current || Object.keys(pending.current).length === 0) {
-            return;
+    const save = useCallback((create = false): Promise<void> => {
+        if (saving.current) {
+            return current.current ?? Promise.resolve();
         }
 
+        // Sem mudanças, só salva para criar o artigo (antes de enviar imagem).
+        if (
+            Object.keys(pending.current).length === 0 &&
+            !(create && idRef.current === null)
+        ) {
+            return Promise.resolve();
+        }
+
+        current.current = run();
+
+        return current.current;
+    }, []);
+
+    const run = async (): Promise<void> => {
         const patch = pending.current;
         pending.current = {};
         saving.current = true;
@@ -122,7 +133,7 @@ export function useAutosave({
                 timer.current = setTimeout(() => void save(), DELAY_MS);
             }
         }
-    }, []);
+    };
 
     const change = useCallback(
         (fields: Partial<DraftFields>) => {
@@ -156,5 +167,23 @@ export function useAutosave({
         };
     }, []);
 
-    return { articleId, status, savedAt, errors, change, flush: save };
+    /** O id do artigo, criando-o antes se ainda não foi salvo. */
+    const ensureArticle = useCallback(async (): Promise<number | null> => {
+        if (idRef.current === null) {
+            await save();
+            await save(true);
+        }
+
+        return idRef.current;
+    }, [save]);
+
+    return {
+        articleId,
+        status,
+        savedAt,
+        errors,
+        change,
+        flush: () => save(),
+        ensureArticle,
+    };
 }

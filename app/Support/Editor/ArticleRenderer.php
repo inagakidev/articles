@@ -3,6 +3,7 @@
 namespace App\Support\Editor;
 
 use App\Support\Editor\Tiptap\AnchoredHeading;
+use App\Support\Editor\Tiptap\ArticleFigure;
 use App\Support\Editor\Tiptap\HighlightedCodeBlock;
 use App\Support\Editor\Tiptap\PaletteColor;
 use App\Support\Editor\Tiptap\PaletteHighlight;
@@ -23,8 +24,11 @@ use Tiptap\Nodes\TableRow;
  */
 final class ArticleRenderer
 {
-    /** @param  array<string, mixed>  $document */
-    public function render(array $document): RenderedArticle
+    /**
+     * @param  array<string, mixed>  $document
+     * @param  array<string, ImageSource>  $images  as imagens do artigo, pelo id
+     */
+    public function render(array $document, array $images = []): RenderedArticle
     {
         [$document, $toc] = $this->anchorHeadings($document);
 
@@ -37,6 +41,7 @@ final class ArticleRenderer
             ]),
             new AnchoredHeading(['levels' => EditorSchema::HEADING_LEVELS]),
             new HighlightedCodeBlock,
+            new ArticleFigure($images),
             new Link(['HTMLAttributes' => ['target' => null, 'rel' => 'nofollow ugc noopener']]),
             new PaletteColor,
             new PaletteHighlight,
@@ -125,6 +130,13 @@ final class ArticleRenderer
      */
     private function collectText(array $node, array &$blocks): void
     {
+        if (($node['type'] ?? null) === 'image') {
+            // A legenda é texto visível; o texto alternativo, não.
+            $blocks[] = (string) ($node['attrs']['caption'] ?? '');
+
+            return;
+        }
+
         if (($node['type'] ?? null) === 'text') {
             $blocks[array_key_last($blocks) ?? 0] = ($blocks[array_key_last($blocks) ?? 0] ?? '').$node['text'];
 

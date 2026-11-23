@@ -18,6 +18,13 @@ type Props = {
         language: string | null;
         category: { name: string; color: PastelTone } | null;
         tags: string[];
+        cover: {
+            src: string;
+            srcset: string;
+            width: number;
+            height: number;
+            alt: string;
+        } | null;
         html: string;
         toc: TocItem[];
         readingMinutes: number;
@@ -101,6 +108,18 @@ export default function Preview({ articleId, article }: Props) {
                             </div>
                         </div>
                     </header>
+
+                    {article.cover && (
+                        <img
+                            src={article.cover.src}
+                            srcSet={article.cover.srcset || undefined}
+                            sizes="(min-width: 768px) 720px, 100vw"
+                            width={article.cover.width}
+                            height={article.cover.height}
+                            alt={article.cover.alt}
+                            className="mb-10 aspect-video w-full rounded-card bg-surface-muted object-cover"
+                        />
+                    )}
 
                     {article.html ? (
                         <ArticleBody

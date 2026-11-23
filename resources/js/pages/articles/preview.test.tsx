@@ -8,6 +8,7 @@ const article = {
     language: 'pt_BR',
     category: { name: 'Back-end', color: 'lavender' as const },
     tags: ['laravel', 'filas'],
+    cover: null,
     html: '<h2 id="quem-tira">Quem tira o job</h2><pre class="code-block" data-language="php"><code>echo 1;</code></pre>',
     toc: [{ id: 'quem-tira', text: 'Quem tira o job', level: 2 }],
     readingMinutes: 4,
@@ -49,6 +50,31 @@ describe('prévia do artigo', () => {
 
         expect(screen.getByRole('heading', { level: 1 })).not.toHaveTextContent(
             /^$/,
+        );
+    });
+
+    it('mostra a capa com o texto alternativo e os tamanhos', () => {
+        render(
+            <Preview
+                articleId={7}
+                article={{
+                    ...article,
+                    cover: {
+                        src: '/media/images/a/960.webp',
+                        srcset: '/media/images/a/480.webp 480w, /media/images/a/960.webp 960w',
+                        width: 1600,
+                        height: 900,
+                        alt: 'Fila de jobs',
+                    },
+                }}
+            />,
+        );
+
+        expect(
+            screen.getByRole('img', { name: 'Fila de jobs' }),
+        ).toHaveAttribute(
+            'srcset',
+            '/media/images/a/480.webp 480w, /media/images/a/960.webp 960w',
         );
     });
 });

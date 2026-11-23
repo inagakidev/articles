@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import {
     afterEach,
     beforeEach,
@@ -19,11 +19,21 @@ const props = {
         language: 'pt_BR',
         categoryId: null,
         tags: [],
+        cover: null,
         updatedAt: null,
         createdAt: null,
     },
+    images: {},
     categories: [{ id: 1, name: 'Back-end', color: 'lavender' as const }],
-    limits: { title: 150, characters: 50000, tags: 10, wordsPerMinute: 200 },
+    limits: {
+        title: 150,
+        characters: 50000,
+        tags: 10,
+        wordsPerMinute: 200,
+        images: 5,
+        imageText: 250,
+        imageMegabytes: 10,
+    },
     colors: ['lavanda' as const, 'rosa' as const],
     codeLanguages: ['php', 'js'],
 };
@@ -74,5 +84,61 @@ describe('editor do artigo', () => {
             '/articles',
             expect.objectContaining({ method: 'POST' }),
         );
+    });
+
+    it('imagem sem texto alternativo aparece em erro e entra no que falta', async () => {
+        const id = '0f8c6a4e-1b2c-4d3e-8f90-123456789abc';
+        render(
+            <Edit
+                {...props}
+                articleId={3}
+                draft={{
+                    ...props.draft,
+                    content: {
+                        type: 'doc',
+                        content: [{ type: 'image', attrs: { id } }],
+                    },
+                }}
+                images={{ [id]: '/media/images/x/original.webp' }}
+            />,
+        );
+
+        expect(
+            screen.getAllByText('Descreva a imagem ou marque como decorativa.')
+                .length,
+        ).toBeGreaterThan(0);
+        expect(
+            screen.getAllByText('Texto alternativo das imagens').length,
+        ).toBeGreaterThan(0);
+        expect(
+            screen.getAllByRole('button', { name: 'Corrigir' }).length,
+        ).toBeGreaterThan(0);
+
+        await act(async () => {
+            fireEvent.click(
+                screen.getAllByRole('checkbox', {
+                    name: 'Imagem decorativa',
+                })[0],
+            );
+            await vi.advanceTimersByTimeAsync(50);
+        });
+
+        expect(
+            screen.queryByText('Descreva a imagem ou marque como decorativa.'),
+        ).toBeNull();
+        expect(screen.queryByRole('button', { name: 'Corrigir' })).toBeNull();
+    });
+
+    it('mostra a capa vazia, o botão de imagem e a contagem com o limite', () => {
+        render(<Edit {...props} />);
+
+        expect(
+            screen.getAllByRole('button', { name: /Enviar imagem de capa/ })
+                .length,
+        ).toBeGreaterThan(0);
+        expect(
+            screen.getByRole('button', { name: 'Imagem' }),
+        ).toBeInTheDocument();
+        expect(screen.getAllByText('limite de 5').length).toBeGreaterThan(0);
     });
 });

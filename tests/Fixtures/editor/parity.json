@@ -12,6 +12,7 @@
         "blockquote",
         "codeBlock",
         "horizontalRule",
+        "image",
         "table",
         "tableRow",
         "tableHeader",
@@ -219,6 +220,21 @@
                 },
                 {
                     "type": "horizontalRule"
+                },
+                {
+                    "type": "image",
+                    "attrs": {
+                        "id": "0f8c6a4e-1b2c-4d3e-8f90-123456789abc",
+                        "alt": "Diagrama da fila",
+                        "caption": "Figura 1"
+                    }
+                },
+                {
+                    "type": "image",
+                    "attrs": {
+                        "id": "7d2e1f00-aaaa-4bbb-8ccc-0123456789ab",
+                        "decorative": true
+                    }
                 },
                 {
                     "type": "table",

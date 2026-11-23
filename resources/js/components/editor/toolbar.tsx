@@ -8,6 +8,7 @@ import {
     Bold,
     Code,
     Highlighter,
+    ImagePlus,
     Italic,
     Link2,
     List,
@@ -42,11 +43,14 @@ export default function Toolbar({
     editor,
     colors,
     codeLanguages,
+    image,
     className,
 }: {
     editor: Editor;
     colors: PaletteColor[];
     codeLanguages: string[];
+    /** Abre a escolha de arquivo; a página envia e insere (RF-082). */
+    image: { onPick: () => void; disabled: boolean };
     className?: string;
 }) {
     const { t } = useTranslation();
@@ -169,6 +173,12 @@ export default function Toolbar({
                     onClick={() => chain().toggleCodeBlock().run()}
                 />
                 <TableTool editor={editor} active={state.table} />
+                <Tool
+                    Icon={ImagePlus}
+                    label="editor.toolbar.image"
+                    disabled={image.disabled}
+                    onClick={image.onPick}
+                />
                 <Tool
                     Icon={Minus}
                     label="editor.toolbar.divider"

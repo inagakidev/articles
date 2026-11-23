@@ -1,6 +1,6 @@
 # DECISIONS — he4rt ink
 
-**Atualizado em:** 21/11/2026
+**Atualizado em:** 22/11/2026
 
 Registro das decisões de produto e de arquitetura, com contexto, alternativas consideradas e impacto. Os requisitos resultantes estão em `REQUIREMENTS.md`; a visão do produto está em `PRODUCT.md`.
 
@@ -687,7 +687,7 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Tags:** guardadas já na forma normalizada (minúsculas, sem acento, hífen no lugar de espaço, mantendo `#`, `+` e `.`), com até 40 caracteres. Unir leva as versões para a tag certa e transforma a antiga em apelido, então quem digitá-la depois cai na tag certa. A tela sugere uniões por uma chave aproximada ("reactjs" e "react-js" parecem "react"), guardada e indexada em `tags.loose_key`, para consultar só as tags parecidas com as da página exibida; quem une é a administradora. Tag bloqueada não pode ser usada (RF-129); excluir tira a tag de todas as versões.
     - **Tela:** "Categorias e tags" no painel, no desenho da prancha, com o nome nos dois idiomas e a cor no criar e renomear. As categorias reais passam a aparecer na página de apresentação (D74).
 - **Alternativas descartadas:** guardar diferenças entre versões (complexo para aprovar e restaurar, sem ganho no tamanho dos artigos); um campo de estado "na lixeira" (exigiria guardar o estado anterior à parte); a categoria no artigo em vez da versão (mudar a categoria de um artigo publicado não passaria pela revisão); nome de categoria só em português.
-- **Pendente:** as tabelas de imagens entram com a fatia 9, porque o formato delas depende do processamento de lá; o registro de auditoria das ações da administradora em categorias e tags entra com a auditoria (p6-15); o slug e o endereço do artigo, com a leitura (fatia 12).
+- **Pendente:** as tabelas de imagens entram com a fatia 9 (D81), porque o formato delas depende do processamento de lá; o registro de auditoria das ações da administradora em categorias e tags entra com a auditoria (p6-15); o slug e o endereço do artigo, com a leitura (fatia 12).
 
 ### D80 — Editor, salvamento automático e prévia
 
@@ -704,3 +704,18 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Limites:** título de 150 caracteres, conteúdo de 50.000 (medido no texto puro depois da limpeza), até 10 tags, idioma entre os da interface. Tag bloqueada é recusada com o nome dela.
 - **Fora desta fatia:** o painel "o que falta" já aparece, mas o botão de envio fica oculto até a fatia 10; capa e imagens no editor, na fatia 9. A prancha mostra um subtítulo, que não existe nos requisitos e ficou de fora.
 - **Alternativas descartadas:** guardar HTML (perde a validação estrutural da D51); colorir o código no navegador com Shiki ou highlight.js (mais JavaScript na leitura, e a prévia dependeria do navegador); salvar por formulário do Inertia (cada salvamento recarregaria as props da página); criar o artigo ao abrir "Escrever" (deixaria rascunhos vazios).
+
+### D81 — Imagens dos artigos
+
+- **Status:** Aprovada (22/11/2026).
+- **Contexto:** a fatia 9 entrega a capa e as imagens no editor (p4-07, RF-079 a RF-091). A D52 define o processamento e a D53, o armazenamento e a entrega; faltava o modelo de dados, a regra de acesso e o caminho do envio até o texto.
+- **Decisão:**
+    - **A imagem pertence ao artigo**, não à versão (`article_images`). As versões só a citam (`article_version_image`), então a cópia de uma versão para um rascunho não duplica arquivos, e uma imagem repetida entre versões conta uma vez (RF-089). A ligação é recalculada a cada salvamento, a partir do texto e da capa.
+    - **Envio:** `POST /articles/{id}/images`, em JSON, só para quem escreveu. Aceita JPG, PNG e WebP até 10 MB (RF-081, RF-085) e recusa lados acima de 12.000 px, que estourariam a memória ao abrir. O artigo novo é criado antes do envio, porque a imagem pertence a ele.
+    - **Processamento:** o `ImageProcessor` desvira pela orientação da câmera, limita o maior lado a 3.200 px e regrava em WebP sem metadados (RF-086). As larguras 480, 960 e 1600 são geradas pela fila (`GenerateImageVariants`), só as menores que o original. Até a fila terminar, a rota entrega o original.
+    - **No texto:** o nó `image` do esquema guarda o id, o texto alternativo, a legenda e a marcação de decorativa (RF-087, RF-088). O servidor recusa imagem de outro artigo e mais de cinco no texto (RF-080); a capa não entra na conta. O renderer gera `<figure>` com `srcset`, dimensões e carregamento preguiçoso, e alt vazio na imagem decorativa. Imagem colada de outro site é ignorada: só entra o que passou pelo envio.
+    - **Capa:** na versão (`cover_image_id`, `cover_alt`, `cover_decorative`), escolhida no painel de detalhes, como na prancha.
+    - **Acesso (RF-090):** a imagem é pública quando a versão em vigor de um artigo publicado, fora da lixeira, a cita. Fora disso, só o autor e a administradora a veem; para os demais, a rota responde 404, sem revelar que existe. A pública vai com cache longo; a privada, com cache privado de 5 minutos, porque pode mudar de estado na aprovação.
+    - **O que falta para enviar:** havendo imagens ou capa, entra o item "Texto alternativo das imagens", com "Corrigir" levando ao primeiro campo vazio. A recusa do envio sem texto alternativo entra com o envio (fatia 10).
+- **Fora desta fatia:** a limpeza das imagens que nenhuma versão cita, depois de 24 horas (p4-11, com a coluna `created_at` já indexada); as recomendações de dimensões (RF-091) aparecem só como "JPG, PNG ou WebP · até 10 MB", como na prancha.
+- **Alternativas descartadas:** imagem por versão (duplicaria arquivos a cada edição); guardar a URL no documento (a URL muda com a entrega da D53 e não carrega a regra de acesso); gerar os tamanhos durante o envio (a resposta demoraria vários segundos em fotos grandes).

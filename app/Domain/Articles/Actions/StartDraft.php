@@ -32,11 +32,16 @@ class StartDraft
                 'content_text' => $base->content_text,
                 'language' => $base->language,
                 'category_id' => $base->category_id,
+                'cover_image_id' => $base->cover_image_id,
+                'cover_alt' => $base->cover_alt,
+                'cover_decorative' => $base->cover_decorative,
             ]);
 
             if ($base !== null) {
                 $draft->forceFill(['based_on_id' => $base->id])->save();
                 $draft->tags()->sync($base->tags()->pluck('tags.id'));
+                // As imagens são as mesmas: a cópia só cita, não duplica arquivos (RF-089)
+                $draft->images()->sync($base->images()->pluck('article_images.id'));
             }
 
             return $draft;

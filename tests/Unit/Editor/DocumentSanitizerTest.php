@@ -83,3 +83,17 @@ test('profundidade absurda é cortada', function () {
 
     expect($flat)->not->toContain('fundo');
 });
+
+test('imagem: id inválido some; texto longo, vazio e decorativa falsa são descartados', function () {
+    $id = '0f8c6a4e-1b2c-4d3e-8f90-123456789abc';
+    $clean = (new DocumentSanitizer)->sanitize(['type' => 'doc', 'content' => [
+        ['type' => 'image', 'attrs' => ['id' => '../../etc/passwd', 'alt' => 'x']],
+        ['type' => 'image', 'attrs' => ['id' => $id, 'alt' => str_repeat('a', 251), 'caption' => '  Figura 1 ', 'decorative' => 'sim', 'src' => 'https://outro.site/x.png']],
+        ['type' => 'image', 'attrs' => ['id' => $id, 'alt' => '   ', 'decorative' => true], 'content' => [['type' => 'text', 'text' => 'x']]],
+    ]]);
+
+    expect($clean['content'])->toBe([
+        ['type' => 'image', 'attrs' => ['id' => $id, 'caption' => 'Figura 1']],
+        ['type' => 'image', 'attrs' => ['id' => $id, 'decorative' => true]],
+    ])->and(DocumentSanitizer::imageIds($clean))->toBe([$id]);
+});

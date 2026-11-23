@@ -1,16 +1,23 @@
 import { useTranslation } from '@/lib/i18n';
 
-/** Palavras, tempo de leitura e caracteres com o limite (RF-070, RF-078, RF-096). */
+/**
+ * Palavras, tempo de leitura, caracteres e imagens com os limites
+ * (RF-070, RF-078, RF-080, RF-096).
+ */
 export default function EditorStats({
     words,
     characters,
     maxCharacters,
     wordsPerMinute,
+    images,
+    maxImages,
 }: {
     words: number;
     characters: number;
     maxCharacters: number;
     wordsPerMinute: number;
+    images: number;
+    maxImages: number;
 }) {
     const { t, locale } = useTranslation();
     const format = new Intl.NumberFormat(locale.replace('_', '-'), {
@@ -25,7 +32,7 @@ export default function EditorStats({
             <h2 id="stats-title" className="sr-only">
                 {t('editor.stats.title')}
             </h2>
-            <dl className="grid grid-cols-3 gap-2 text-center">
+            <dl className="grid grid-cols-2 gap-2 text-center">
                 <Stat
                     label={t('editor.stats.words')}
                     value={words.toLocaleString(locale.replace('_', '-'))}
@@ -41,6 +48,12 @@ export default function EditorStats({
                         max: format.format(maxCharacters),
                     })}
                     warn={near}
+                />
+                <Stat
+                    label={t('editor.stats.images')}
+                    value={String(images)}
+                    hint={t('editor.stats.images_limit', { max: maxImages })}
+                    warn={images >= maxImages}
                 />
             </dl>
         </section>

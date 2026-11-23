@@ -48,6 +48,12 @@ class Article extends Model
         return $this->hasMany(ArticleVersion::class);
     }
 
+    /** @return HasMany<ArticleImage, $this> */
+    public function images(): HasMany
+    {
+        return $this->hasMany(ArticleImage::class);
+    }
+
     /** @return BelongsTo<ArticleVersion, $this> */
     public function currentVersion(): BelongsTo
     {

@@ -2,6 +2,7 @@ import { TableKit } from '@tiptap/extension-table';
 import TextAlign from '@tiptap/extension-text-align';
 import { CharacterCount, Placeholder } from '@tiptap/extensions';
 import StarterKit from '@tiptap/starter-kit';
+import { ArticleImage } from '@/components/editor/article-image';
 import { PaletteHighlight, TextColor } from '@/components/editor/palette-marks';
 
 /**
@@ -11,9 +12,12 @@ import { PaletteHighlight, TextColor } from '@/components/editor/palette-marks';
 export function editorExtensions({
     placeholder,
     characterLimit,
+    images = { resolve: () => undefined, textMax: 250 },
 }: {
     placeholder: string;
     characterLimit: number;
+    /** De onde vem o endereço de cada imagem já enviada (RF-080). */
+    images?: { resolve: (id: string) => string | undefined; textMax: number };
 }) {
     return [
         StarterKit.configure({
@@ -39,6 +43,7 @@ export function editorExtensions({
         TableKit.configure({ table: { resizable: false } }),
         TextColor,
         PaletteHighlight,
+        ArticleImage.configure(images),
         Placeholder.configure({ placeholder }),
         CharacterCount.configure({ limit: characterLimit }),
     ];

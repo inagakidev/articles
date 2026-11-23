@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { DraftFields } from '@/hooks/use-autosave';
 import TagsInput from '@/components/editor/tags-input';
 import FormField from '@/components/ui/form-field';
@@ -8,8 +9,9 @@ import type { PastelTone } from '@/types';
 
 export type EditorCategory = { id: number; name: string; color: PastelTone };
 
-/** Categoria, idioma e tags do artigo (RF-092 a RF-094). A capa entra com as imagens. */
+/** Capa, categoria, idioma e tags do artigo (RF-079, RF-092 a RF-094). */
 export default function DetailsPanel({
+    cover,
     fields,
     categories,
     maxTags,
@@ -17,6 +19,8 @@ export default function DetailsPanel({
     isNew,
     onChange,
 }: {
+    /** O campo de capa, que a página liga ao envio de imagem. */
+    cover: ReactNode;
     fields: Pick<DraftFields, 'language' | 'category_id' | 'tags'>;
     categories: EditorCategory[];
     maxTags: number;
@@ -28,6 +32,7 @@ export default function DetailsPanel({
 
     return (
         <div className="flex flex-col gap-4">
+            {cover}
             <FormField
                 id="category"
                 label={t('editor.details.category')}
