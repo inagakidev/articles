@@ -43,6 +43,11 @@ describe('leitura do artigo', () => {
         expect(
             screen.getByRole('navigation', { name: 'Neste artigo' }),
         ).toBeInTheDocument();
+        // A tag leva à busca por ela
+        expect(screen.getByRole('link', { name: '#laravel' })).toHaveAttribute(
+            'href',
+            '/busca?tags%5B%5D=laravel',
+        );
     });
 
     it('diz quando foi atualizado (RF-137)', () => {

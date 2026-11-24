@@ -5,9 +5,19 @@ import {
     CircleCheck,
     LayoutGrid,
     PenLine,
+    SlidersHorizontal,
     Sparkles,
 } from 'lucide-react';
 import ArticleCard from '@/components/articles/article-card';
+import {
+    filterUrl,
+    NO_FILTERS,
+    useFilterBar,
+} from '@/components/search/filter-bar';
+import type {
+    SearchOptions,
+    SearchQuery,
+} from '@/components/search/search-filters';
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/ui/empty-state';
 import Mascot from '@/components/ui/mascot';
@@ -21,15 +31,16 @@ import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
-import { index } from '@/routes/articles';
 import type { ArticleSummary, CategorySummary } from '@/types';
 
 type Category = CategorySummary & { slug: string };
 
 type Props = {
     categories: Category[];
-    /** Slug da categoria escolhida; nulo em "Todas". */
-    category: string | null;
+    /** Os filtros, no mesmo formato da busca (D85). */
+    query: SearchQuery;
+    filterCount: number;
+    options: SearchOptions;
     articles: {
         data: ArticleSummary[];
         currentPage: number;
@@ -68,32 +79,33 @@ const steps: {
     },
 ];
 
-function pageUrl(category: string | null, page: number): string {
-    const query: Record<string, string | number> = {};
-
-    if (category) {
-        query.categoria = category;
-    }
-
-    if (page > 1) {
-        query.page = page;
-    }
-
-    return `${index({ query }).url}#artigos`;
+/** Leva à mesma listagem com os filtros e a página, voltando aos cartões. */
+function pageUrl(query: SearchQuery, page = 1): string {
+    return `${filterUrl('articles', query, page)}#artigos`;
 }
 
 /**
  * Listagem pública em `/artigos` (prancha "Home", RF-002, RF-133): a
- * abertura, os artigos visíveis por categoria, do mais novo para o mais
- * antigo, e como publicar. Ordenar e filtrar entram com a busca (fatia 13).
+ * abertura, os artigos visíveis com os mesmos filtros e ordem da busca
+ * (D85), as categorias em chips e como publicar.
  */
 export default function ArticlesIndex({
     categories,
-    category,
+    query,
+    filterCount,
+    options,
     articles,
 }: Props) {
     const { t } = useTranslation();
+    const category = query.categoria;
     const active = categories.find((item) => item.slug === category) ?? null;
+    const bar = useFilterBar({
+        page: 'articles',
+        query,
+        options,
+        filterCount,
+        total: articles.total,
+    });
 
     return (
         <>
@@ -105,14 +117,19 @@ export default function ArticlesIndex({
                 aria-labelledby="artigos-title"
                 className="mx-auto mt-18 flex w-full max-w-page scroll-mt-6 flex-col gap-6 px-4 sm:px-8"
             >
-                <h2
-                    id="artigos-title"
-                    className="font-display text-[2rem]/10 font-extrabold tracking-[-0.02em]"
-                >
-                    {active
-                        ? t('listing.in_category', { category: active.name })
-                        : t('listing.title')}
-                </h2>
+                <div className="flex flex-wrap items-end justify-between gap-4">
+                    <h2
+                        id="artigos-title"
+                        className="font-display text-[2rem]/10 font-extrabold tracking-[-0.02em]"
+                    >
+                        {active
+                            ? t('listing.in_category', {
+                                  category: active.name,
+                              })
+                            : t('listing.title')}
+                    </h2>
+                    {bar.controls}
+                </div>
 
                 {categories.length > 0 && (
                     <nav
@@ -121,7 +138,7 @@ export default function ArticlesIndex({
                         className="flex scroll-mt-24 flex-wrap gap-2"
                     >
                         <CategoryChip
-                            href={pageUrl(null, 1)}
+                            href={pageUrl({ ...query, categoria: null })}
                             current={category === null}
                         >
                             <LayoutGrid aria-hidden="true" className="size-4" />
@@ -130,7 +147,10 @@ export default function ArticlesIndex({
                         {categories.map((item) => (
                             <CategoryChip
                                 key={item.slug}
-                                href={pageUrl(item.slug, 1)}
+                                href={pageUrl({
+                                    ...query,
+                                    categoria: item.slug,
+                                })}
                                 current={item.slug === category}
                             >
                                 <span
@@ -146,8 +166,14 @@ export default function ArticlesIndex({
                     </nav>
                 )}
 
+                {bar.panel}
+
                 {articles.total === 0 ? (
-                    <Empty category={active} />
+                    <Empty
+                        category={active}
+                        filtered={filterCount > 0}
+                        clearHref={pageUrl({ ...query, ...NO_FILTERS })}
+                    />
                 ) : (
                     <>
                         <div className="grid grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))] gap-6">
@@ -173,7 +199,7 @@ export default function ArticlesIndex({
                         <Pagination
                             current={articles.currentPage}
                             last={articles.lastPage}
-                            href={(page) => pageUrl(category, page)}
+                            href={(page) => pageUrl(query, page)}
                         />
                     </>
                 )}
@@ -312,10 +338,35 @@ function CategoryChip({
     );
 }
 
-/** Nada para ler ainda, no site todo ou na categoria escolhida. */
-function Empty({ category }: { category: Category | null }) {
+/** Nada para ler ainda, no site todo ou com os filtros escolhidos. */
+function Empty({
+    category,
+    filtered,
+    clearHref,
+}: {
+    category: Category | null;
+    filtered: boolean;
+    clearHref: string;
+}) {
     const { t } = useTranslation();
     const writeHref = useWriteHref();
+
+    if (filtered && !category) {
+        return (
+            <EmptyState
+                Icon={SlidersHorizontal}
+                title={t('search.empty.title_filters')}
+                text={t('listing.empty_filters.text')}
+                action={
+                    <Button asChild variant="outline" size="md">
+                        <Link href={clearHref}>
+                            {t('search.filters.clear')}
+                        </Link>
+                    </Button>
+                }
+            />
+        );
+    }
 
     if (category) {
         return (
@@ -327,7 +378,7 @@ function Empty({ category }: { category: Category | null }) {
                 text={t('listing.empty_category.text')}
                 action={
                     <Button asChild variant="outline" size="md">
-                        <Link href={pageUrl(null, 1)}>
+                        <Link href={clearHref}>
                             {t('listing.empty_category.all')}
                         </Link>
                     </Button>

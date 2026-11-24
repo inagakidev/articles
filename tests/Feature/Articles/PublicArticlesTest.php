@@ -2,6 +2,7 @@
 
 use App\Domain\Articles\Enums\ArticleState;
 use App\Domain\Articles\Enums\VersionStatus;
+use App\Domain\Articles\Queries\ArticleSearch;
 use App\Domain\Articles\Queries\PublicArticles;
 use App\Models\Article;
 use App\Models\ArticleVersion;
@@ -47,7 +48,8 @@ test('a listagem mostra os visíveis, do mais novo para o mais antigo', function
             ->where('articles.data.0.title', $new->currentVersion->title)
             ->where('articles.data.1.url', '/artigos/'.$old->slug)
             ->where('articles.total', 2)
-            ->where('category', null)
+            ->where('query.categoria', null)
+            ->where('filterCount', 0)
             // O cartão não leva o documento nem dados da conta
             ->missing('articles.data.0.content')
             ->missing('articles.data.0.author.email'),
@@ -55,7 +57,7 @@ test('a listagem mostra os visíveis, do mais novo para o mais antigo', function
 });
 
 test('a listagem pagina de doze em doze (RF-133)', function () {
-    foreach (range(1, PublicArticles::PER_PAGE + 1) as $day) {
+    foreach (range(1, ArticleSearch::PER_PAGE + 1) as $day) {
         publishedArticle()->forceFill(['first_published_at' => now()->subDays($day)])->save();
     }
 
@@ -76,7 +78,7 @@ test('filtra por categoria e só oferece categorias com artigo', function () {
 
     $this->get(route('articles.index', ['categoria' => $backend->slug]))
         ->assertInertia(fn (Assert $page) => $page
-            ->where('category', $backend->slug)
+            ->where('query.categoria', $backend->slug)
             ->has('articles.data', 1)
             ->where('articles.data.0.url', '/artigos/'.$inBackend->slug)
             ->where('categories', fn ($categories) => collect($categories)->contains('slug', $backend->slug)
@@ -84,8 +86,33 @@ test('filtra por categoria e só oferece categorias com artigo', function () {
         );
 });
 
-test('categoria que não existe dá 404', function () {
-    $this->get(route('articles.index', ['categoria' => 'nao-existe']))->assertNotFound();
+test('categoria que não existe só não acha nada', function () {
+    publishedArticle();
+
+    $this->get(route('articles.index', ['categoria' => 'nao-existe']))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->where('articles.total', 0));
+});
+
+test('a listagem tem os mesmos filtros e a ordem da busca (D85)', function () {
+    $old = publishedArticle();
+    $old->forceFill(['first_published_at' => now()->subYears(2)])->save();
+    $new = publishedArticle(['language' => 'en']);
+
+    $this->get(route('articles.index', ['ordem' => 'antigos']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('articles.data.0.url', '/artigos/'.$old->slug)
+            ->where('query.ordem', 'antigos')
+            ->has('options.categories')
+            ->where('options.languages', ['pt_BR', 'en']),
+        );
+
+    $this->get(route('articles.index', ['idioma' => 'en', 'periodo' => 'ano']))
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('articles.data', 1)
+            ->where('articles.data.0.url', '/artigos/'.$new->slug)
+            ->where('filterCount', 2),
+        );
 });
 
 test('a leitura mostra o artigo, com a data da primeira publicação', function () {

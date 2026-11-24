@@ -20,6 +20,10 @@ describe('página não encontrada', () => {
         expect(
             screen.getByRole('link', { name: 'Ver categorias' }),
         ).toHaveAttribute('href', '/artigos#categorias');
+        // A busca pelo assunto, com rótulo fixo
+        expect(
+            screen.getByRole('searchbox', { name: 'Buscar artigos' }),
+        ).toBeInTheDocument();
     });
 
     it('fala em inglês quando o idioma é inglês', () => {

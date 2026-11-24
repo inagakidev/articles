@@ -6,7 +6,6 @@ use App\Domain\Articles\Enums\ArticleState;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,15 +13,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * A regra única de visibilidade pública (REQUIREMENTS §5.3, p5-01):
  * publicado, fora da lixeira, com versão em vigor e endereço. Listagem,
- * leitura, apresentação e imagens partem de `query()`; a busca e o perfil
- * também vão partir. A situação do autor (suspenso ou banido, RF-353) entra
+ * busca, leitura, apresentação e imagens partem de `query()`; o perfil
+ * também vai partir. A situação do autor (suspenso ou banido, RF-353) entra
  * aqui com as penalidades (fatia 21).
  */
 class PublicArticles
 {
-    /** Cartões por página na listagem (RF-133). */
-    public const PER_PAGE = 12;
-
     /** @return Builder<Article> */
     public function query(): Builder
     {
@@ -33,24 +29,14 @@ class PublicArticles
             ->whereNotNull('slug');
     }
 
-    /**
-     * Do mais novo para o mais antigo, pela primeira publicação (RF-136).
-     *
-     * @return LengthAwarePaginator<int, Article>
-     */
-    public function paginate(?Category $category = null): LengthAwarePaginator
+    /** @return Collection<int, Article> */
+    public function recent(int $limit, ?Category $category = null): Collection
     {
         return $this->summaries()
             ->when($category, fn (Builder $query, Category $category) => $query
                 ->whereHas('currentVersion', fn (Builder $version) => $version->where('category_id', $category->id)))
-            ->paginate(self::PER_PAGE)
-            ->withQueryString();
-    }
-
-    /** @return Collection<int, Article> */
-    public function recent(int $limit): Collection
-    {
-        return $this->summaries()->limit($limit)->get();
+            ->limit($limit)
+            ->get();
     }
 
     public function findBySlug(string $slug): ?Article
@@ -77,19 +63,25 @@ class PublicArticles
 
     /**
      * O que o cartão precisa, sem o documento do editor: o resumo e o tempo
-     * de leitura saem do texto puro.
+     * de leitura saem do texto puro. A busca usa o mesmo formato.
      *
+     * @param  Builder<Article>  $query
      * @return Builder<Article>
      */
+    public function withSummary(Builder $query): Builder
+    {
+        return $query->with([
+            'author',
+            'currentVersion' => fn (BelongsTo $version) => $version->select(['id', 'article_id', 'title', 'content_text', 'category_id', 'cover_image_id', 'decided_at']),
+            'currentVersion.category',
+            'currentVersion.coverImage',
+        ]);
+    }
+
+    /** @return Builder<Article> */
     private function summaries(): Builder
     {
-        return $this->query()
-            ->with([
-                'author',
-                'currentVersion' => fn (BelongsTo $version) => $version->select(['id', 'article_id', 'title', 'content_text', 'category_id', 'cover_image_id', 'decided_at']),
-                'currentVersion.category',
-                'currentVersion.coverImage',
-            ])
+        return $this->withSummary($this->query())
             ->orderByDesc('first_published_at')
             ->orderByDesc('id');
     }

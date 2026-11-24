@@ -133,6 +133,8 @@ Uma cópia completa do conteúdo, com o próprio estado (REQUIREMENTS §5.2, D79
 | `decision_reason`                             | text, nulo                  | Justificativa da rejeição ou despublicação                                 |
 | `draft_slot`, `pending_slot`, `approved_slot` | gerada, única               | `article_id` quando o status bate; garante RF-351 no banco                 |
 
+Índice FULLTEXT `article_versions_search` em `title` e `content_text`, consultado só pelo `ArticleSearch` (D54, D85).
+
 ### `article_version_tag`
 
 Tags de cada versão (chave composta). Apagar a versão ou a tag apaga a ligação.

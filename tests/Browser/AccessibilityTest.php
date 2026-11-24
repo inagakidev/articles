@@ -254,3 +254,45 @@ it('não tem problemas de acessibilidade na listagem, na leitura e no 404', func
     'leitura' => '/artigos/{slug}',
     '404' => '/nada-por-aqui',
 ])->with(['claro', 'escuro', 'inglês', 'celular']);
+
+it('não tem problemas de acessibilidade na busca', function (string $url, string $mode) {
+    $category = Category::query()->firstOrFail();
+    $article = Article::factory()->published()->create();
+    $article->currentVersion->update(['title' => 'Concorrência em Go, do zero']);
+    $article->currentVersion->tags()->attach(Tag::query()->create(['name' => 'laravel', 'loose_key' => 'laravel']));
+    Article::factory()->published()->count(3)->create();
+    $page = visit(str_replace('{categoria}', $category->slug, $url));
+
+    $page = match ($mode) {
+        'escuro' => $page->inDarkMode(),
+        'inglês' => $page->withLocale('en-US'),
+        'celular' => $page->on()->mobile(),
+        default => $page,
+    };
+
+    $page->wait(ENTRANCE_SECONDS)
+        ->assertSee(str_contains($url, 'kubernets') ? 'kubernets' : 'Concorrência em Go')
+        ->assertNoAccessibilityIssues();
+})->with([
+    'com resultados e termo curto' => '/busca?q=go&tags[]=laravel',
+    'sem resultados' => '/busca?q=kubernets&categoria={categoria}',
+])->with(['claro', 'escuro', 'inglês', 'celular']);
+
+it('não tem problemas de acessibilidade nos filtros da busca', function () {
+    Article::factory()->published()->count(2)->create();
+
+    visit('/busca')
+        ->withLocale('pt-BR')
+        ->press('Filtros')
+        ->wait(ENTRANCE_SECONDS)
+        ->assertSee('Publicado em')
+        ->assertNoAccessibilityIssues();
+
+    visit('/busca')
+        ->withLocale('pt-BR')
+        ->on()->mobile()
+        ->press('Filtros')
+        ->wait(ENTRANCE_SECONDS)
+        ->assertSee('Publicado em')
+        ->assertNoAccessibilityIssues();
+});

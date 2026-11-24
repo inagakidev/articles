@@ -1,6 +1,6 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import type { InertiaLinkProps } from '@inertiajs/react';
-import { LayoutDashboard, LogOut, Settings } from 'lucide-react';
+import { FileText, LayoutDashboard, LogOut, Settings } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import {
     DropdownMenu,
@@ -15,6 +15,7 @@ import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { logout } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
+import { mine } from '@/routes/articles';
 import { edit as settings } from '@/routes/profile';
 
 type Item = {
@@ -26,9 +27,9 @@ type Item = {
 };
 
 /**
- * Menu da conta de quem entrou: nome e e-mail, atalhos e "Sair". Fica nos
- * cabeçalhos do site, da apresentação e do painel; para a administradora,
- * tem o atalho para o painel (D75).
+ * Menu da conta de quem entrou: nome e e-mail, "Meus artigos", atalhos e
+ * "Sair". Fica nos cabeçalhos do site, da leitura, da apresentação e do
+ * painel; para a administradora, tem o atalho para o painel (D75).
  */
 export default function AccountMenu({
     items = [],
@@ -48,6 +49,7 @@ export default function AccountMenu({
     const user = auth.user;
     const links: Item[] = [
         ...items,
+        { label: t('site.nav.my_articles'), href: mine(), Icon: FileText },
         ...(user.is_admin
             ? [
                   {

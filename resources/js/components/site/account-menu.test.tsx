@@ -25,13 +25,16 @@ describe('menu da conta', () => {
         expect(open(null)).toBeNull();
     });
 
-    it('tem Configurações e Sair, sem o painel para quem não administra', () => {
+    it('tem Meus artigos, Configurações e Sair, sem o painel para quem não administra', () => {
         open({
             name: 'Lia Martins',
             email: 'lia@exemplo.dev',
             is_admin: false,
         });
 
+        expect(
+            screen.getByRole('menuitem', { name: 'Meus artigos' }),
+        ).toHaveAttribute('href', '/my-articles');
         expect(
             screen.getByRole('menuitem', { name: 'Configurações' }),
         ).toHaveAttribute('href', '/settings/profile');

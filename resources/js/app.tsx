@@ -23,6 +23,7 @@ void createInertiaApp({
                 return ReadingLayout;
             case name === 'articles/index' ||
                 name.startsWith('errors/') ||
+                name.startsWith('search/') ||
                 name.startsWith('policies/') ||
                 name.startsWith('profile/') ||
                 name.startsWith('my-articles/'):
