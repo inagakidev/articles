@@ -9,6 +9,7 @@ use App\Models\ArticleVersion;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\CommentLike;
+use App\Models\Favorite;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
@@ -394,3 +395,28 @@ it('não tem problemas de acessibilidade nos comentários e curtidas', function 
 
     $page->wait(ENTRANCE_SECONDS)->assertSee('Uso no job também.')->assertVisible('#comentarios nav')->assertNoAccessibilityIssues();
 })->with(['claro', 'escuro', 'celular', 'visitante']);
+
+it('não tem problemas de acessibilidade nos favoritos', function (string $mode) {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    if ($mode !== 'vazio') {
+        foreach (Article::factory()->published()->count(2)->create() as $article) {
+            Favorite::query()->create(['article_id' => $article->id, 'user_id' => $user->id]);
+        }
+        $gone = Article::factory()->published()->create();
+        Favorite::query()->create(['article_id' => $gone->id, 'user_id' => $user->id]);
+        $gone->delete();
+    }
+
+    $page = visit('/favoritos')->withLocale('pt-BR');
+    $page = match ($mode) {
+        'escuro' => $page->inDarkMode(),
+        'celular' => $page->on()->mobile(),
+        default => $page,
+    };
+
+    $page->wait(ENTRANCE_SECONDS)
+        ->assertSee($mode === 'vazio' ? 'Nada salvo ainda' : 'Este artigo não está mais disponível')
+        ->assertNoAccessibilityIssues();
+})->with(['claro', 'escuro', 'celular', 'vazio']);

@@ -1,6 +1,12 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import type { InertiaLinkProps } from '@inertiajs/react';
-import { FileText, LayoutDashboard, LogOut, Settings } from 'lucide-react';
+import {
+    Bookmark,
+    FileText,
+    LayoutDashboard,
+    LogOut,
+    Settings,
+} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import {
     DropdownMenu,
@@ -16,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { logout } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { mine } from '@/routes/articles';
+import { index as favorites } from '@/routes/favorites';
 import { edit as settings } from '@/routes/profile';
 
 type Item = {
@@ -50,6 +57,7 @@ export default function AccountMenu({
     const links: Item[] = [
         ...items,
         { label: t('site.nav.my_articles'), href: mine(), Icon: FileText },
+        { label: t('site.nav.favorites'), href: favorites(), Icon: Bookmark },
         ...(user.is_admin
             ? [
                   {

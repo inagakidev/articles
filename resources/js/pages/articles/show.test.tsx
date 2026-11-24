@@ -24,6 +24,7 @@ const article = {
 
 const social = {
     likes: { articleId: 3, count: 48, liked: false, canLike: false },
+    favorites: { count: 5, favorited: false, canFavorite: false },
     comments: {
         total: 0,
         items: [],
@@ -170,6 +171,7 @@ describe('leitura do artigo', () => {
             <Show
                 article={article}
                 likes={social.likes}
+                favorites={social.favorites}
                 comments={{
                     ...social.comments,
                     total: 1,
@@ -193,6 +195,7 @@ describe('leitura do artigo', () => {
             <Show
                 article={article}
                 likes={{ ...social.likes, canLike: true }}
+                favorites={social.favorites}
                 comments={{
                     total: 3,
                     canComment: true,
@@ -244,6 +247,7 @@ describe('leitura do artigo', () => {
             <Show
                 article={article}
                 likes={social.likes}
+                favorites={social.favorites}
                 comments={{
                     total: 1,
                     canComment: true,
@@ -290,6 +294,7 @@ describe('leitura do artigo', () => {
             <Show
                 article={article}
                 likes={social.likes}
+                favorites={social.favorites}
                 comments={{
                     ...social.comments,
                     total: 6,
@@ -330,6 +335,7 @@ describe('leitura do artigo', () => {
             <Show
                 article={article}
                 likes={social.likes}
+                favorites={social.favorites}
                 comments={{ ...social.comments, canComment: true }}
             />,
         );
@@ -355,6 +361,7 @@ describe('leitura do artigo', () => {
             <Show
                 article={article}
                 likes={social.likes}
+                favorites={social.favorites}
                 comments={{
                     ...social.comments,
                     total: 1,
@@ -367,5 +374,21 @@ describe('leitura do artigo', () => {
             'datetime',
             createdAt,
         );
+    });
+
+    it('favoritar mostra o marcador com a contagem pública', () => {
+        render(
+            <Show
+                article={article}
+                {...social}
+                favorites={{ count: 5, favorited: true, canFavorite: true }}
+            />,
+        );
+
+        expect(
+            screen.getAllByRole('button', {
+                name: 'Favoritar, 5 favoritos',
+            })[0],
+        ).toHaveAttribute('aria-pressed', 'true');
     });
 });
