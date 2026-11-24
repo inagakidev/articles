@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vite-plus/test';
 import { testPage } from '@/test/inertia';
 import Show from '@/pages/articles/show';
@@ -88,5 +88,36 @@ describe('leitura do artigo', () => {
         expect(
             screen.queryByRole('link', { name: 'Ver perfil e outros artigos' }),
         ).toBeNull();
+    });
+
+    it('compartilha o artigo pelas redes e pelo link (RF-163)', () => {
+        render(<Show article={article} />);
+
+        fireEvent.click(
+            screen.getAllByRole('button', { name: 'Compartilhar' })[0],
+        );
+
+        const dialog = screen.getByRole('dialog', {
+            name: 'Compartilhar artigo',
+        });
+        expect(dialog).toBeInTheDocument();
+        for (const network of [
+            'WhatsApp',
+            'LinkedIn',
+            'Facebook',
+            'X',
+            'E-mail',
+        ]) {
+            expect(
+                screen.getByRole('link', { name: network }),
+            ).toBeInTheDocument();
+        }
+        expect(screen.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute(
+            'target',
+            '_blank',
+        );
+        expect(
+            screen.getByRole('button', { name: 'Copiar link' }),
+        ).toBeInTheDocument();
     });
 });

@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import ArticleView from '@/components/articles/article-view';
+import ShareButton from '@/components/share/share-button';
 import Mascot from '@/components/ui/mascot';
 import { formatShortDate } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
@@ -16,9 +17,9 @@ type Props = {
 };
 
 /**
- * Leitura pública (prancha "Leitura", RF-137): o artigo, quem escreveu e o
- * fim da leitura. Curtir, favoritar, compartilhar, denunciar e comentar
- * entram com as fatias deles (14, 17, 18 e 20).
+ * Leitura pública (prancha "Leitura", RF-137): o artigo, quem escreveu,
+ * compartilhar (RF-163) e o fim da leitura. Curtir, favoritar, denunciar e
+ * comentar entram com as fatias deles (17, 18 e 20).
  */
 export default function Show({ article }: Props) {
     const { t, locale } = useTranslation();
@@ -44,6 +45,14 @@ export default function Show({ article }: Props) {
                             </>
                         )}
                     </>
+                }
+                actions={
+                    <ShareButton
+                        label={t('share.action')}
+                        title={t('share.article_title')}
+                        linkLabel={t('share.article_link')}
+                        text={article.title ?? ''}
+                    />
                 }
                 after={<ReadingEnd category={article.category} />}
             />
@@ -78,6 +87,9 @@ function ReadingEnd({ category }: { category: ReadableArticle['category'] }) {
                 <strong className="font-display text-h3 font-extrabold">
                     {t('reading.end.title')}
                 </strong>
+                <span className="text-label leading-6 text-text-secondary">
+                    {t('reading.end.share')}
+                </span>
                 <Link
                     href={articles({
                         query: category ? { categoria: category.slug } : {},

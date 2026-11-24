@@ -18,11 +18,14 @@ import type { ReadableArticle } from '@/types';
 export default function ArticleView({
     article,
     byline,
+    actions,
     after,
 }: {
     article: ReadableArticle;
     /** Abaixo do nome de quem escreveu: as datas, ou "ainda não publicado". */
     byline: ReactNode;
+    /** Ações sobre o artigo (compartilhar), abaixo das tags e ao lado do sumário. */
+    actions?: ReactNode;
     /** Depois do cartão de autoria (o fim da leitura). */
     after?: ReactNode;
 }) {
@@ -123,6 +126,12 @@ export default function ArticleView({
                         </ul>
                     )}
 
+                    {actions && (
+                        <div className="mt-8 flex flex-wrap items-center gap-2">
+                            {actions}
+                        </div>
+                    )}
+
                     <section
                         aria-labelledby="author-title"
                         className="mt-8 flex flex-wrap items-start gap-4 rounded-card border border-border bg-surface p-6"
@@ -162,8 +171,13 @@ export default function ArticleView({
                 </div>
 
                 <aside className="hidden w-60 shrink-0 xl:block">
-                    <div className="sticky top-24">
+                    <div className="sticky top-24 flex flex-col gap-6">
                         <ArticleToc items={article.toc} />
+                        {actions && (
+                            <div className="flex flex-col gap-2 [&>*]:w-full [&>*]:justify-start">
+                                {actions}
+                            </div>
+                        )}
                     </div>
                 </aside>
             </div>
