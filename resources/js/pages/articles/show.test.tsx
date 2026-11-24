@@ -321,4 +321,51 @@ describe('leitura do artigo', () => {
             screen.getAllByRole('button', { name: 'Compartilhar' })[0],
         ).not.toHaveTextContent('Compartilhar');
     });
+
+    it('a conversa vazia convida quem pode comentar, e o campo abre ao focar', () => {
+        Object.assign(testPage.props, {
+            auth: { user: { name: 'Lia Martins', email: 'lia@exemplo.dev' } },
+        });
+        render(
+            <Show
+                article={article}
+                likes={social.likes}
+                comments={{ ...social.comments, canComment: true }}
+            />,
+        );
+
+        expect(
+            screen.getByText('Seja a primeira pessoa a comentar'),
+        ).toBeInTheDocument();
+
+        const field = screen.getByLabelText('Escreva um comentário');
+        expect(field).toHaveClass('h-12');
+        fireEvent.focus(field);
+        expect(field).toHaveClass('h-28');
+
+        // O contador só aparece perto do limite
+        expect(screen.queryByText('0 / 2.000')).not.toBeInTheDocument();
+        fireEvent.change(field, { target: { value: 'a'.repeat(1850) } });
+        expect(screen.getByText('1.850 / 2.000')).toBeInTheDocument();
+    });
+
+    it('comentários recentes mostram a data relativa, com a completa na dica', () => {
+        const createdAt = new Date().toISOString();
+        render(
+            <Show
+                article={article}
+                likes={social.likes}
+                comments={{
+                    ...social.comments,
+                    total: 1,
+                    items: [comment(1, { createdAt })],
+                }}
+            />,
+        );
+
+        expect(screen.getByText('agora')).toHaveAttribute(
+            'datetime',
+            createdAt,
+        );
+    });
 });

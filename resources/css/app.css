@@ -1154,6 +1154,34 @@
     }
 
     /* Estouro ao curtir: seis pontos saem do coração e somem, uma vez */
+    /* Comentário recém-publicado: entra subindo e o destaque se apaga */
+    .comment-new {
+        animation: comment-new 2.4s var(--ease-emphasized);
+    }
+    @keyframes comment-new {
+        0% {
+            opacity: 0;
+            transform: translateY(0.5rem);
+            background: var(--color-surface-selected);
+        }
+        15% {
+            opacity: 1;
+            transform: none;
+            background: var(--color-surface-selected);
+        }
+        100% {
+            background: transparent;
+        }
+    }
+    .motion-paused .comment-new {
+        animation: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .comment-new {
+            animation: none;
+            background: var(--color-surface-selected);
+        }
+    }
     /* Curtir: o coração pula e solta uma rajada de corações que sobem */
     .like-hearts {
         position: absolute;

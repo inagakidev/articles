@@ -833,6 +833,7 @@ compete com o texto, nunca carrega informação sozinho.
 | Artigo enviado para revisão                                          | Sim, discreto                 | `esperando`                              |
 | Artigo aprovado (Meus artigos, notificação, e-mail)                  | Sim                           | `comemorando`                            |
 | Fim do artigo, depois do texto                                       | Sim, pequeno                  | `lendo`                                  |
+| Conversa vazia, para quem pode comentar                              | Sim, pequeno                  | `esperando`                              |
 | Busca carregando                                                     | Sim                           | `procurando`                             |
 | Busca sem resultados                                                 | Sim                           | `pensativo`                              |
 | Nenhum favorito                                                      | Sim                           | `lendo`                                  |

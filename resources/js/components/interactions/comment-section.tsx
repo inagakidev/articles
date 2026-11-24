@@ -6,8 +6,8 @@ import {
     ShieldAlert,
     Trash2,
 } from 'lucide-react';
-import { useState } from 'react';
-import type { FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+import type { FormEvent, KeyboardEvent } from 'react';
 import LikeButton from '@/components/interactions/like-button';
 import DecisionFields from '@/components/moderation/decision-fields';
 import type { PolicyItem } from '@/components/moderation/decision-fields';
@@ -25,10 +25,12 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import InputError from '@/components/ui/input-error';
+import Mascot from '@/components/ui/mascot';
 import Pagination from '@/components/ui/pagination';
 import { Spinner } from '@/components/ui/spinner';
 import UserAvatar from '@/components/ui/user-avatar';
-import { shortDate } from '@/lib/dates';
+import { relative, shortDate } from '@/lib/dates';
+import type { Locale } from '@/lib/i18n';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import * as comments from '@/routes/comments';
@@ -73,6 +75,21 @@ function flatten(nodes: CommentNode[]): CommentNode[] {
     return nodes.flatMap((node) => [node, ...flatten(node.replies)]);
 }
 
+/** A partir de quanto do limite o contador aparece. */
+const COUNTER_FROM = 0.9;
+
+/** Quanto tempo o comentário recém-publicado fica destacado. */
+const FRESH_MS = 2400;
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** "agora", "há 5 minutos", "ontem"; depois de uma semana, "14 nov". */
+function when(iso: string, locale: Locale): string {
+    return Date.now() - new Date(iso).getTime() < WEEK_MS
+        ? relative(iso, locale)
+        : shortDate(iso, locale);
+}
+
 /**
  * Comentários da leitura (prancha "Comentários · logada", RF-138 a RF-147):
  * qualquer pessoa lê; quem tem conta confirmada escreve, responde até 3
@@ -94,8 +111,33 @@ export default function CommentSection({
     const [editing, setEditing] = useState<number | null>(null);
     const [deleting, setDeleting] = useState<CommentNode | null>(null);
     const [moderating, setModerating] = useState<CommentNode | null>(null);
+    const [fresh, setFresh] = useState<number | null>(null);
+    const [, tick] = useState(0);
     const { url } = usePage();
     const path = url.split(/[?#]/)[0];
+
+    // As datas relativas ("há 5 minutos") andam sozinhas
+    useEffect(() => {
+        const timer = window.setInterval(() => tick((n) => n + 1), 60_000);
+
+        return () => window.clearInterval(timer);
+    }, []);
+
+    // O comentário recém-publicado aparece na tela e fica destacado um pouco
+    useEffect(() => {
+        if (fresh === null) {
+            return;
+        }
+
+        const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+        document.getElementById(`comentario-${fresh}`)?.scrollIntoView({
+            block: 'center',
+            behavior: calm.matches ? 'auto' : 'smooth',
+        });
+        const timer = window.setTimeout(() => setFresh(null), FRESH_MS);
+
+        return () => window.clearTimeout(timer);
+    }, [fresh]);
 
     // Trocar de página leva a leitura e o foco ao começo da conversa
     function toTop() {
@@ -128,10 +170,24 @@ export default function CommentSection({
                     id="novo-comentario"
                     label={t('comments.write')}
                     submit={t('comments.publish')}
+                    compact
+                    onPosted={setFresh}
                 />
             )}
 
-            {data.total === 0 ? (
+            {data.total === 0 && data.canComment ? (
+                <div className="flex items-center gap-4 py-4">
+                    <Mascot art="esperando" size={88} float />
+                    <div className="flex flex-col gap-1">
+                        <strong className="font-display text-h3 font-extrabold">
+                            {t('comments.first.title')}
+                        </strong>
+                        <span className="text-label text-text-secondary">
+                            {t('comments.first.text')}
+                        </span>
+                    </div>
+                </div>
+            ) : data.total === 0 ? (
                 <p className="py-4 text-label text-text-secondary">
                     {t('comments.empty')}
                 </p>
@@ -145,6 +201,8 @@ export default function CommentSection({
                             maxLength={data.maxLength}
                             replying={replying === comment.id}
                             editing={editing === comment.id}
+                            fresh={fresh === comment.id}
+                            onPosted={setFresh}
                             onReply={(open) =>
                                 setReplying(open ? comment.id : null)
                             }
@@ -197,6 +255,8 @@ function CommentForm({
     submit,
     parent,
     onCancel,
+    compact = false,
+    onPosted,
 }: {
     articleId: number;
     maxLength: number;
@@ -205,24 +265,68 @@ function CommentForm({
     submit: string;
     parent?: CommentNode;
     onCancel?: () => void;
+    /** Começa numa linha e abre ao focar (o campo da conversa). */
+    compact?: boolean;
+    /** Recebe o comentário publicado, para destacá-lo. */
+    onPosted?: (id: number) => void;
 }) {
     const { t, locale } = useTranslation();
-    const { auth } = usePage().props;
+    const { auth, comments: current } = usePage<{
+        comments?: CommentsData;
+    }>().props;
     const form = useForm({ body: '', parent_id: parent?.id ?? null });
+    const [focused, setFocused] = useState(false);
+    const open = !compact || focused || form.data.body !== '';
+    const empty = form.data.body.trim() === '';
 
-    function send(event: FormEvent) {
-        event.preventDefault();
+    function send(event?: FormEvent) {
+        event?.preventDefault();
+
+        if (empty || form.processing) {
+            return;
+        }
+
+        // O publicado é o que não estava na conversa antes
+        const before = new Set(flatten(current?.items ?? []).map((c) => c.id));
+
         form.post(comments.store(articleId).url, {
             preserveScroll: true,
             only: RELOAD,
-            onSuccess: () => {
+            onSuccess: (page) => {
                 form.reset();
                 onCancel?.();
+                const after = flatten(
+                    (page.props.comments as CommentsData | undefined)?.items ??
+                        [],
+                );
+                const posted = after.find((c) => !before.has(c.id));
+
+                if (posted) {
+                    onPosted?.(posted.id);
+                }
             },
         });
     }
 
-    const counter = `${form.data.body.length.toLocaleString(locale.replace('_', '-'))} / ${maxLength.toLocaleString(locale.replace('_', '-'))}`;
+    // Ctrl + Enter (⌘ + Enter no Mac) publica
+    function shortcut(event: KeyboardEvent<HTMLTextAreaElement>) {
+        if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+            event.preventDefault();
+            send();
+        }
+    }
+
+    const tag = locale.replace('_', '-');
+    const length = form.data.body.length;
+    const showCounter = length >= maxLength * COUNTER_FROM;
+    const counter = `${length.toLocaleString(tag)} / ${maxLength.toLocaleString(tag)}`;
+    const describedBy = [
+        `${id}-dica`,
+        showCounter && `${id}-contagem`,
+        form.errors.body && `${id}-erro`,
+    ]
+        .filter(Boolean)
+        .join(' ');
 
     return (
         <form onSubmit={send} className="flex gap-3 py-1">
@@ -252,27 +356,50 @@ function CommentForm({
                     onChange={(event) =>
                         form.setData('body', event.target.value)
                     }
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
+                    onKeyDown={shortcut}
                     maxLength={maxLength}
                     placeholder={label}
                     autoFocus={parent !== undefined}
                     aria-invalid={form.errors.body ? true : undefined}
-                    aria-describedby={`${id}-dica ${id}-contagem${form.errors.body ? ` ${id}-erro` : ''}`}
-                    className="w-full resize-y rounded-xl border border-border-strong bg-surface px-3.5 py-3 text-body text-text-primary placeholder:text-text-secondary focus-visible:outline-offset-[-1px]"
+                    aria-describedby={describedBy}
+                    className={cn(
+                        'w-full resize-none rounded-xl border border-border-strong bg-surface px-3.5 py-3 text-body text-text-primary transition-[height] duration-200 placeholder:text-text-secondary focus-visible:outline-offset-[-1px]',
+                        compact && (open ? 'h-28 resize-y' : 'h-12'),
+                    )}
                 />
                 <InputError id={`${id}-erro`} message={form.errors.body} />
-                <div className="flex flex-wrap items-center gap-2">
+                <div
+                    className={cn(
+                        'flex flex-wrap items-center gap-2',
+                        !open && 'sr-only',
+                    )}
+                >
                     <span
                         id={`${id}-dica`}
                         className="text-caption text-text-secondary"
                     >
                         {t('comments.public')}
+                        <span className="hidden sm:inline">
+                            {' '}
+                            {t('comments.shortcut')}
+                        </span>
                     </span>
-                    <span
-                        id={`${id}-contagem`}
-                        className="ml-auto text-caption text-text-secondary"
-                    >
-                        {counter}
-                    </span>
+                    {showCounter && (
+                        <span
+                            id={`${id}-contagem`}
+                            className={cn(
+                                'text-caption font-bold',
+                                length >= maxLength
+                                    ? 'text-danger-fg'
+                                    : 'text-warning-fg',
+                            )}
+                        >
+                            {counter}
+                        </span>
+                    )}
+                    <span className="ml-auto" />
                     {onCancel && (
                         <Button
                             type="button"
@@ -286,9 +413,8 @@ function CommentForm({
                     <Button
                         type="submit"
                         size="sm"
-                        disabled={
-                            form.processing || form.data.body.trim() === ''
-                        }
+                        disabled={form.processing || empty}
+                        className="[&_svg]:transition-transform hover:[&_svg]:translate-x-0.5 hover:[&_svg]:-translate-y-0.5"
                     >
                         {form.processing ? (
                             <Spinner />
@@ -309,6 +435,8 @@ function CommentItem({
     maxLength,
     replying,
     editing,
+    fresh,
+    onPosted,
     onReply,
     onEdit,
     onDelete,
@@ -319,6 +447,9 @@ function CommentItem({
     maxLength: number;
     replying: boolean;
     editing: boolean;
+    /** Acabou de ser publicado: entra destacado. */
+    fresh: boolean;
+    onPosted: (id: number) => void;
     onReply: (open: boolean) => void;
     onEdit: (open: boolean) => void;
     onDelete: () => void;
@@ -334,8 +465,9 @@ function CommentItem({
             <li
                 id={`comentario-${comment.id}`}
                 className={cn(
-                    'flex gap-3.5 py-3.5',
-                    nested && 'border-l-2 border-border pl-4.5',
+                    'flex gap-3.5 rounded-xl py-3.5',
+                    nested && 'rounded-l-none border-l-2 border-border pl-4.5',
+                    fresh && 'comment-new',
                 )}
                 style={
                     nested
@@ -370,7 +502,14 @@ function CommentItem({
                         )}
                         {comment.createdAt && (
                             <span className="text-caption text-text-secondary">
-                                {shortDate(comment.createdAt, locale)}
+                                <time
+                                    dateTime={comment.createdAt}
+                                    title={new Date(
+                                        comment.createdAt,
+                                    ).toLocaleString(locale.replace('_', '-'))}
+                                >
+                                    {when(comment.createdAt, locale)}
+                                </time>
                                 {comment.edited && ` · ${t('comments.edited')}`}
                             </span>
                         )}
@@ -476,6 +615,7 @@ function CommentItem({
                         submit={t('comments.reply')}
                         parent={comment}
                         onCancel={() => onReply(false)}
+                        onPosted={onPosted}
                     />
                 </li>
             )}

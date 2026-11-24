@@ -988,5 +988,8 @@
     "trash.restored": "Artigo restaurado. Ele voltou para onde estava.",
     "trash.title": "Lixeira",
     "comments.pages": "Páginas de comentários",
-    "comments.go_to": "Ver os comentários (:count)"
+    "comments.go_to": "Ver os comentários (:count)",
+    "comments.first.title": "Seja a primeira pessoa a comentar",
+    "comments.first.text": "Conte o que achou ou tire uma dúvida com quem escreveu.",
+    "comments.shortcut": "Ctrl + Enter publica."
 }

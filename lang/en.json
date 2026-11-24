@@ -988,5 +988,8 @@
     "trash.restored": "Article restored. It's back where it was.",
     "trash.title": "Trash",
     "comments.pages": "Comment pages",
-    "comments.go_to": "See the comments (:count)"
+    "comments.go_to": "See the comments (:count)",
+    "comments.first.title": "Be the first to comment",
+    "comments.first.text": "Say what you thought or ask the author a question.",
+    "comments.shortcut": "Ctrl + Enter posts."
 }
