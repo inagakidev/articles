@@ -20,6 +20,22 @@ const categories = [
     { slug: 'devops', name: 'DevOps', color: 'pink' as const },
 ];
 
+const query = (categoria: string | null = null) => ({
+    q: '',
+    categoria,
+    autor: null,
+    idioma: null,
+    tags: [],
+    periodo: null,
+    ordem: 'recentes' as const,
+});
+
+const options = {
+    categories: [],
+    languages: ['pt_BR' as const, 'en' as const],
+    tags: [],
+};
+
 const page = (data: ArticleSummary[], extra = {}) => ({
     data,
     currentPage: 1,
@@ -42,7 +58,9 @@ describe('listagem de artigos', () => {
         render(
             <ArticlesIndex
                 categories={categories}
-                category={null}
+                query={query()}
+                filterCount={0}
+                options={options}
                 articles={page([article(1), article(2)], {
                     total: 14,
                     lastPage: 2,
@@ -75,7 +93,9 @@ describe('listagem de artigos', () => {
         render(
             <ArticlesIndex
                 categories={categories}
-                category="devops"
+                query={query('devops')}
+                filterCount={1}
+                options={options}
                 articles={page([article(1)])}
             />,
         );
@@ -92,11 +112,31 @@ describe('listagem de artigos', () => {
         );
     });
 
+    it('ordenar e filtrar ficam ao lado do título', () => {
+        render(
+            <ArticlesIndex
+                categories={categories}
+                query={query()}
+                filterCount={0}
+                options={options}
+                articles={page([article(1)])}
+            />,
+        );
+
+        expect(screen.getByLabelText('Ordenar por')).toHaveValue('recentes');
+        expect(screen.getByRole('button', { name: 'Filtros' })).toHaveAttribute(
+            'aria-expanded',
+            'false',
+        );
+    });
+
     it('sem artigos, convida a escrever', () => {
         render(
             <ArticlesIndex
                 categories={[]}
-                category={null}
+                query={query()}
+                filterCount={0}
+                options={options}
                 articles={page([])}
             />,
         );
@@ -115,7 +155,9 @@ describe('listagem de artigos', () => {
         render(
             <ArticlesIndex
                 categories={categories}
-                category="devops"
+                query={query('devops')}
+                filterCount={1}
+                options={options}
                 articles={page([])}
             />,
         );

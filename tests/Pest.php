@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -17,6 +18,13 @@ use Tests\TestCase;
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature', 'Browser');
+
+// O FULLTEXT do InnoDB só enxerga o que foi confirmado, então a busca por
+// texto não roda dentro da transação do RefreshDatabase: cada teste migra o
+// banco do zero (D85). A suíte roda por último.
+pest()->extend(TestCase::class)
+    ->use(DatabaseMigrations::class)
+    ->in('Search');
 
 /*
 |--------------------------------------------------------------------------

@@ -35,7 +35,7 @@ describe('cabeçalho do site', () => {
         );
     });
 
-    it('leva aos artigos e às categorias, marcando a página atual', () => {
+    it('leva aos artigos, marcando a página atual, e tem a busca', () => {
         renderIn('pt_BR', null, '/artigos');
         const nav = screen.getAllByRole('navigation', { name: 'Principal' })[0];
 
@@ -43,8 +43,11 @@ describe('cabeçalho do site', () => {
             within(nav).getByRole('link', { name: 'Artigos' }),
         ).toHaveAttribute('aria-current', 'page');
         expect(
-            within(nav).getByRole('link', { name: 'Categorias' }),
-        ).toHaveAttribute('href', '/artigos#categorias');
+            within(nav).queryByRole('link', { name: 'Categorias' }),
+        ).toBeNull();
+        expect(
+            screen.getByRole('search', { name: 'Buscar no site' }),
+        ).toBeInTheDocument();
     });
 
     it('troca os textos quando o idioma é inglês', () => {
@@ -52,6 +55,7 @@ describe('cabeçalho do site', () => {
         expect(
             screen.getByRole('link', { name: 'Log in' }),
         ).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Write' })).toBeInTheDocument();
         expect(
             screen.getByRole('button', {
                 name: /Language: English\. Switch to Português/,
@@ -59,15 +63,14 @@ describe('cabeçalho do site', () => {
         ).toHaveTextContent('EN');
     });
 
-    it('para quem entrou, mostra Meus artigos e o menu da conta', () => {
+    it('para quem entrou, mostra o menu da conta, com Meus artigos dentro', () => {
         renderIn('pt_BR', {
             id: 1,
             name: 'Lia Martins',
             email: 'lia@exemplo.dev',
         });
-        expect(
-            screen.getByRole('link', { name: 'Meus artigos' }),
-        ).toBeInTheDocument();
+        // "Meus artigos" fica no menu do avatar, não na barra (D85)
+        expect(screen.queryByRole('link', { name: 'Meus artigos' })).toBeNull();
         expect(
             screen.getByRole('button', { name: 'Menu da conta: Lia Martins' }),
         ).toHaveTextContent('LM');

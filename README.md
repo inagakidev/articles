@@ -79,14 +79,16 @@ As imagens dos artigos têm até 10 MB, e o PHP costuma vir com limite de envio 
 
 ## Testes e verificações
 
-| Comando                 | O que faz                                                                                           |
-| ----------------------- | --------------------------------------------------------------------------------------------------- |
-| `php artisan test`      | Testes Pest, incluindo os de navegador com axe em `tests/Browser` (usam o banco `articles_testing`) |
-| `npm test`              | Testes Vitest dos componentes React                                                                 |
-| `npm run test:contrast` | Lista o contraste de cada par de cores dos tokens, nos dois temas                                   |
-| `npm run types:check`   | Checagem de tipos TypeScript                                                                        |
-| `npm run check`         | Formatação e lint do frontend                                                                       |
-| `composer test`         | Pint, PHPStan e Pest                                                                                |
-| `composer ci:check`     | Todas as verificações acima                                                                         |
+| Comando            | O que faz                                                                                           |
+| ------------------ | --------------------------------------------------------------------------------------------------- |
+| `php artisan test` | Testes Pest, incluindo os de navegador com axe em `tests/Browser` (usam o banco `articles_testing`) |
+
+A busca por texto fica em `tests/Search`: o FULLTEXT do MariaDB só enxerga dados confirmados, então esses testes migram o banco a cada teste e rodam por último (D85).
+| `npm test` | Testes Vitest dos componentes React |
+| `npm run test:contrast` | Lista o contraste de cada par de cores dos tokens, nos dois temas |
+| `npm run types:check` | Checagem de tipos TypeScript |
+| `npm run check` | Formatação e lint do frontend |
+| `composer test` | Pint, PHPStan e Pest |
+| `composer ci:check` | Todas as verificações acima |
 
 Testes de frontend ficam ao lado do componente, com o sufixo `.test.tsx`.

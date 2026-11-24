@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Articles;
 
+use App\Domain\Articles\Queries\ArticleSearch;
 use App\Domain\Articles\Queries\PublicArticles;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Articles\SearchRequest;
 use App\Http\Resources\Articles\ArticlePage;
 use App\Http\Resources\Articles\ArticleSummaryResource;
+use App\Http\Resources\Articles\SearchOptions;
 use App\Models\ArticleVersion;
 use App\Models\Category;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,15 +22,17 @@ class PublicArticlesController extends Controller
 {
     public function __construct(private readonly PublicArticles $articles) {}
 
-    public function index(Request $request): Response
+    /**
+     * A listagem é a busca sem termo: os mesmos filtros e a mesma ordem
+     * (D85), com as categorias também em chips (prancha "Home").
+     */
+    public function index(SearchRequest $request, ArticleSearch $search, SearchOptions $options): Response
     {
-        $category = $request->filled('categoria')
-            ? Category::query()->where('slug', $request->string('categoria'))->firstOrFail()
-            : null;
-        $page = $this->articles->paginate($category);
+        $criteria = $request->criteria();
+        $page = $search->paginate($criteria);
 
         return Inertia::render('articles/index', [
-            // Só as categorias que têm o que ler, para nenhum filtro dar em nada
+            // Só as categorias que têm o que ler, para nenhum chip dar em nada
             'categories' => Category::query()
                 ->whereIn('id', ArticleVersion::query()
                     ->whereIn('id', $this->articles->query()->select('current_version_id'))
@@ -40,7 +44,9 @@ class PublicArticlesController extends Controller
                     'name' => $category->name(),
                     'color' => $category->color->value,
                 ]),
-            'category' => $category?->slug,
+            'query' => SearchRequest::toQuery($criteria),
+            'filterCount' => $criteria->filterCount(),
+            'options' => $options->toArray(),
             'articles' => [
                 'data' => ArticleSummaryResource::collection($page->items())->resolve(),
                 'currentPage' => $page->currentPage(),

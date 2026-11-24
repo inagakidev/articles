@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ArrowLeft, ListTree } from 'lucide-react';
+import { ArrowLeft, ListTree, Search } from 'lucide-react';
 import { useState } from 'react';
 import ArticleToc from '@/components/articles/article-toc';
 import AccountMenu from '@/components/site/account-menu';
@@ -9,14 +9,14 @@ import { ThemeToggle } from '@/components/site/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { useTranslation } from '@/lib/i18n';
-import { login } from '@/routes';
+import { login, search } from '@/routes';
 import { index as articles } from '@/routes/articles';
 import type { TocItem } from '@/types';
 
 /**
  * Cabeçalho discreto da leitura (DESIGN §8.1, prancha "Leitura"): a volta
- * para os artigos, tema, idioma e a conta, com a barra do quanto já foi
- * lido. No celular, o sumário abre por baixo.
+ * para os artigos, a busca, tema, idioma e a conta, com a barra do quanto
+ * já foi lido. No celular, o sumário abre por baixo.
  */
 export default function ReadingHeader() {
     const { auth, article } = usePage<{ article?: { toc: TocItem[] } }>().props;
@@ -54,8 +54,17 @@ export default function ReadingHeader() {
                             <ListTree aria-hidden="true" className="size-5" />
                         </Button>
                     )}
-                    <ThemeToggle />
-                    <LanguageToggle />
+                    <Button
+                        asChild
+                        variant="ghost"
+                        className="size-10 rounded-full px-0"
+                    >
+                        <Link href={search()} aria-label={t('search.label')}>
+                            <Search aria-hidden="true" className="size-5" />
+                        </Link>
+                    </Button>
+                    <ThemeToggle className="max-sm:hidden" />
+                    <LanguageToggle className="max-sm:hidden" />
                     {auth.user ? (
                         <AccountMenu />
                     ) : (

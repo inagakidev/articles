@@ -6,6 +6,7 @@ import ArticleToc from '@/components/articles/article-toc';
 import Pill from '@/components/ui/pill';
 import UserAvatar from '@/components/ui/user-avatar';
 import { useTranslation } from '@/lib/i18n';
+import { search } from '@/routes';
 import { show as profile } from '@/routes/profiles';
 import type { ReadableArticle } from '@/types';
 
@@ -108,11 +109,15 @@ export default function ArticleView({
                             className="mt-10 flex flex-wrap gap-2"
                         >
                             {article.tags.map((tag) => (
-                                <li
-                                    key={tag}
-                                    className="rounded-full bg-surface-muted px-3 py-1 font-mono text-caption font-bold"
-                                >
-                                    #{tag}
+                                <li key={tag}>
+                                    <Link
+                                        href={search({
+                                            query: { tags: [tag] },
+                                        })}
+                                        className="block rounded-full bg-surface-muted px-3 py-1 font-mono text-caption font-bold hover:bg-surface-selected hover:text-text-on-selected"
+                                    >
+                                        #{tag}
+                                    </Link>
                                 </li>
                             ))}
                         </ul>

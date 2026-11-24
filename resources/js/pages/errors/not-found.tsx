@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { House } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import SearchForm from '@/components/search/search-form';
 import Mascot from '@/components/ui/mascot';
 import { useTranslation } from '@/lib/i18n';
 import { home } from '@/routes';
@@ -10,7 +11,7 @@ const ripples = [300, 390, 480];
 
 /**
  * "Não achamos esta página" (prancha "Página não encontrada"), para endereço
- * que não existe e para artigo fora do ar. A busca entra com a fatia 13.
+ * que não existe e para artigo fora do ar, com a busca pelo assunto.
  */
 export default function NotFound() {
     const { t } = useTranslation();
@@ -46,6 +47,16 @@ export default function NotFound() {
                     <p className="text-[1.0625rem]/[1.625rem] text-text-secondary">
                         {t('not_found.text')}
                     </p>
+                    <SearchForm
+                        id="busca-404"
+                        size="lg"
+                        className="w-full"
+                        hints={[
+                            t('not_found.hint1'),
+                            t('not_found.hint2'),
+                            t('search.placeholder'),
+                        ]}
+                    />
                     <div className="flex w-full flex-wrap gap-2.5">
                         <Button asChild size="md">
                             <Link href={home()}>

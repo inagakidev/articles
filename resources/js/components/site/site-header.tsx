@@ -1,7 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, Menu, Newspaper, PenLine } from 'lucide-react';
+import { Menu, Newspaper, PenLine, Search } from 'lucide-react';
 import { useState } from 'react';
 import AccountMenu from '@/components/site/account-menu';
+import SearchForm from '@/components/search/search-form';
 import { Button } from '@/components/ui/button';
 import { LanguageToggle } from '@/components/site/language-switch';
 import SiteLogo from '@/components/site/site-logo';
@@ -10,13 +11,14 @@ import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-import { login } from '@/routes';
-import { index as articles, mine } from '@/routes/articles';
+import { login, search } from '@/routes';
+import { index as articles } from '@/routes/articles';
 
 /**
- * Cabeçalho das páginas públicas (prancha "Home"): logo, "Artigos" e
- * "Categorias", tema, idioma e a conta. No celular, a navegação vai para o
- * menu. A busca entra com a fatia 13.
+ * Cabeçalho das páginas públicas: logo, "Artigos", a busca, tema, idioma,
+ * "Escrever" e a conta. "Meus artigos" fica no menu do avatar, para a barra
+ * não pesar (D85). No celular, a navegação vai para o menu; a busca, num
+ * botão que leva à página dela.
  */
 export default function SiteHeader() {
     const { props, url } = usePage();
@@ -25,6 +27,12 @@ export default function SiteHeader() {
     const writeHref = useWriteHref();
     const [menuOpen, setMenuOpen] = useState(false);
     const onArticles = url === '/artigos' || url.startsWith('/artigos?');
+    // Na própria busca, o celular tem o campo na página, e o do cabeçalho
+    // mostra o termo atual
+    const onSearch = url === '/busca' || url.startsWith('/busca?');
+    const term = onSearch
+        ? ((props as { query?: { q?: string } }).query?.q ?? '')
+        : '';
 
     const nav = [
         {
@@ -32,12 +40,6 @@ export default function SiteHeader() {
             label: t('site.nav.articles'),
             Icon: Newspaper,
             current: onArticles,
-        },
-        {
-            href: `${articles().url}#categorias`,
-            label: t('site.nav.categories'),
-            Icon: LayoutGrid,
-            current: false,
         },
     ];
 
@@ -64,21 +66,30 @@ export default function SiteHeader() {
                         </Link>
                     ))}
                 </nav>
-                <div className="ml-auto flex items-center gap-1 sm:gap-2">
-                    <ThemeToggle className="max-sm:hidden" />
-                    <LanguageToggle className="max-sm:hidden" />
-                    {auth.user ? (
+                <SearchForm
+                    key={term}
+                    id="busca-cabecalho"
+                    initial={term}
+                    className="ml-auto hidden w-full max-w-110 lg:block"
+                />
+                <div className="ml-auto flex items-center gap-1 sm:gap-2 lg:ml-0">
+                    {!onSearch && (
                         <Button
                             asChild
                             variant="ghost"
-                            size="lg"
-                            className="hidden sm:inline-flex"
+                            className="size-10 rounded-full px-0 lg:hidden"
                         >
-                            <Link href={mine()}>
-                                {t('site.nav.my_articles')}
+                            <Link
+                                href={search()}
+                                aria-label={t('search.label')}
+                            >
+                                <Search aria-hidden="true" className="size-5" />
                             </Link>
                         </Button>
-                    ) : (
+                    )}
+                    <ThemeToggle className="max-sm:hidden" />
+                    <LanguageToggle className="max-sm:hidden" />
+                    {!auth.user && (
                         <Button
                             asChild
                             variant="subtle"
@@ -128,18 +139,7 @@ export default function SiteHeader() {
                                 {label}
                             </Link>
                         ))}
-                        {auth.user ? (
-                            <Link
-                                href={mine()}
-                                className="flex h-11 items-center gap-3 rounded-xl px-3 font-semibold hover:bg-surface-hover"
-                            >
-                                <PenLine
-                                    aria-hidden="true"
-                                    className="size-5"
-                                />
-                                {t('site.nav.my_articles')}
-                            </Link>
-                        ) : (
+                        {!auth.user && (
                             <Link
                                 href={login()}
                                 className="flex h-11 items-center gap-3 rounded-xl px-3 font-bold text-primary-text hover:bg-surface-hover"

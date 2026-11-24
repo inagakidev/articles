@@ -4,6 +4,7 @@ use App\Http\Controllers\Accounts\PolicyAcceptanceController;
 use App\Http\Controllers\Accounts\UnverifiedEmailController;
 use App\Http\Controllers\Accounts\UsernameAvailabilityController;
 use App\Http\Controllers\Articles\PublicArticlesController;
+use App\Http\Controllers\Articles\SearchController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MediaController;
@@ -19,6 +20,9 @@ Route::get('artigos', [PublicArticlesController::class, 'index'])->name('article
 Route::get('artigos/{slug}', [PublicArticlesController::class, 'show'])
     ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')
     ->name('articles.show');
+
+// Busca (RF-130 a RF-136, D85)
+Route::get('busca', SearchController::class)->middleware('throttle:60,1')->name('search');
 
 Route::put('locale', LocaleController::class)->name('locale.update');
 
