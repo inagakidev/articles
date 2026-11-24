@@ -2,7 +2,6 @@ import { Link } from '@inertiajs/react';
 import {
     BookOpen,
     ChevronRight,
-    CircleCheck,
     CloudCheck,
     PenLine,
     Sparkles,
@@ -16,14 +15,7 @@ import StatusBadge from '@/components/ui/status-badge';
 import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
 import { index as articles } from '@/routes/articles';
-import type { TranslationKey } from '@/lib/i18n';
 import type { CategorySummary } from '@/types';
-
-const perks: TranslationKey[] = [
-    'landing.hero.perk1',
-    'landing.hero.perk2',
-    'landing.hero.perk3',
-];
 
 /**
  * Abertura: o que é a plataforma, a chamada para escrever e o mascote em
@@ -43,14 +35,6 @@ export default function Hero({
             aria-labelledby="hero-title"
             className="relative overflow-hidden pt-[clamp(40px,7vw,88px)]"
         >
-            <div
-                aria-hidden="true"
-                className="absolute inset-0 overflow-hidden"
-            >
-                <span className="aurora top-[-10%] right-[5%] size-[min(520px,80vw)] bg-pastel-lavender" />
-                <span className="aurora bottom-[-20%] left-[-10%] size-[min(420px,70vw)] bg-pastel-pink [animation-delay:-6s]" />
-                <span className="aurora top-[30%] right-[30%] size-[min(300px,50vw)] bg-pastel-blue [animation-delay:-12s]" />
-            </div>
             <div aria-hidden="true" className="dot-grid absolute inset-0" />
             <LandingContainer className="relative flex flex-wrap items-center gap-[clamp(32px,5vw,56px)]">
                 <div className="stagger flex min-w-0 flex-[999_1_520px] flex-col gap-6">
@@ -122,21 +106,6 @@ export default function Hero({
                             </Link>
                         </Button>
                     </div>
-
-                    <ul className="flex flex-wrap gap-x-5.5 gap-y-2">
-                        {perks.map((perk) => (
-                            <li
-                                key={perk}
-                                className="inline-flex items-center gap-1.5 text-label font-semibold text-text-secondary"
-                            >
-                                <CircleCheck
-                                    aria-hidden="true"
-                                    className="size-[17px] text-success-fg"
-                                />
-                                {t(perk)}
-                            </li>
-                        ))}
-                    </ul>
                 </div>
 
                 <div className="flex flex-[1_1_360px] animate-rise justify-center [animation-delay:200ms]">

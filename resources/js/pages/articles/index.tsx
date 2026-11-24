@@ -2,7 +2,6 @@ import { Head, Link } from '@inertiajs/react';
 import {
     ArrowDown,
     ChevronRight,
-    CircleCheck,
     LayoutGrid,
     PenLine,
     SlidersHorizontal,
@@ -50,12 +49,6 @@ type Props = {
         to: number | null;
     };
 };
-
-const perks: TranslationKey[] = [
-    'listing.hero.perk1',
-    'listing.hero.perk2',
-    'listing.hero.perk3',
-];
 
 const steps: {
     title: TranslationKey;
@@ -281,20 +274,6 @@ function Hero() {
                             </Link>
                         </Button>
                     </div>
-                    <ul className="mt-1 flex flex-wrap gap-x-5 gap-y-2">
-                        {perks.map((perk) => (
-                            <li
-                                key={perk}
-                                className="inline-flex items-center gap-1.5 text-meta font-semibold text-text-secondary"
-                            >
-                                <CircleCheck
-                                    aria-hidden="true"
-                                    className="size-4 text-success-fg"
-                                />
-                                {t(perk)}
-                            </li>
-                        ))}
-                    </ul>
                 </div>
                 <div className="relative flex flex-[1_1_300px] justify-center">
                     <MascotOrbit>
