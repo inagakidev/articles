@@ -986,5 +986,6 @@
     "trash.restore": "Restore",
     "trash.restore_named": "Restore :title",
     "trash.restored": "Article restored. It's back where it was.",
-    "trash.title": "Trash"
+    "trash.title": "Trash",
+    "comments.load_more": "Load more comments"
 }

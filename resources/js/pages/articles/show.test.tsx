@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vite-plus/test';
+import { router } from '@inertiajs/react';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { testPage } from '@/test/inertia';
 import Show from '@/pages/articles/show';
 
@@ -24,7 +25,14 @@ const article = {
 
 const social = {
     likes: { articleId: 3, count: 48, liked: false, canLike: false },
-    comments: { total: 0, items: [], canComment: false, maxLength: 2000 },
+    comments: {
+        total: 0,
+        items: [],
+        canComment: false,
+        maxLength: 2000,
+        page: 1,
+        hasMore: false,
+    },
 };
 
 const noActions = {
@@ -190,6 +198,8 @@ describe('leitura do artigo', () => {
                     total: 3,
                     canComment: true,
                     maxLength: 2000,
+                    page: 1,
+                    hasMore: false,
                     items: [
                         comment(1, {
                             replies: [
@@ -239,6 +249,8 @@ describe('leitura do artigo', () => {
                     total: 1,
                     canComment: true,
                     maxLength: 2000,
+                    page: 1,
+                    hasMore: false,
                     items: [
                         comment(1, {
                             own: true,
@@ -264,5 +276,40 @@ describe('leitura do artigo', () => {
                 name: 'Mais ações do comentário de Bia Tanaka',
             }),
         ).toBeInTheDocument();
+    });
+
+    it('abre a próxima página da conversa só quando há mais comentários', () => {
+        const reload = vi.spyOn(router, 'reload').mockImplementation(() => {});
+        const { rerender } = render(<Show article={article} {...social} />);
+
+        expect(
+            screen.queryByRole('button', {
+                name: 'Carregar mais comentários',
+            }),
+        ).not.toBeInTheDocument();
+
+        rerender(
+            <Show
+                article={article}
+                likes={social.likes}
+                comments={{
+                    ...social.comments,
+                    total: 21,
+                    items: [comment(1)],
+                    hasMore: true,
+                }}
+            />,
+        );
+        fireEvent.click(
+            screen.getByRole('button', { name: 'Carregar mais comentários' }),
+        );
+
+        expect(reload).toHaveBeenCalledWith(
+            expect.objectContaining({
+                data: { comentarios: 2 },
+                only: ['comments'],
+            }),
+        );
+        reload.mockRestore();
     });
 });

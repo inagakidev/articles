@@ -378,6 +378,8 @@ it('não tem problemas de acessibilidade nos comentários e curtidas', function 
     $reply = Comment::factory()->replyTo($first)->create(['user_id' => $article->user_id, 'body' => 'Esse é o cenário!']);
     Comment::factory()->replyTo($reply)->create(['user_id' => $reader->id, 'body' => 'Uso no job também.']);
     CommentLike::query()->insert(['comment_id' => $first->id, 'user_id' => $reader->id, 'created_at' => now()]);
+    // Mais de uma página de conversa, para aparecer o botão de carregar mais
+    Comment::factory()->for($article)->count(20)->create(['created_at' => now()->addMinute()]);
 
     if ($mode !== 'visitante') {
         $this->actingAs($reader);
@@ -390,5 +392,5 @@ it('não tem problemas de acessibilidade nos comentários e curtidas', function 
         default => $page,
     };
 
-    $page->wait(ENTRANCE_SECONDS)->assertSee('Uso no job também.')->assertNoAccessibilityIssues();
+    $page->wait(ENTRANCE_SECONDS)->assertSee('Uso no job também.')->assertVisible('section[aria-labelledby="comentarios-titulo"] > button')->assertNoAccessibilityIssues();
 })->with(['claro', 'escuro', 'celular', 'visitante']);

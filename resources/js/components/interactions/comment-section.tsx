@@ -57,6 +57,9 @@ export type CommentNode = {
 export type CommentsData = {
     total: number;
     items: CommentNode[];
+    /** Páginas da conversa abertas e se há mais comentários depois delas. */
+    page: number;
+    hasMore: boolean;
     canComment: boolean;
     maxLength: number;
 };
@@ -90,6 +93,26 @@ export default function CommentSection({
     const [editing, setEditing] = useState<number | null>(null);
     const [deleting, setDeleting] = useState<CommentNode | null>(null);
     const [moderating, setModerating] = useState<CommentNode | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    // Abre a próxima página e leva o foco ao primeiro comentário dela
+    function loadMore() {
+        const shown = data.items.length;
+
+        router.reload({
+            data: { comentarios: data.page + 1 },
+            only: RELOAD,
+            onStart: () => setLoading(true),
+            onFinish: () => setLoading(false),
+            onSuccess: (page) => {
+                const next = (page.props.comments as CommentsData).items[shown];
+
+                if (next) {
+                    document.getElementById(`comentario-${next.id}`)?.focus();
+                }
+            },
+        });
+    }
 
     return (
         <section
@@ -141,6 +164,20 @@ export default function CommentSection({
                         />
                     ))}
                 </ul>
+            )}
+
+            {data.hasMore && (
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="md"
+                    className="self-center"
+                    disabled={loading}
+                    onClick={loadMore}
+                >
+                    {loading && <Spinner />}
+                    {t('comments.load_more')}
+                </Button>
             )}
 
             <DeleteDialog
@@ -302,6 +339,8 @@ function CommentItem({
         <>
             <li
                 id={`comentario-${comment.id}`}
+                // Recebe o foco ao abrir mais comentários
+                tabIndex={nested ? undefined : -1}
                 className={cn(
                     'flex gap-3.5 py-3.5',
                     nested && 'border-l-2 border-border pl-4.5',

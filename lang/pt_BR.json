@@ -986,5 +986,6 @@
     "trash.restore": "Restaurar",
     "trash.restore_named": "Restaurar :title",
     "trash.restored": "Artigo restaurado. Ele voltou para onde estava.",
-    "trash.title": "Lixeira"
+    "trash.title": "Lixeira",
+    "comments.load_more": "Carregar mais comentários"
 }

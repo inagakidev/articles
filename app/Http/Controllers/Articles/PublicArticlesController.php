@@ -70,7 +70,8 @@ class PublicArticlesController extends Controller
         abort_if($article === null, 404);
         $viewer = $request->user();
         $participates = $viewer?->hasVerifiedEmail() ?? false;
-        $all = $comments->for($article, $viewer);
+        // `comentarios` diz quantas páginas da conversa já estão abertas (D88)
+        $conversation = $comments->for($article, $viewer, $request->integer('comentarios', 1));
         $version = $article->currentVersion;
 
         // "Atualizado em" só quando outra versão foi aprovada depois (RF-137)
@@ -92,8 +93,10 @@ class PublicArticlesController extends Controller
             ],
             // Qualquer pessoa lê; só conta confirmada participa (RF-140, RF-141)
             'comments' => [
-                'total' => $all->count(),
-                'items' => $thread->build($all, $article, $viewer),
+                'total' => $conversation['total'],
+                'items' => $thread->build($conversation['comments'], $article, $viewer),
+                'page' => $conversation['pages'],
+                'hasMore' => $conversation['hasMore'],
                 'canComment' => $participates,
                 'maxLength' => CommentRules::MAX_LENGTH,
             ],

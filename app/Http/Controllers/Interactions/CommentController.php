@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Interactions;
 use App\Domain\Interactions\Actions\EditComment;
 use App\Domain\Interactions\Actions\PostComment;
 use App\Domain\Interactions\Exceptions\InteractionRefused;
+use App\Domain\Interactions\Queries\ArticleComments;
 use App\Domain\Moderation\Actions\RemoveComment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ModerationRequest;
@@ -22,19 +23,25 @@ use Inertia\Inertia;
  */
 class CommentController extends Controller
 {
-    public function store(CommentRequest $request, Article $article, PostComment $post): RedirectResponse
+    public function store(CommentRequest $request, Article $article, PostComment $post, ArticleComments $conversation): RedirectResponse
     {
         $parent = $request->filled('parent_id')
             ? Comment::query()->where('article_id', $article->id)->find($request->integer('parent_id'))
             : null;
 
         try {
-            $post->handle($article, $request->user(), trim($request->validated('body')), $parent);
+            $comment = $post->handle($article, $request->user(), trim($request->validated('body')), $parent);
         } catch (InteractionRefused $refused) {
             throw ValidationException::withMessages(['body' => __($refused->getMessage(), ['seconds' => $refused->seconds])]);
         }
 
-        return back();
+        // Um comentário novo entra no fim da conversa: abre até a página dele.
+        // Uma resposta já está à vista, junto do comentário respondido.
+        $page = $parent === null ? $conversation->pageOf($comment) : 1;
+
+        return $page > 1
+            ? redirect()->route('articles.show', ['slug' => $article->slug, 'comentarios' => $page])
+            : back();
     }
 
     public function update(CommentRequest $request, Comment $comment, EditComment $edit): RedirectResponse
