@@ -391,4 +391,20 @@ describe('leitura do artigo', () => {
             })[0],
         ).toHaveAttribute('aria-pressed', 'true');
     });
+
+    it('a contagem usa o singular quando é 1', () => {
+        render(
+            <Show
+                article={article}
+                {...social}
+                likes={{ ...social.likes, count: 1 }}
+                favorites={{ count: 1, favorited: false, canFavorite: true }}
+            />,
+        );
+
+        expect(screen.getAllByText('1 curtida')[0]).toBeInTheDocument();
+        expect(
+            screen.getAllByRole('button', { name: 'Favoritar, 1 favorito' })[0],
+        ).toBeInTheDocument();
+    });
 });

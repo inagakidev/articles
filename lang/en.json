@@ -1013,5 +1013,9 @@
     "favorites.save": "Favorite",
     "favorites.button": ":label, :count favorites",
     "favorites.count": ":count favorites",
-    "site.nav.favorites": "Favorites"
+    "site.nav.favorites": "Favorites",
+    "likes.count_one": "1 like",
+    "likes.button_one": ":label, 1 like",
+    "favorites.count_one": "1 favorite",
+    "favorites.button_one": ":label, 1 favorite"
 }

@@ -1013,5 +1013,9 @@
     "favorites.save": "Favoritar",
     "favorites.button": ":label, :count favoritos",
     "favorites.count": ":count favoritos",
-    "site.nav.favorites": "Favoritos"
+    "site.nav.favorites": "Favoritos",
+    "likes.count_one": "1 curtida",
+    "likes.button_one": ":label, 1 curtida",
+    "favorites.count_one": "1 favorito",
+    "favorites.button_one": ":label, 1 favorito"
 }

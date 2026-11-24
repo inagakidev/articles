@@ -35,7 +35,14 @@ export default function FavoriteButton({
                 <Bookmark aria-hidden="true" />
                 <span aria-hidden="true">{state.count}</span>
                 <span className="sr-only">
-                    {t('favorites.count', { count: state.count })}
+                    {t(
+                        state.count === 1
+                            ? 'favorites.count_one'
+                            : 'favorites.count',
+                        {
+                            count: state.count,
+                        },
+                    )}
                 </span>
             </span>
         );
@@ -66,7 +73,13 @@ export default function FavoriteButton({
         <button
             type="button"
             aria-pressed={state.favorited}
-            aria-label={t('favorites.button', { label, count: state.count })}
+            aria-label={t(
+                state.count === 1 ? 'favorites.button_one' : 'favorites.button',
+                {
+                    label,
+                    count: state.count,
+                },
+            )}
             title={label}
             onClick={toggle}
             className={cn(
