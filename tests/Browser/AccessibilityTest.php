@@ -485,6 +485,8 @@ it('não tem problemas de acessibilidade nas denúncias', function (string $mode
     $reading->click('article .border-y button[aria-label="Denunciar artigo"]')
         ->wait(0.5)
         ->click('Outro')
+        // O botão de enviar troca de cor ao ficar ativo; espera a transição
+        ->wait(0.5)
         ->assertSee('O conteúdo continua no ar até a análise')
         ->assertNoAccessibilityIssues();
 
@@ -498,6 +500,7 @@ it('não tem problemas de acessibilidade nas denúncias', function (string $mode
     };
     $admin->wait(ENTRANCE_SECONDS)
         ->click('input[value="delete_comment"]')
+        ->wait(0.5)
         ->assertSee('apaga também a resposta')
         ->assertNoAccessibilityIssues();
 })->with(['claro', 'escuro', 'celular']);
