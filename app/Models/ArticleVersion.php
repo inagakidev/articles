@@ -5,11 +5,14 @@ namespace App\Models;
 use App\Domain\Articles\Enums\VersionStatus;
 use Database\Factories\ArticleVersionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Uma cópia completa do conteúdo do artigo, com o próprio estado (D79).
@@ -38,7 +41,10 @@ use Illuminate\Support\Carbon;
 class ArticleVersion extends Model
 {
     /** @use HasFactory<ArticleVersionFactory> */
-    use HasFactory;
+    use HasFactory, Prunable;
+
+    /** Versões substituídas guardadas por artigo (RF-098, A16). */
+    public const KEPT_SUPERSEDED = 5;
 
     /** @var array<string, mixed> */
     protected $attributes = [
@@ -48,6 +54,27 @@ class ArticleVersion extends Model
 
     /** Colunas geradas pelo banco para os limites de RF-351; nunca escritas. */
     protected $hidden = ['draft_slot', 'pending_slot', 'approved_slot'];
+
+    /**
+     * Substituídas além das cinco mais recentes de cada artigo: saem pelo
+     * `model:prune` diário (RF-098). Só a substituída entra na conta, então a
+     * versão em vigor, o rascunho, a pendente e as rejeitadas ficam. As
+     * imagens que só elas usavam caem na limpeza de imagens sem uso (D81).
+     *
+     * @return Builder<static>
+     */
+    public function prunable(): Builder
+    {
+        $ranked = DB::table('article_versions')
+            ->select('id')
+            ->selectRaw('row_number() over (partition by article_id order by decided_at desc, id desc) as position')
+            ->where('status', VersionStatus::Superseded->value);
+
+        return static::query()->whereIn('id', DB::query()
+            ->fromSub($ranked, 'ranked')
+            ->where('position', '>', self::KEPT_SUPERSEDED)
+            ->select('id'));
+    }
 
     /** @return BelongsTo<Article, $this> */
     public function article(): BelongsTo
