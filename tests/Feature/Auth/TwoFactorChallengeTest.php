@@ -5,6 +5,9 @@ use Inertia\Testing\AssertableInertia as Assert;
 use Laravel\Fortify\Features;
 
 beforeEach(function () {
+    // O desafio só existe com o 2FA ligado (D75); hoje ele fica desligado (D84).
+    config(['auth.admin_two_factor' => true]);
+
     $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
 });
 

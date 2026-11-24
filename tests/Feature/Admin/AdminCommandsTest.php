@@ -92,7 +92,8 @@ test('zera o 2FA da administradora, encerra as sessões e registra o evento', fu
         ->and(DB::table('sessions')->where('user_id', $admin->id)->exists())->toBeFalse()
         ->and(SecurityEvent::query()->where('user_id', $admin->id)->where('type', SecurityEventType::TwoFactorReset)->exists())->toBeTrue();
 
-    // No próximo acesso, o painel pede a ativação de novo.
+    // No próximo acesso, com o 2FA ligado, o painel pede a ativação de novo.
+    config(['auth.admin_two_factor' => true]);
     $this->actingAs($admin)->get(route('admin.dashboard'))->assertRedirect(route('admin.two-factor.show'));
 });
 

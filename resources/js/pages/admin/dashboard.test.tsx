@@ -95,6 +95,23 @@ describe('painel da administração', () => {
                 name: 'Menu da conta: Amanda Inagaki',
             }),
         ).toBeInTheDocument();
+        // 2FA desligado (D84): sem o selo
+        expect(screen.queryByText('2FA ativo')).toBeNull();
+    });
+
+    it('com o 2FA ligado, o cabeçalho mostra o selo', () => {
+        Object.assign(testPage.props, {
+            auth: {
+                user: { name: 'Amanda Inagaki', email: 'amanda@exemplo.dev' },
+                adminTwoFactor: true,
+            },
+        });
+        render(
+            <AdminLayout>
+                <Dashboard {...props} />
+            </AdminLayout>,
+        );
+
         expect(screen.getByText('2FA ativo')).toBeInTheDocument();
     });
 });

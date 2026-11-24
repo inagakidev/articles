@@ -66,6 +66,6 @@ passo a passo cobre a p8-02 e a p8-04; o backup (p8-05) e a validação
 1. Clique em **Deploy**.
 2. Pelo terminal do Ploi (SSH), crie a administradora:
    `php artisan admin:create voce@exemplo.dev`.
-3. Entre em `/admin`, ative o 2FA e guarde os códigos de recuperação.
+3. Entre em `/admin` com uma senha longa e única. O 2FA está desligado por enquanto (D84); se ele for religado antes do deploy, ative-o aqui e guarde os códigos de recuperação.
 4. Faça um segundo deploy para conferir que ele se repete sem ajustes
    (p8-04).

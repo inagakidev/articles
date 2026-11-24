@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Notification;
 use Inertia\Testing\AssertableInertia as Assert;
 use Laravel\Fortify\Features;
 
+// Estes testes descrevem o 2FA ligado (D75); hoje ele fica desligado (D84).
+beforeEach(fn () => config(['auth.admin_two_factor' => true]));
+
 test('quem não administra não vê o 2FA, que fica para depois do MVP (RF-019)', function () {
     $this->actingAs(User::factory()->create())
         ->withSession(['auth.password_confirmed_at' => time()])

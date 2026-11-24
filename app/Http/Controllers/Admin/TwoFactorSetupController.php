@@ -17,6 +17,9 @@ class TwoFactorSetupController extends Controller
 {
     public function __invoke(Request $request): Response|RedirectResponse
     {
+        // 2FA desligado (D84): a ativação não existe para quem visita
+        abort_unless(config('auth.admin_two_factor'), 404);
+
         $user = $request->user();
         $justConfirmed = $request->session()->get('status') === 'two-factor-authentication-confirmed';
 

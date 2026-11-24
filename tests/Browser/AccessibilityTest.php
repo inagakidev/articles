@@ -72,6 +72,8 @@ it('não tem problemas de acessibilidade no painel da administração', function
 });
 
 it('não tem problemas de acessibilidade na confirmação de senha e na ativação do 2FA', function () {
+    // Telas do 2FA ligado (D75); hoje ele fica desligado (D84).
+    config(['auth.admin_two_factor' => true]);
     $this->actingAs(User::factory()->admin()->create());
 
     visit('/admin')
@@ -90,6 +92,8 @@ it('não tem problemas de acessibilidade na confirmação de senha e na ativaç�
 });
 
 it('não tem problemas de acessibilidade no código do 2FA ao entrar', function () {
+    // Telas do 2FA ligado (D75); hoje ele fica desligado (D84).
+    config(['auth.admin_two_factor' => true]);
     $admin = User::factory()->admin()->withTwoFactor()->create();
 
     visit('/login')

@@ -85,6 +85,8 @@ class CreateAdmin extends Command
     private function finish(User $user): void
     {
         $this->info("Pronto: @{$user->username} é a administradora.");
-        $this->line('No primeiro acesso a /admin, o painel pede a senha e a ativação do 2FA.');
+        if (config('auth.admin_two_factor')) {
+            $this->line('No primeiro acesso a /admin, o painel pede a senha e a ativação do 2FA.');
+        }
     }
 }
