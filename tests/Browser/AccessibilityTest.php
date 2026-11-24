@@ -1,6 +1,8 @@
 <?php
 
 use App\Domain\Articles\Enums\VersionStatus;
+use App\Domain\Audit\Actions\RecordAudit;
+use App\Domain\Audit\Enums\AuditAction;
 use App\Models\Article;
 use App\Models\ArticleImage;
 use App\Models\ArticleVersion;
@@ -314,5 +316,55 @@ it('não tem problemas de acessibilidade no compartilhar', function () {
         ->press('Compartilhar perfil')
         ->wait(ENTRANCE_SECONDS)
         ->assertSee('Link do perfil')
+        ->assertNoAccessibilityIssues();
+});
+
+it('não tem problemas de acessibilidade na moderação', function (string $mode) {
+    $admin = User::factory()->admin()->create();
+    $this->actingAs($admin);
+    $article = Article::factory()->create();
+    $version = ArticleVersion::factory()->for($article)->create([
+        'status' => VersionStatus::Pending,
+        'submitted_at' => now()->subHours(8),
+    ]);
+    ArticleVersion::factory()->for(Article::factory()->published()->create())->create([
+        'status' => VersionStatus::Pending,
+        'submitted_at' => now()->subHour(),
+    ]);
+    app(RecordAudit::class)->handle($admin, AuditAction::TagBlocked, '#spam', policyItem: '1.2', reason: 'Usada só em spam.');
+
+    foreach (['/admin', '/admin/queue', '/admin/audit'] as $url) {
+        $page = visit($url);
+        $page = match ($mode) {
+            'escuro' => $page->inDarkMode(),
+            'celular' => $page->on()->mobile(),
+            default => $page,
+        };
+        $page->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    }
+
+    $review = visit('/admin/versions/'.$version->id);
+    $review = match ($mode) {
+        'escuro' => $review->inDarkMode(),
+        'celular' => $review->on()->mobile(),
+        default => $review,
+    };
+    $review->withLocale('pt-BR')
+        ->click('Rejeitar')
+        ->wait(ENTRANCE_SECONDS)
+        ->assertSee('Item da Política de conteúdo')
+        ->assertNoAccessibilityIssues();
+})->with(['claro', 'escuro', 'celular']);
+
+it('não tem problemas de acessibilidade na moderação pela leitura', function () {
+    $this->actingAs(User::factory()->admin()->create());
+    $article = Article::factory()->published()->create();
+
+    visit('/artigos/'.$article->slug)
+        ->withLocale('pt-BR')
+        ->press('Moderação')
+        ->click('Despublicar')
+        ->wait(ENTRANCE_SECONDS)
+        ->assertSee('Despublicar o artigo')
         ->assertNoAccessibilityIssues();
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Articles;
 
 use App\Domain\Articles\Queries\PublicArticles;
+use App\Domain\Moderation\Queries\ContentPolicyItems;
 use App\Domain\Search\Queries\ArticleSearch;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Articles\SearchRequest;
@@ -11,6 +12,7 @@ use App\Http\Resources\Articles\ArticleSummaryResource;
 use App\Http\Resources\Articles\SearchOptions;
 use App\Models\ArticleVersion;
 use App\Models\Category;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -58,7 +60,7 @@ class PublicArticlesController extends Controller
         ]);
     }
 
-    public function show(string $slug, ArticlePage $page): Response
+    public function show(Request $request, string $slug, ArticlePage $page, ContentPolicyItems $items): Response
     {
         $article = $this->articles->findBySlug($slug);
         abort_if($article === null, 404);
@@ -74,6 +76,10 @@ class PublicArticlesController extends Controller
                 'publishedAt' => $publishedAt,
                 'updatedAt' => $updatedAt !== null && $updatedAt > $publishedAt ? $updatedAt : null,
             ],
+            // Despublicar e excluir de vez, só para a administradora (D87)
+            'moderation' => $request->user()?->is_admin
+                ? ['articleId' => $article->id, 'policyItems' => $items->all()]
+                : null,
         ]);
     }
 }

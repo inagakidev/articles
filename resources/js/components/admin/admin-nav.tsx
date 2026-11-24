@@ -1,10 +1,10 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import type { InertiaLinkProps } from '@inertiajs/react';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-import { dashboard, taxonomy } from '@/routes/admin';
+import { audit, dashboard, queue, taxonomy } from '@/routes/admin';
 
 type Item = {
     label: TranslationKey;
@@ -14,18 +14,27 @@ type Item = {
 };
 
 /**
- * Seções do painel. Cada uma entra aqui com a fatia dela (D75): Fila de
- * aprovação, Denúncias, Usuários, Contestações e Auditoria.
+ * Seções do painel. Cada uma entra aqui com a fatia dela (D75): Denúncias,
+ * Usuários e Contestações chegam com as fatias 20 e 21.
  */
-const items: Item[] = [
-    { label: 'admin.nav.dashboard', href: dashboard() },
-    { label: 'admin.nav.taxonomy', href: taxonomy() },
-];
+function useItems(): Item[] {
+    const { adminCounts } = usePage<{
+        adminCounts?: { queue: number } | null;
+    }>().props;
+
+    return [
+        { label: 'admin.nav.dashboard', href: dashboard() },
+        { label: 'admin.nav.queue', href: queue(), count: adminCounts?.queue },
+        { label: 'admin.nav.taxonomy', href: taxonomy() },
+        { label: 'admin.nav.audit', href: audit() },
+    ];
+}
 
 /** Lista lateral no desktop; faixa rolável acima do conteúdo no celular. */
 export default function AdminNav() {
     const { t } = useTranslation();
     const { isCurrentUrl } = useCurrentUrl();
+    const items = useItems();
 
     return (
         <nav

@@ -1,14 +1,33 @@
-import { Head, usePage } from '@inertiajs/react';
-import { CircleCheck, Info, Users } from 'lucide-react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import {
+    CircleCheck,
+    Clock,
+    FileText,
+    Hourglass,
+    Info,
+    Users,
+} from 'lucide-react';
 import MetricCard from '@/components/admin/metric-card';
+import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/ui/empty-state';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
+import { review } from '@/routes/admin';
+
+/** Uma versão que passou do prazo da fila (RF-378). */
+type LateVersion = {
+    type: 'late_version';
+    id: number;
+    title: string | null;
+    author: string | null;
+    hours: number;
+};
 
 type Props = {
-    metrics: { users: number };
-    /** Avisos para a administradora; chegam com moderação, denúncias e contestações. */
-    attention: unknown[];
+    metrics: { users: number; published: number; pending: number };
+    /** Avisos para a administradora; denúncias e contestações chegam com as fatias 20 e 21. */
+    attention: LateVersion[];
+    lateHours: number;
     /** Quando os números foram lidos (ISO). */
     updatedAt: string;
 };
@@ -25,10 +44,16 @@ function greetingKey(hour: number): TranslationKey {
 }
 
 /**
- * Painel da administração (prancha "Admin · Painel"). Por enquanto só com o
- * que já existe (D75); as outras métricas e os avisos entram com as fatias.
+ * Painel da administração (prancha "Admin · Painel", RF-262): usuários,
+ * artigos publicados, a fila e as versões atrasadas. Denúncias e
+ * contestações entram com as fatias 20 e 21 (D75).
  */
-export default function Dashboard({ metrics, attention, updatedAt }: Props) {
+export default function Dashboard({
+    metrics,
+    attention,
+    lateHours,
+    updatedAt,
+}: Props) {
     const { auth } = usePage().props;
     const { t, locale } = useTranslation();
     const updated = new Date(updatedAt);
@@ -59,6 +84,18 @@ export default function Dashboard({ metrics, attention, updatedAt }: Props) {
                         value={metrics.users}
                         hint={t('admin.dashboard.users.hint')}
                     />
+                    <MetricCard
+                        Icon={FileText}
+                        title={t('admin.dashboard.published.title')}
+                        value={metrics.published}
+                        hint={t('admin.dashboard.published.hint')}
+                    />
+                    <MetricCard
+                        Icon={Hourglass}
+                        title={t('admin.dashboard.pending.title')}
+                        value={metrics.pending}
+                        hint={t('admin.dashboard.pending.hint')}
+                    />
                 </dl>
             </section>
 
@@ -72,12 +109,52 @@ export default function Dashboard({ metrics, attention, updatedAt }: Props) {
                 >
                     {t('admin.dashboard.attention.title')}
                 </h2>
-                {attention.length === 0 && (
+                {attention.length === 0 ? (
                     <EmptyState
                         Icon={CircleCheck}
                         title={t('admin.dashboard.attention.empty.title')}
                         text={t('admin.dashboard.attention.empty.text')}
                     />
+                ) : (
+                    <ul className="flex flex-col divide-y divide-border">
+                        {attention.map((item) => (
+                            <li
+                                key={item.id}
+                                className="flex flex-wrap items-center gap-3 py-3"
+                            >
+                                <span
+                                    aria-hidden="true"
+                                    className="inline-flex size-9 items-center justify-center rounded-full bg-warning-bg text-warning-fg"
+                                >
+                                    <Clock className="size-4" />
+                                </span>
+                                <div className="flex min-w-0 flex-1 flex-col">
+                                    <strong className="text-label">
+                                        {t('admin.dashboard.attention.late', {
+                                            hours: lateHours,
+                                        })}
+                                    </strong>
+                                    <span className="text-meta text-text-secondary">
+                                        {t(
+                                            'admin.dashboard.attention.late_text',
+                                            {
+                                                title:
+                                                    item.title ??
+                                                    t('preview.untitled'),
+                                                author: item.author ?? '—',
+                                                hours: item.hours,
+                                            },
+                                        )}
+                                    </span>
+                                </div>
+                                <Button asChild size="sm" variant="outline">
+                                    <Link href={review(item.id)}>
+                                        {t('admin.queue.review_action')}
+                                    </Link>
+                                </Button>
+                            </li>
+                        ))}
+                    </ul>
                 )}
             </section>
 
