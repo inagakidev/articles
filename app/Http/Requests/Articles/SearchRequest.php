@@ -18,7 +18,10 @@ class SearchRequest extends FormRequest
     /** Valores do endereço → valores do domínio. */
     private const PERIODS = ['mes' => 'month', 'semestre' => 'semester', 'ano' => 'year'];
 
-    private const SORTS = ['recentes' => 'recent', 'antigos' => 'oldest'];
+    private const SORTS = ['curtidos' => 'liked', 'recentes' => 'recent', 'antigos' => 'oldest'];
+
+    /** Valor do endereço para "desde sempre" na popularidade. */
+    private const ALWAYS = 'sempre';
 
     /** @return array<string, mixed> */
     public function rules(): array
@@ -43,7 +46,8 @@ class SearchRequest extends FormRequest
             language: in_array($this->text('idioma'), config('app.locales'), true) ? $this->text('idioma') : null,
             tags: $tags,
             period: self::PERIODS[$this->text('periodo')] ?? null,
-            sort: self::SORTS[$this->text('ordem')] ?? 'recent',
+            sort: self::SORTS[$this->text('ordem')] ?? 'liked',
+            popularity: $this->popularity(),
         );
     }
 
@@ -51,7 +55,7 @@ class SearchRequest extends FormRequest
      * Os critérios de volta no formato do endereço, para a página
      * preencher os campos.
      *
-     * @return array{q: string, categoria: ?string, autor: ?string, idioma: ?string, tags: list<string>, periodo: ?string, ordem: string}
+     * @return array{q: string, categoria: ?string, autor: ?string, idioma: ?string, tags: list<string>, periodo: ?string, ordem: string, popularidade: string}
      */
     public static function toQuery(SearchCriteria $criteria): array
     {
@@ -65,7 +69,19 @@ class SearchRequest extends FormRequest
             'tags' => $criteria->tags,
             'periodo' => $period === false ? null : $period,
             'ordem' => (string) array_search($criteria->sort, self::SORTS, true),
+            'popularidade' => $criteria->popularity === null ? self::ALWAYS : (string) $criteria->popularity,
         ];
+    }
+
+    private function popularity(): ?int
+    {
+        $value = $this->text('popularidade');
+
+        if ($value === self::ALWAYS) {
+            return null;
+        }
+
+        return in_array((int) $value, SearchCriteria::POPULARITY, true) ? (int) $value : SearchCriteria::DEFAULT_POPULARITY;
     }
 
     private function text(string $key): string

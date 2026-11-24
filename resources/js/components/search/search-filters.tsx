@@ -13,7 +13,10 @@ export type SearchQuery = {
     idioma: string | null;
     tags: string[];
     periodo: 'mes' | 'semestre' | 'ano' | null;
-    ordem: 'recentes' | 'antigos';
+    /** "Mais curtidos" é o padrão (RF-132). */
+    ordem: 'curtidos' | 'recentes' | 'antigos';
+    /** Dias das curtidas contadas, ou "sempre" (RF-134). */
+    popularidade: '7' | '30' | '90' | 'sempre';
 };
 
 export type SearchOptions = {
@@ -33,8 +36,8 @@ const selectClass =
 
 /**
  * Os filtros da busca (RF-131, prancha "Busca com filtros"): categoria,
- * autor, idioma, tags e período da primeira publicação. Cada mudança já
- * busca; a popularidade entra com as curtidas (fatia 17).
+ * autor, idioma, tags, popularidade (o período das curtidas em "mais
+ * curtidos") e período da primeira publicação. Cada mudança já busca.
  */
 export default function SearchFilters({
     query,
@@ -127,10 +130,24 @@ export default function SearchFilters({
                 />
             </Field>
 
-            <Field
-                legend={t('search.filters.period')}
-                className="md:col-span-2"
-            >
+            <Field legend={t('search.filters.popularity')}>
+                <ChoiceChips
+                    name={`${idPrefix}-popularidade`}
+                    value={query.popularidade}
+                    onChange={(value) => onChange({ popularidade: value })}
+                    options={(['7', '30', '90'] as const)
+                        .map((days) => ({
+                            value: days as SearchQuery['popularidade'],
+                            label: t('search.filters.days', { days }),
+                        }))
+                        .concat({
+                            value: 'sempre',
+                            label: t('search.filters.always'),
+                        })}
+                />
+            </Field>
+
+            <Field legend={t('search.filters.period')}>
                 <ChoiceChips
                     name={`${idPrefix}-periodo`}
                     value={query.periodo ?? 'qualquer'}

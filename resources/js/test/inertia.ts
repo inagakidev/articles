@@ -18,8 +18,27 @@ vi.mock('@inertiajs/react', async (original) => ({
     // Fora de uma aplicação Inertia, Head não faz nada e Link e Form viram
     // os elementos HTML.
     Head: () => null,
-    Link: ({ href, children, ...props }: { href: Href; children: ReactNode }) =>
-        createElement('a', { href: toUrl(href), ...props }, children),
+    // As opções de visita do Inertia não são atributos HTML; ficam de fora.
+    Link: ({
+        href,
+        children,
+        preserveScroll: _preserveScroll,
+        preserveState: _preserveState,
+        only: _only,
+        replace: _replace,
+        prefetch: _prefetch,
+        onSuccess: _onSuccess,
+        ...props
+    }: {
+        href: Href;
+        children: ReactNode;
+        preserveScroll?: unknown;
+        preserveState?: unknown;
+        only?: unknown;
+        replace?: unknown;
+        prefetch?: unknown;
+        onSuccess?: unknown;
+    }) => createElement('a', { href: toUrl(href), ...props }, children),
     Form: ({
         children,
         className,

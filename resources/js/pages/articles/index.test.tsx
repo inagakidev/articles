@@ -27,7 +27,8 @@ const query = (categoria: string | null = null) => ({
     idioma: null,
     tags: [],
     periodo: null,
-    ordem: 'recentes' as const,
+    ordem: 'curtidos' as const,
+    popularidade: '30' as const,
 });
 
 const options = {
@@ -123,7 +124,7 @@ describe('listagem de artigos', () => {
             />,
         );
 
-        expect(screen.getByLabelText('Ordenar por')).toHaveValue('recentes');
+        expect(screen.getByLabelText('Ordenar por')).toHaveValue('curtidos');
         expect(screen.getByRole('button', { name: 'Filtros' })).toHaveAttribute(
             'aria-expanded',
             'false',

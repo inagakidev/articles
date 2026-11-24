@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vite-plus/test';
 import { testPage } from '@/test/inertia';
 import Show from '@/pages/articles/show';
@@ -22,13 +22,51 @@ const article = {
     updatedAt: null,
 };
 
+const social = {
+    likes: { articleId: 3, count: 48, liked: false, canLike: false },
+    comments: {
+        total: 0,
+        items: [],
+        canComment: false,
+        maxLength: 2000,
+        page: 1,
+        lastPage: 1,
+    },
+};
+
+const noActions = {
+    like: false,
+    reply: false,
+    edit: false,
+    delete: false,
+    moderate: false,
+};
+
+const comment = (id: number, extra = {}) => ({
+    id,
+    body: `Comentário ${id}`,
+    depth: 1,
+    createdAt: '2026-11-13T10:00:00Z',
+    edited: false,
+    author: { name: 'Bia Tanaka', username: 'bia', avatar: null },
+    isArticleAuthor: false,
+    own: false,
+    likes: { count: 7, liked: true },
+    can: { ...noActions, like: true, reply: true },
+    replies: [],
+    ...extra,
+});
+
 describe('leitura do artigo', () => {
     beforeEach(() => {
-        Object.assign(testPage.props, { locale: 'pt_BR' });
+        Object.assign(testPage.props, {
+            locale: 'pt_BR',
+            auth: { user: null },
+        });
     });
 
     it('mostra o artigo, quem escreveu e a data da publicação', () => {
-        render(<Show article={article} />);
+        render(<Show article={article} {...social} />);
 
         expect(
             screen.getByRole('heading', { level: 1, name: 'Filas no Laravel' }),
@@ -51,7 +89,12 @@ describe('leitura do artigo', () => {
     });
 
     it('diz quando foi atualizado (RF-137)', () => {
-        render(<Show article={{ ...article, updatedAt: '2026-11-14' }} />);
+        render(
+            <Show
+                article={{ ...article, updatedAt: '2026-11-14' }}
+                {...social}
+            />,
+        );
 
         expect(screen.getByText(/Atualizado em/)).toHaveTextContent(
             'Atualizado em 14 nov 2026',
@@ -59,7 +102,7 @@ describe('leitura do artigo', () => {
     });
 
     it('no fim, leva a mais artigos da mesma categoria', () => {
-        render(<Show article={article} />);
+        render(<Show article={article} {...social} />);
 
         expect(
             screen.getByText('Você chegou ao fim. Valeu pela leitura!'),
@@ -72,6 +115,7 @@ describe('leitura do artigo', () => {
     it('de conta excluída, mostra o autor removido sem link de perfil', () => {
         render(
             <Show
+                {...social}
                 article={{
                     ...article,
                     author: {
@@ -91,7 +135,7 @@ describe('leitura do artigo', () => {
     });
 
     it('compartilha o artigo pelas redes e pelo link (RF-163)', () => {
-        render(<Show article={article} />);
+        render(<Show article={article} {...social} />);
 
         fireEvent.click(
             screen.getAllByRole('button', { name: 'Compartilhar' })[0],
@@ -119,5 +163,209 @@ describe('leitura do artigo', () => {
         expect(
             screen.getByRole('button', { name: 'Copiar link' }),
         ).toBeInTheDocument();
+    });
+
+    it('visitante vê as curtidas e os comentários, sem formulário (RF-141)', () => {
+        render(
+            <Show
+                article={article}
+                likes={social.likes}
+                comments={{
+                    ...social.comments,
+                    total: 1,
+                    items: [comment(1, { can: noActions })],
+                }}
+            />,
+        );
+
+        expect(screen.getAllByText('48 curtidas')).toHaveLength(2);
+        expect(screen.queryByRole('button', { name: /Curtir,/ })).toBeNull();
+        expect(screen.getByText('Comentário 1')).toBeInTheDocument();
+        expect(screen.queryByLabelText('Escreva um comentário')).toBeNull();
+        expect(screen.queryByRole('button', { name: 'Responder' })).toBeNull();
+    });
+
+    it('quem participa curte, comenta e responde em até 3 níveis', () => {
+        Object.assign(testPage.props, {
+            auth: { user: { name: 'Lia Martins', email: 'lia@exemplo.dev' } },
+        });
+        render(
+            <Show
+                article={article}
+                likes={{ ...social.likes, canLike: true }}
+                comments={{
+                    total: 3,
+                    canComment: true,
+                    maxLength: 2000,
+                    page: 1,
+                    lastPage: 1,
+                    items: [
+                        comment(1, {
+                            replies: [
+                                comment(2, {
+                                    depth: 2,
+                                    replies: [
+                                        comment(3, {
+                                            depth: 3,
+                                            can: { ...noActions, like: true },
+                                        }),
+                                    ],
+                                }),
+                            ],
+                        }),
+                    ],
+                }}
+            />,
+        );
+
+        expect(
+            screen.getAllByRole('button', { name: 'Curtir, 48 curtidas' })[0],
+        ).toHaveAttribute('aria-pressed', 'false');
+        expect(
+            screen.getByLabelText('Escreva um comentário'),
+        ).toBeInTheDocument();
+        expect(
+            screen.getAllByRole('button', { name: 'Responder' }),
+        ).toHaveLength(2);
+
+        fireEvent.click(
+            screen.getAllByRole('button', { name: 'Responder' })[0],
+        );
+        expect(
+            screen.getByLabelText('Escreva sua resposta'),
+        ).toBeInTheDocument();
+    });
+
+    it('o próprio comentário mostra só a contagem e o menu de ações', () => {
+        Object.assign(testPage.props, {
+            auth: { user: { name: 'Bia Tanaka', email: 'bia@exemplo.dev' } },
+        });
+        render(
+            <Show
+                article={article}
+                likes={social.likes}
+                comments={{
+                    total: 1,
+                    canComment: true,
+                    maxLength: 2000,
+                    page: 1,
+                    lastPage: 1,
+                    items: [
+                        comment(1, {
+                            own: true,
+                            likes: { count: 2, liked: false },
+                            can: {
+                                ...noActions,
+                                reply: true,
+                                edit: true,
+                                delete: true,
+                            },
+                        }),
+                    ],
+                }}
+            />,
+        );
+
+        expect(screen.getByText('Você')).toBeInTheDocument();
+        expect(
+            screen.getByTitle('Você não curte o próprio comentário'),
+        ).toHaveTextContent('2');
+        expect(
+            screen.getByRole('button', {
+                name: 'Mais ações do comentário de Bia Tanaka',
+            }),
+        ).toBeInTheDocument();
+    });
+
+    it('a conversa troca de página pelos botões, sem rolagem sem fim', () => {
+        const { rerender } = render(<Show article={article} {...social} />);
+
+        expect(
+            screen.queryByRole('navigation', {
+                name: 'Páginas de comentários',
+            }),
+        ).not.toBeInTheDocument();
+
+        rerender(
+            <Show
+                article={article}
+                likes={social.likes}
+                comments={{
+                    ...social.comments,
+                    total: 6,
+                    items: [comment(1)],
+                    page: 1,
+                    lastPage: 2,
+                }}
+            />,
+        );
+
+        const pages = screen.getByRole('navigation', {
+            name: 'Páginas de comentários',
+        });
+        expect(
+            within(pages).getByRole('link', { name: 'Próxima' }),
+        ).toHaveAttribute('href', '/?comentarios=2');
+        expect(
+            within(pages).getByRole('link', { name: 'Página 1' }),
+        ).toHaveAttribute('aria-current', 'page');
+    });
+
+    it('curtir, comentar e compartilhar são só ícones, com nome acessível', () => {
+        render(<Show article={article} {...social} />);
+
+        expect(
+            screen.getAllByRole('link', { name: 'Ver os comentários (0)' })[0],
+        ).toHaveAttribute('href', '#comentarios');
+        expect(
+            screen.getAllByRole('button', { name: 'Compartilhar' })[0],
+        ).not.toHaveTextContent('Compartilhar');
+    });
+
+    it('a conversa vazia convida quem pode comentar, e o campo abre ao focar', () => {
+        Object.assign(testPage.props, {
+            auth: { user: { name: 'Lia Martins', email: 'lia@exemplo.dev' } },
+        });
+        render(
+            <Show
+                article={article}
+                likes={social.likes}
+                comments={{ ...social.comments, canComment: true }}
+            />,
+        );
+
+        expect(
+            screen.getByText('Seja a primeira pessoa a comentar'),
+        ).toBeInTheDocument();
+
+        const field = screen.getByLabelText('Escreva um comentário');
+        expect(field).toHaveClass('h-12');
+        fireEvent.focus(field);
+        expect(field).toHaveClass('h-28');
+
+        // O contador só aparece perto do limite
+        expect(screen.queryByText('0 / 2.000')).not.toBeInTheDocument();
+        fireEvent.change(field, { target: { value: 'a'.repeat(1850) } });
+        expect(screen.getByText('1.850 / 2.000')).toBeInTheDocument();
+    });
+
+    it('comentários recentes mostram a data relativa, com a completa na dica', () => {
+        const createdAt = new Date().toISOString();
+        render(
+            <Show
+                article={article}
+                likes={social.likes}
+                comments={{
+                    ...social.comments,
+                    total: 1,
+                    items: [comment(1, { createdAt })],
+                }}
+            />,
+        );
+
+        expect(screen.getByText('agora')).toHaveAttribute(
+            'datetime',
+            createdAt,
+        );
     });
 });

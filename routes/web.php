@@ -67,6 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/articles.php';
+require __DIR__.'/interactions.php';
 
 // Endereço que não existe: a página 404 do site, com o cabeçalho e o idioma
 // de sempre, porque o fallback passa pelos middlewares da web.
