@@ -8,6 +8,7 @@ import AuthLayout from '@/layouts/auth-layout';
 import EditorLayout from '@/layouts/editor-layout';
 import LandingLayout from '@/layouts/landing-layout';
 import PublicLayout from '@/layouts/public-layout';
+import ReadingLayout from '@/layouts/reading-layout';
 import SettingsLayout from '@/layouts/settings-layout';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -18,7 +19,11 @@ void createInertiaApp({
         switch (true) {
             case name === 'home':
                 return LandingLayout;
-            case name.startsWith('policies/') ||
+            case name === 'articles/show':
+                return ReadingLayout;
+            case name === 'articles/index' ||
+                name.startsWith('errors/') ||
+                name.startsWith('policies/') ||
                 name.startsWith('profile/') ||
                 name.startsWith('my-articles/'):
                 return PublicLayout;

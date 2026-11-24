@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import {
+    ArrowRight,
     BookOpen,
     Bookmark,
     ListChecks,
@@ -21,6 +22,7 @@ import type { MascotArt } from '@/components/ui/mascot';
 import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
+import { index as articles } from '@/routes/articles';
 
 type Journey = {
     id: 'ler' | 'escrever';
@@ -84,8 +86,7 @@ const journeys: Journey[] = [
 
 /**
  * As duas jornadas em abas (padrão de abas do WAI-ARIA: setas trocam a aba,
- * só a aba ativa entra na ordem do Tab). A chamada de quem lê volta quando
- * a listagem de artigos existir.
+ * só a aba ativa entra na ordem do Tab).
  */
 export default function Audience() {
     const { t } = useTranslation();
@@ -198,6 +199,23 @@ export default function Audience() {
                                 </li>
                             ))}
                         </ul>
+                        {journey.id === 'ler' && (
+                            <div>
+                                <Button
+                                    asChild
+                                    size="xl"
+                                    className="shadow-primary"
+                                >
+                                    <Link href={articles()}>
+                                        <ArrowRight
+                                            aria-hidden="true"
+                                            className="size-[18px]"
+                                        />
+                                        {t('landing.cta.explore')}
+                                    </Link>
+                                </Button>
+                            </div>
+                        )}
                         {journey.id === 'escrever' && (
                             <div>
                                 <Button

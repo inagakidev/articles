@@ -64,6 +64,8 @@ class AuthorArticles
             return ['published', [
                 ...$base,
                 ...$this->version($current),
+                // Endereço público, para "Ver" (D83)
+                'url' => $article->slug === null ? null : route('articles.show', $article->slug, absolute: false),
                 'firstPublishedAt' => $article->first_published_at?->toIso8601String(),
                 'currentSince' => $current->decided_at?->toIso8601String(),
                 'editRejected' => $pending === null && $lastDecided !== null,

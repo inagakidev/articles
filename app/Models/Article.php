@@ -22,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int|null $user_id
  * @property ArticleState $state
+ * @property string|null $slug
  * @property int|null $current_version_id
  * @property Carbon|null $first_published_at
  * @property Carbon|null $created_at

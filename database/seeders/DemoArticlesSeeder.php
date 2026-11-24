@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Articles\Actions\AssignSlug;
 use App\Domain\Articles\Enums\ArticleState;
 use App\Domain\Articles\Enums\VersionStatus;
 use App\Domain\Taxonomy\Actions\ResolveTags;
@@ -25,7 +26,7 @@ class DemoArticlesSeeder extends Seeder
 {
     public const AUTHOR_EMAIL = 'lia@exemplo.dev';
 
-    public function run(DocumentSanitizer $sanitizer, ArticleRenderer $renderer, ResolveTags $resolveTags): void
+    public function run(DocumentSanitizer $sanitizer, ArticleRenderer $renderer, ResolveTags $resolveTags, AssignSlug $assignSlug): void
     {
         if (app()->isProduction()) {
             $this->command?->warn('Conteúdo de demonstração não roda em produção.');
@@ -44,12 +45,15 @@ class DemoArticlesSeeder extends Seeder
         $articles = require __DIR__.'/Demo/articles.php';
 
         foreach ($articles as $index => $data) {
-            $exists = ArticleVersion::query()
-                ->where('title', $data['title'])
-                ->whereHas('article', fn ($query) => $query->where('user_id', $author->id))
-                ->exists();
+            $existing = Article::query()
+                ->where('user_id', $author->id)
+                ->whereHas('currentVersion', fn ($query) => $query->where('title', $data['title']))
+                ->first();
 
-            if ($exists) {
+            if ($existing !== null) {
+                // Criado antes do endereço público existir (D83)
+                $assignSlug->handle($existing, $data['title']);
+
                 continue;
             }
 
@@ -57,7 +61,7 @@ class DemoArticlesSeeder extends Seeder
             $publishedAt = now()->subDays((count($articles) - $index) * 3);
             $content = $sanitizer->sanitize($data['content']);
 
-            DB::transaction(function () use ($author, $data, $content, $publishedAt, $renderer, $resolveTags) {
+            DB::transaction(function () use ($author, $data, $content, $publishedAt, $renderer, $resolveTags, $assignSlug) {
                 $article = Article::query()->create(['user_id' => $author->id]);
 
                 $version = new ArticleVersion([
@@ -84,6 +88,8 @@ class DemoArticlesSeeder extends Seeder
                     'created_at' => $publishedAt,
                     'updated_at' => $publishedAt,
                 ])->save();
+
+                $assignSlug->handle($article, $data['title']);
             });
         }
     }

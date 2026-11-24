@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Domain\Articles\Actions\AssignSlug;
 use App\Domain\Articles\Enums\ArticleState;
 use App\Domain\Articles\Enums\VersionStatus;
 use App\Models\Article;
@@ -32,6 +33,8 @@ class ArticleFactory extends Factory
                 'current_version_id' => $version->id,
                 'first_published_at' => now(),
             ])->save();
+
+            (new AssignSlug)->handle($article, (string) $version->title);
         });
     }
 }

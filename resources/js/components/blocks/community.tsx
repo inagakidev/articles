@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { PenLine } from 'lucide-react';
+import { ArrowRight, PenLine } from 'lucide-react';
 import ArticleCard from '@/components/articles/article-card';
 import SectionHeading, {
     LandingContainer,
@@ -10,6 +10,7 @@ import Mascot from '@/components/ui/mascot';
 import UserAvatar from '@/components/ui/user-avatar';
 import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
+import { index as allArticles } from '@/routes/articles';
 import type { ArticleSummary, AuthorSummary } from '@/types';
 
 /**
@@ -92,6 +93,20 @@ export default function Community({
                         </Marquee>
                     ))}
                 </div>
+            )}
+
+            {articles.length > 0 && (
+                <LandingContainer className="mt-10 flex justify-center">
+                    <Button asChild size="xl" variant="outline">
+                        <Link href={allArticles()}>
+                            {t('landing.community.all')}
+                            <ArrowRight
+                                aria-hidden="true"
+                                className="size-[18px]"
+                            />
+                        </Link>
+                    </Button>
+                </LandingContainer>
             )}
         </section>
     );

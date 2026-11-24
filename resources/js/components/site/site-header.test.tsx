@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vite-plus/test';
 import { testPage } from '@/test/inertia';
 import SiteHeader from '@/components/site/site-header';
@@ -7,7 +7,12 @@ vi.mock('@/hooks/use-appearance', () => ({
     useAppearance: () => ({ appearance: 'system', updateAppearance: vi.fn() }),
 }));
 
-function renderIn(locale: 'pt_BR' | 'en', user: object | null = null) {
+function renderIn(
+    locale: 'pt_BR' | 'en',
+    user: object | null = null,
+    url = '/',
+) {
+    testPage.url = url;
     Object.assign(testPage.props, {
         locale,
         name: 'he4rt ink',
@@ -23,9 +28,23 @@ describe('cabeçalho do site', () => {
         expect(
             screen.getByRole('link', { name: 'Entrar' }),
         ).toBeInTheDocument();
+        // Visitante que quer escrever vai para o cadastro (prancha "Home")
+        expect(screen.getByRole('link', { name: 'Escrever' })).toHaveAttribute(
+            'href',
+            '/register',
+        );
+    });
+
+    it('leva aos artigos e às categorias, marcando a página atual', () => {
+        renderIn('pt_BR', null, '/artigos');
+        const nav = screen.getAllByRole('navigation', { name: 'Principal' })[0];
+
         expect(
-            screen.getByRole('link', { name: 'Criar conta' }),
-        ).toBeInTheDocument();
+            within(nav).getByRole('link', { name: 'Artigos' }),
+        ).toHaveAttribute('aria-current', 'page');
+        expect(
+            within(nav).getByRole('link', { name: 'Categorias' }),
+        ).toHaveAttribute('href', '/artigos#categorias');
     });
 
     it('troca os textos quando o idioma é inglês', () => {

@@ -56,10 +56,19 @@ describe('página de apresentação', () => {
         expect(document.querySelector('.marquee')).toBeNull();
     });
 
-    it('não oferece a leitura de artigos enquanto a listagem não existe', () => {
+    it('leva à listagem de artigos (D74)', () => {
         render(<Home {...empty} />);
 
-        expect(screen.queryByRole('link', { name: /artigos/i })).toBeNull();
+        // Na abertura e na chamada final
+        for (const link of screen.getAllByRole('link', {
+            name: 'Ler os artigos',
+        })) {
+            expect(link).toHaveAttribute('href', '/artigos');
+        }
+        // Sem artigos ainda, "Ver todos os artigos" não aparece
+        expect(
+            screen.queryByRole('link', { name: 'Ver todos os artigos' }),
+        ).toBeNull();
     });
 
     it('mostra categorias, artigos recentes e quem publicou', () => {

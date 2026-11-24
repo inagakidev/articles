@@ -75,7 +75,10 @@ test('artigo publicado com edição rejeitada ganha o selo', function () {
     ArticleVersion::factory()->for($published)->create(['status' => VersionStatus::Rejected]);
 
     $this->actingAs($user)->get(route('articles.mine'))
-        ->assertInertia(fn (Assert $page) => $page->where('sections.published.0.editRejected', true));
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('sections.published.0.editRejected', true)
+            // "Ver" leva à leitura pública (D83)
+            ->where('sections.published.0.url', '/artigos/'.$published->fresh()->slug));
 });
 
 test('despublicado vai para Não aprovados (RF-115)', function () {

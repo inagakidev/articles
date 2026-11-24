@@ -3,14 +3,22 @@
 use App\Http\Controllers\Accounts\PolicyAcceptanceController;
 use App\Http\Controllers\Accounts\UnverifiedEmailController;
 use App\Http\Controllers\Accounts\UsernameAvailabilityController;
+use App\Http\Controllers\Articles\PublicArticlesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\NotFoundController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\Profiles\ShowProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+
+// Listagem e leitura públicas (RF-379, D83)
+Route::get('artigos', [PublicArticlesController::class, 'index'])->name('articles.index');
+Route::get('artigos/{slug}', [PublicArticlesController::class, 'show'])
+    ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')
+    ->name('articles.show');
 
 Route::put('locale', LocaleController::class)->name('locale.update');
 
@@ -55,3 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/articles.php';
+
+// Endereço que não existe: a página 404 do site, com o cabeçalho e o idioma
+// de sempre, porque o fallback passa pelos middlewares da web.
+Route::fallback(NotFoundController::class);

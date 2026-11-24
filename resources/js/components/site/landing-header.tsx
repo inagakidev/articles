@@ -8,7 +8,7 @@ import MotionToggle from '@/components/ui/motion-toggle';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
 import { login, register } from '@/routes';
-import { create } from '@/routes/articles';
+import { create, index as articles } from '@/routes/articles';
 
 /** Âncoras das seções da página de apresentação. */
 const sections: { id: string; label: TranslationKey }[] = [
@@ -53,6 +53,12 @@ export default function LandingHeader() {
                     <ThemeToggle className={toolClass} />
                     <LanguageToggle className={toolClass} />
                     <MotionToggle variant="icon" />
+                    <Link
+                        href={articles()}
+                        className="hidden rounded-full px-2.5 text-label font-bold hover:underline min-[961px]:inline"
+                    >
+                        {t('landing.cta.read_short')}
+                    </Link>
                     {auth.user ? (
                         <>
                             <Button

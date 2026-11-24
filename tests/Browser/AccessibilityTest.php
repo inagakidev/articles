@@ -218,3 +218,26 @@ it('não tem problemas de acessibilidade em Meus artigos vazio', function () {
     visit('/my-articles')->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
     visit('/my-articles')->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
 });
+
+it('não tem problemas de acessibilidade na listagem, na leitura e no 404', function () {
+    $category = Category::query()->firstOrFail();
+    $articles = Article::factory()->published()->count(13)->create();
+    $article = $articles->first();
+    ArticleVersion::query()->whereKey($article->current_version_id)->update([
+        'category_id' => $category->id,
+        'decided_at' => now()->addDay(),
+        'content' => ['type' => 'doc', 'content' => [
+            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Quando comecei com filas no Laravel.']]],
+            ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [['type' => 'text', 'text' => 'Quem tira o job da fila']]],
+            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'O worker, um processo de longa duração.']]],
+            ['type' => 'codeBlock', 'attrs' => ['language' => 'php'], 'content' => [['type' => 'text', 'text' => 'php artisan queue:work']]],
+        ]],
+    ]);
+
+    foreach (['/', '/artigos', '/artigos?page=2', '/artigos/'.$article->slug, '/nada-por-aqui'] as $url) {
+        visit($url)->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+        visit($url)->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+        visit($url)->withLocale('en-US')->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+        visit($url)->on()->mobile()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+    }
+});

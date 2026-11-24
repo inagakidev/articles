@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotFoundController;
 use App\Http\Middleware\EnsurePoliciesAccepted;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -46,4 +48,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // 404 dentro de uma rota (artigo fora do ar, modelo que não existe) vira
+        // a página do site; JSON e imagens continuam com a resposta curta. O
+        // endereço que não casa com rota nenhuma cai no fallback de web.php.
+        $exceptions->respond(function (Response $response, Throwable $e, Request $request) {
+            if ($response->getStatusCode() !== 404 || $request->expectsJson() || $request->is('media/*')) {
+                return $response;
+            }
+
+            return app(NotFoundController::class)($request);
+        });
     })->create();
