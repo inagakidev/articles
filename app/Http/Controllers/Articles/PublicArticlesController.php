@@ -6,6 +6,8 @@ use App\Domain\Articles\Queries\PublicArticles;
 use App\Domain\Interactions\Queries\ArticleComments;
 use App\Domain\Interactions\Rules\CommentRules;
 use App\Domain\Moderation\Queries\ContentPolicyItems;
+use App\Domain\Reports\Enums\ReportTarget;
+use App\Domain\Reports\Queries\ReportQueue;
 use App\Domain\Search\Queries\ArticleSearch;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Articles\SearchRequest;
@@ -64,7 +66,7 @@ class PublicArticlesController extends Controller
         ]);
     }
 
-    public function show(Request $request, string $slug, ArticlePage $page, ContentPolicyItems $items, ArticleComments $comments, CommentThread $thread): Response
+    public function show(Request $request, string $slug, ArticlePage $page, ContentPolicyItems $items, ArticleComments $comments, CommentThread $thread, ReportQueue $reports): Response
     {
         $article = $this->articles->findBySlug($slug);
         abort_if($article === null, 404);
@@ -97,10 +99,17 @@ class PublicArticlesController extends Controller
                 'favorited' => $viewer !== null && $article->favorites()->where('user_id', $viewer->id)->exists(),
                 'canFavorite' => $participates,
             ],
+            // Denunciar o artigo: conta confirmada, e não o próprio (RF-164, RF-168)
+            'report' => [
+                'canReport' => $participates && $article->user_id !== $viewer->id,
+                'reported' => $participates && $reports->openBy($viewer, ReportTarget::Article, [$article->id]) !== [],
+            ],
             // Qualquer pessoa lê; só conta confirmada participa (RF-140, RF-141)
             'comments' => [
                 'total' => $conversation['total'],
-                'items' => $thread->build($conversation['comments'], $article, $viewer),
+                'items' => $thread->build($conversation['comments'], $article, $viewer, $participates
+                    ? $reports->openBy($viewer, ReportTarget::Comment, array_values($conversation['comments']->modelKeys()))
+                    : []),
                 'page' => $conversation['page'],
                 'lastPage' => $conversation['lastPage'],
                 'canComment' => $participates,

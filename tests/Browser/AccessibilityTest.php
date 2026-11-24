@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\CommentLike;
 use App\Models\Favorite;
+use App\Models\Report;
 use App\Models\Tag;
 use App\Models\User;
 use App\Notifications\Articles\VersionRejected;
@@ -454,3 +455,62 @@ it('não tem problemas de acessibilidade nas notificações', function (string $
             ->assertNoAccessibilityIssues();
     }
 })->with(['claro', 'escuro', 'celular', 'vazio']);
+
+it('não tem problemas de acessibilidade nas denúncias', function (string $mode) {
+    $article = Article::factory()->published()->create();
+    $comment = Comment::factory()->for($article)->create(['body' => 'Volta pro tutorial.']);
+    Comment::factory()->replyTo($comment)->create();
+    foreach (User::factory()->count(2)->create() as $reporter) {
+        Report::query()->create(['reporter_id' => $reporter->id, 'target' => 'comment', 'target_id' => $comment->id, 'reason' => 'offensive', 'details' => 'Ataque pessoal.']);
+    }
+    Report::query()->create(['reporter_id' => User::factory()->create()->id, 'target' => 'profile', 'target_id' => $article->user_id, 'reason' => 'spam']);
+
+    // Quem lê: o diálogo de denúncia aberto na leitura
+    $this->actingAs(User::factory()->create());
+    $reading = visit('/artigos/'.$article->slug)->withLocale('pt-BR');
+    $reading = match ($mode) {
+        'escuro' => $reading->inDarkMode(),
+        'celular' => $reading->on()->mobile(),
+        default => $reading,
+    };
+    // As entradas da leitura acompanham a rolagem; com o diálogo aberto, a
+    // página para no meio delas. Pausar as animações as mostra inteiras.
+    $reading->wait(ENTRANCE_SECONDS)
+        ->script("document.documentElement.classList.add('motion-paused')");
+    $reading->click('article .border-y button[aria-label="Denunciar artigo"]')
+        ->wait(0.5)
+        ->click('Outro')
+        ->assertSee('O conteúdo continua no ar até a análise')
+        ->assertNoAccessibilityIssues();
+
+    // A administradora: a lista e a análise com a decisão escolhida
+    $this->actingAs(User::factory()->admin()->create());
+    $admin = visit('/admin/reports/comment/'.$comment->id)->withLocale('pt-BR');
+    $admin = match ($mode) {
+        'escuro' => $admin->inDarkMode(),
+        'celular' => $admin->on()->mobile(),
+        default => $admin,
+    };
+    $admin->wait(ENTRANCE_SECONDS)
+        ->script("document.querySelector('input[value=\"delete_comment\"]').click()");
+    $admin->assertSee('apaga também a resposta')
+        ->assertNoAccessibilityIssues();
+})->with(['claro', 'escuro', 'celular']);
+
+it('não tem problemas de acessibilidade na troca obrigatória de username', function (string $mode) {
+    $user = User::factory()->create(['username' => 'compre-cursos']);
+    $user->forceFill(['username_change_required_at' => now(), 'username_change_policy_item' => '1.2'])->save();
+    $this->actingAs($user);
+
+    $page = visit('/artigos')->withLocale('pt-BR');
+    $page = match ($mode) {
+        'escuro' => $page->inDarkMode(),
+        'celular' => $page->on()->mobile(),
+        default => $page,
+    };
+
+    $page->wait(ENTRANCE_SECONDS)
+        ->assertSee('Escolha um novo username')
+        ->type('#username', 'pedro')
+        ->assertNoAccessibilityIssues();
+})->with(['claro', 'escuro', 'celular']);

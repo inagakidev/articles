@@ -2,10 +2,12 @@ import {
     AlertCircle,
     CheckCircle2,
     EyeOff,
+    Flag,
     Heart,
     MessageCircle,
     Reply,
     Trash2,
+    UserCog,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { NotificationItem } from '@/components/notifications/types';
@@ -25,6 +27,8 @@ const looks: Record<NotificationItem['type'], [LucideIcon, PastelTone]> = {
     'comment.posted': [MessageCircle, 'blue'],
     'comment.replied': [Reply, 'lilac'],
     'like.received': [Heart, 'pink'],
+    'report.reviewed': [Flag, 'mint'],
+    'profile.moderated': [UserCog, 'peach'],
 };
 
 function short(title: string | null): string {
@@ -116,6 +120,29 @@ export function NotificationText({ item }: { item: NotificationItem }) {
                         title,
                         excerpt: item.excerpt ?? '',
                     }),
+                ];
+            case 'report.reviewed':
+                return [
+                    t('notifications.report_reviewed.lead'),
+                    t('notifications.report_reviewed.rest'),
+                ];
+            case 'profile.moderated':
+                return [
+                    t('notifications.profile_moderated.lead'),
+                    item.parts.includes('username')
+                        ? t('notifications.profile_moderated.username', {
+                              item: item_,
+                          })
+                        : t('notifications.profile_moderated.rest', {
+                              parts: item.parts
+                                  .map((part) =>
+                                      t(
+                                          `notifications.profile_moderated.parts.${part}`,
+                                      ),
+                                  )
+                                  .join(', '),
+                              item: item_,
+                          }),
                 ];
             case 'like.received':
                 return [

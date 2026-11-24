@@ -1241,6 +1241,11 @@
     }
 
     /* Pausado ou sem movimento: cada efeito no estado final legível */
+    /* Pausar animações também tira as entradas presas à rolagem (D91) */
+    .motion-paused .reveal,
+    .motion-paused .stack-pop {
+        animation: none;
+    }
     .motion-paused .flip-words > span {
         animation: none;
     }

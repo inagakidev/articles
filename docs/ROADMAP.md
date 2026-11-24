@@ -459,10 +459,10 @@ As tarefas acima são implementadas em **fatias**: cada fatia entrega uma funcio
 | 17. Comentários e curtidas            | p6-01, p6-02                                             | Comentários · logada (desktop e mobile)                                                              |
 | 18. Favoritos                         | p6-03                                                    | Favoritos, Favoritos vazio                                                                           |
 | 19. Notificações                      | p6-04, p6-05, p6-17                                      | Notificações, menu do sino, Notificações vazias                                                      |
-| 20. Denúncias                         | p6-08                                                    | Denunciar artigo, Admin · Denúncias                                                                  |
+| 20. Denúncias                         | p6-08                                                    | Denunciar artigo, Admin · Denúncias, Trocar username obrigatório (D91)                               |
 | 21. Penalidades e contestação         | p6-10, p6-11, p6-12                                      | Admin · Usuário e penalidade, Contestações, Conta suspensa, Contestar suspensão                      |
 | 22. Exclusão de conta                 | p6-13                                                    | Excluir conta, Exclusão solicitada, Cancelar exclusão                                                |
-| 23. Username obrigatório e retenção   | p6-14, p6-16                                             | Trocar username obrigatório                                                                          |
+| 23. Retenção                          | p6-14, p6-16                                             | (a troca obrigatória de username foi para a fatia 20, D91)                                           |
 | 24. Pedido de dados (LGPD)            | p6-18                                                    | Pedido de dados, Pedido · erros, Pedido recebido (desktop e mobile)                                  |
 
 As pranchas "Escuro" do canvas servem de conferência: no código, o tema é uma variável, não uma tela.

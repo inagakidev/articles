@@ -8,6 +8,9 @@ use App\Domain\Interactions\Events\CommentPosted;
 use App\Domain\Interactions\Events\ContentLiked;
 use App\Domain\Notifications\Listeners\NotifyCommentPosted;
 use App\Domain\Notifications\Listeners\NotifyContentLiked;
+use App\Domain\Reports\Listeners\CloseReportsOfRemovedContent;
+use App\Models\Article;
+use App\Models\Comment;
 use App\Models\User;
 use App\Support\Mail\Events\EmailBounced;
 use App\Support\Mail\Events\EmailComplained;
@@ -66,6 +69,11 @@ class AppServiceProvider extends ServiceProvider
 
         // Avisos do provedor de e-mail, já traduzidos para eventos próprios (D71)
         Event::listen([EmailBounced::class, EmailComplained::class], SuppressEmailAddress::class);
+
+        // Conteúdo que sai de vez encerra as denúncias abertas dele (RF-175, D91)
+        Comment::deleting(fn (Comment $comment) => app(CloseReportsOfRemovedContent::class)->comment($comment));
+        Article::forceDeleting(fn (Article $article) => app(CloseReportsOfRemovedContent::class)->article($article));
+        User::deleting(fn (User $user) => app(CloseReportsOfRemovedContent::class)->user($user));
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Domain\Moderation\Queries\ApprovalQueue;
 use App\Domain\Notifications\Queries\UserNotifications;
+use App\Domain\Reports\Queries\ReportQueue;
 use App\Http\Resources\Notifications\NotificationItem;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -54,7 +55,7 @@ class HandleInertiaRequests extends Middleware
             ],
             // A contagem da fila na lateral do painel, só para a administradora
             'adminCounts' => fn () => $request->user()?->is_admin
-                ? ['queue' => app(ApprovalQueue::class)->count()]
+                ? ['queue' => app(ApprovalQueue::class)->count(), 'reports' => app(ReportQueue::class)->openCount()]
                 : null,
         ];
     }

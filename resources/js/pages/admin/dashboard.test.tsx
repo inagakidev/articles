@@ -12,7 +12,7 @@ import AdminLayout from '@/layouts/admin-layout';
 import Dashboard from '@/pages/admin/dashboard';
 
 const props = {
-    metrics: { users: 412, published: 68, pending: 5 },
+    metrics: { users: 412, published: 68, pending: 5, reports: 3 },
     attention: [],
     lateHours: 6,
     updatedAt: '2026-11-21T09:40:00Z',

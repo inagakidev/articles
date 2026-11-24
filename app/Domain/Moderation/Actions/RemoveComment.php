@@ -21,14 +21,7 @@ class RemoveComment
     public function handle(Comment $comment, User $admin, string $policyItem, string $reason): void
     {
         DB::transaction(function () use ($comment, $admin, $policyItem, $reason) {
-            $article = $comment->article;
-            $title = $article->currentVersion?->title;
-            $label = __('audit.comment_label', [
-                'author' => '@'.($comment->author->username ?? '?'),
-                'article' => AuditLabel::article($article, $title),
-            ]);
-
-            $this->audit->handle($admin, AuditAction::CommentDeleted, $label, $comment, $policyItem, $reason, [
+            $this->audit->handle($admin, AuditAction::CommentDeleted, AuditLabel::comment($comment), $comment, $policyItem, $reason, [
                 'replies' => $comment->replies()->count(),
             ]);
             $comment->delete();

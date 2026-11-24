@@ -25,6 +25,7 @@ const article = {
 const social = {
     likes: { articleId: 3, count: 48, liked: false, canLike: false },
     favorites: { count: 5, favorited: false, canFavorite: false },
+    report: { canReport: false, reported: false },
     comments: {
         total: 0,
         items: [],
@@ -41,6 +42,7 @@ const noActions = {
     edit: false,
     delete: false,
     moderate: false,
+    report: false,
 };
 
 const comment = (id: number, extra = {}) => ({
@@ -54,6 +56,7 @@ const comment = (id: number, extra = {}) => ({
     own: false,
     likes: { count: 7, liked: true },
     can: { ...noActions, like: true, reply: true },
+    reported: false,
     replies: [],
     ...extra,
 });
@@ -172,6 +175,7 @@ describe('leitura do artigo', () => {
                 article={article}
                 likes={social.likes}
                 favorites={social.favorites}
+                report={social.report}
                 comments={{
                     ...social.comments,
                     total: 1,
@@ -196,6 +200,7 @@ describe('leitura do artigo', () => {
                 article={article}
                 likes={{ ...social.likes, canLike: true }}
                 favorites={social.favorites}
+                report={social.report}
                 comments={{
                     total: 3,
                     canComment: true,
@@ -248,6 +253,7 @@ describe('leitura do artigo', () => {
                 article={article}
                 likes={social.likes}
                 favorites={social.favorites}
+                report={social.report}
                 comments={{
                     total: 1,
                     canComment: true,
@@ -295,6 +301,7 @@ describe('leitura do artigo', () => {
                 article={article}
                 likes={social.likes}
                 favorites={social.favorites}
+                report={social.report}
                 comments={{
                     ...social.comments,
                     total: 6,
@@ -336,6 +343,7 @@ describe('leitura do artigo', () => {
                 article={article}
                 likes={social.likes}
                 favorites={social.favorites}
+                report={social.report}
                 comments={{ ...social.comments, canComment: true }}
             />,
         );
@@ -362,6 +370,7 @@ describe('leitura do artigo', () => {
                 article={article}
                 likes={social.likes}
                 favorites={social.favorites}
+                report={social.report}
                 comments={{
                     ...social.comments,
                     total: 1,

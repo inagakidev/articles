@@ -20,6 +20,7 @@ const notice = (extra: Partial<NotificationItem>): NotificationItem => ({
     excerpt: null,
     target: null,
     count: null,
+    parts: [],
     ...extra,
 });
 

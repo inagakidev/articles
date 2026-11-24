@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ArticleModerationController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TaxonomyController;
@@ -33,6 +34,17 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])
             // Despublicar e excluir de vez, a partir da leitura (RF-111, RF-122)
             Route::post('articles/{article}/unpublish', [ArticleModerationController::class, 'unpublish'])->name('articles.unpublish');
             Route::delete('articles/{article}', [ArticleModerationController::class, 'destroy'])->withTrashed()->name('articles.destroy');
+
+            // Denúncias: a lista por item, a análise e a decisão (RF-252, D91)
+            Route::get('reports', [ReportController::class, 'index'])->name('reports');
+            Route::get('reports/{target}/{id}', [ReportController::class, 'show'])
+                ->whereIn('target', ['article', 'comment', 'profile'])
+                ->whereNumber('id')
+                ->name('reports.show');
+            Route::post('reports/{target}/{id}/decision', [ReportController::class, 'decide'])
+                ->whereIn('target', ['article', 'comment', 'profile'])
+                ->whereNumber('id')
+                ->name('reports.decide');
 
             // Auditoria: só consulta e exportação (RF-259, RF-291)
             Route::get('audit', [AuditController::class, 'index'])->name('audit');

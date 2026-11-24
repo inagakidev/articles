@@ -24,17 +24,19 @@ A anonimização de registros de contas excluídas (12 meses, `REQUIREMENTS.md` 
 
 A conta (D72). Além das colunas do Laravel e do Fortify (`name`, `email`, `email_verified_at`, `password`, `remember_token` e as de 2FA):
 
-| Coluna                     | Tipo               | Observação                                                                       |
-| -------------------------- | ------------------ | -------------------------------------------------------------------------------- |
-| `username`                 | string(30), único  | Minúsculas sem acento, números, `-` e `_`, começando por letra (RF-027 a RF-029) |
-| `locale`                   | string(5), `pt_BR` | Idioma da conta, usado nos e-mails enviados sem requisição (D62)                 |
-| `is_admin`                 | boolean, `false`   | A administradora da instalação (D56, D75); fora do preenchimento em massa        |
-| `bio`                      | string(300), nulo  | Bio do perfil público (RF-025)                                                   |
-| `avatar_path`              | string, nulo       | Caminho da foto no disco de mídia (`avatars/<uuid>.webp`, D77)                   |
-| `pending_email`            | string, nulo       | E-mail novo esperando a confirmação (RF-030)                                     |
-| `pending_email_expires_at` | timestamp, nulo    | Fim do prazo de 24 h da troca                                                    |
-| `email_suppressed_at`      | timestamp, nulo    | O endereço voltou ou reclamou: não recebe mais e-mails até trocar (p6-17, D71)   |
-| `email_suppressed_reason`  | string(20), nulo   | `bounce` ou `complaint`                                                          |
+| Coluna                        | Tipo               | Observação                                                                         |
+| ----------------------------- | ------------------ | ---------------------------------------------------------------------------------- |
+| `username`                    | string(30), único  | Minúsculas sem acento, números, `-` e `_`, começando por letra (RF-027 a RF-029)   |
+| `locale`                      | string(5), `pt_BR` | Idioma da conta, usado nos e-mails enviados sem requisição (D62)                   |
+| `is_admin`                    | boolean, `false`   | A administradora da instalação (D56, D75); fora do preenchimento em massa          |
+| `bio`                         | string(300), nulo  | Bio do perfil público (RF-025)                                                     |
+| `avatar_path`                 | string, nulo       | Caminho da foto no disco de mídia (`avatars/<uuid>.webp`, D77)                     |
+| `pending_email`               | string, nulo       | E-mail novo esperando a confirmação (RF-030)                                       |
+| `pending_email_expires_at`    | timestamp, nulo    | Fim do prazo de 24 h da troca                                                      |
+| `email_suppressed_at`         | timestamp, nulo    | O endereço voltou ou reclamou: não recebe mais e-mails até trocar (p6-17, D71)     |
+| `email_suppressed_reason`     | string(20), nulo   | `bounce` ou `complaint`                                                            |
+| `username_change_required_at` | timestamp, nulo    | Username considerado inadequado: troca obrigatória no próximo acesso (RF-178, D91) |
+| `username_change_policy_item` | string(10), nulo   | Item da Política citado na tela da troca                                           |
 
 **Retenção:** conta que não confirma o e-mail em 7 dias é apagada no 8º dia (`User::prunable()`, RF-023), e username e e-mail ficam livres na hora. Nenhuma data de nascimento é guardada (RF-012).
 
@@ -208,3 +210,22 @@ Artigos salvos nos favoritos (RF-159 a RF-162, D89). Chave primária (`article_i
 Notificações dentro do site (RF-179 a RF-192, D90), na tabela das notificações do Laravel: `id` (uuid), `type`, `notifiable` (a conta), `data` (JSON), `read_at` e os timestamps. O `type` diz o que aconteceu (`article.approved`, `article.rejected`, `article.unpublished`, `article.deleted`, `comment.posted`, `comment.replied`, `like.received`); `data` guarda só o que o texto precisa (título, item da Política, nome de quem comentou, trecho e o link), nunca a justificativa nem quem curtiu. As curtidas de um item viram uma linha só enquanto não lida, com os ids de quem curtiu apenas para não contar a mesma pessoa duas vezes.
 
 **Retenção:** apagadas pelo `model:prune` diário 90 dias depois da última novidade (`Notification::prunable()`, RF-191). Índice em `updated_at` para isso.
+
+### `reports`
+
+Denúncias de artigos, comentários e perfis (RF-164 a RF-178, D91). Não guardam cópia do conteúdo: a análise é sobre o item como está agora (RF-174).
+
+| Coluna                        | Tipo                         | Observação                                                                                                                                            |
+| ----------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `reporter_id`                 | `users.id`, nulo             | Quem denunciou (`nullOnDelete`: a denúncia fica se a conta sair, RF-373)                                                                              |
+| `target`, `target_id`         | string(20), id               | `article`, `comment` ou `profile` e o id do item                                                                                                      |
+| `reason`                      | string(20)                   | `spam`, `offensive`, `plagiarism`, `misleading` ou `other`                                                                                            |
+| `details`                     | text, nulo                   | Texto livre, obrigatório em `other`, até 500 caracteres                                                                                               |
+| `status`                      | string(20)                   | `open`, `upheld`, `dismissed` ou `removed` (conteúdo excluído antes da análise)                                                                       |
+| `open`                        | boolean, nulo                | `true` enquanto aberta e nulo depois: o índice único em (`reporter_id`, `target`, `target_id`, `open`) deixa uma só aberta por pessoa e item (RF-167) |
+| `outcome`                     | string(30), nulo             | Desfecho da decisão                                                                                                                                   |
+| `policy_item`                 | string(10), nulo             | Item da Política, só nas procedentes (RF-173)                                                                                                         |
+| `justification`               | text, nulo                   | Justificativa da decisão (RF-171)                                                                                                                     |
+| `decided_by_id`, `decided_at` | `users.id`, timestamp, nulos | Quem decidiu e quando                                                                                                                                 |
+
+Índice em (`status`, `target`, `target_id`) para a lista do painel, agrupada por item.
