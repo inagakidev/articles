@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Articles;
 
-use App\Domain\Articles\Actions\StoreArticleImage;
+use App\Domain\Media\Actions\StoreArticleImage;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Articles\ArticleImageRequest;
 use App\Models\Article;

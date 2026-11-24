@@ -1,8 +1,8 @@
 import { Head } from '@inertiajs/react';
 import { Monitor, Moon, Sun } from 'lucide-react';
 import SettingsSection from '@/components/account/settings-section';
-import { changeLocale } from '@/components/site/language-switch';
-import { themes } from '@/components/site/theme-toggle';
+import { changeLocale } from '@/components/preferences/language-switch';
+import { themes } from '@/components/preferences/theme-toggle';
 import SegmentedControl from '@/components/ui/segmented-control';
 import { useAppearance } from '@/hooks/use-appearance';
 import type { Appearance as Theme } from '@/hooks/use-appearance';

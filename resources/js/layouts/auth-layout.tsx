@@ -3,7 +3,7 @@ import type { MascotArt } from '@/components/ui/mascot';
 import Mascot from '@/components/ui/mascot';
 import MascotOrbit from '@/components/ui/mascot-orbit';
 import MotionToggle from '@/components/ui/motion-toggle';
-import SiteLogo from '@/components/site/site-logo';
+import SiteLogo from '@/layouts/parts/site-logo';
 import TextLink from '@/components/ui/text-link';
 import type { TranslationKey } from '@/lib/i18n';
 import { useTranslation } from '@/lib/i18n';

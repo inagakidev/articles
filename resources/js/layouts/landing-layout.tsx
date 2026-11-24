@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import LandingHeader from '@/components/site/landing-header';
-import SiteFooter from '@/components/site/site-footer';
+import LandingHeader from '@/layouts/parts/landing-header';
+import SiteFooter from '@/layouts/parts/site-footer';
 
 /** Página de apresentação: cabeçalho com as seções, conteúdo e rodapé. */
 export default function LandingLayout({ children }: { children: ReactNode }) {
