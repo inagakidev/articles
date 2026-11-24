@@ -53,7 +53,7 @@ export default function Taxonomy({ categories, colors, tags, search }: Props) {
                         {t('admin.taxonomy.categories.new')}
                     </Button>
                 </div>
-                <div className="overflow-x-auto">
+                <div className="relative overflow-x-auto">
                     <table className="w-full min-w-120 text-left text-meta">
                         <thead className="text-caption font-bold text-text-secondary">
                             <tr className="border-b border-border">

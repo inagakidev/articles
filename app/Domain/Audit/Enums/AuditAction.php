@@ -15,6 +15,8 @@ enum AuditAction: string
     // A lixeira venceu: a rotina apagou o artigo, sem ninguém por trás
     case ArticleTrashExpired = 'article_trash_expired';
     case CommentDeleted = 'comment_deleted';
+    case ProfileModerated = 'profile_moderated';
+    case ReportDismissed = 'report_dismissed';
     case CategoryCreated = 'category_created';
     case CategoryUpdated = 'category_updated';
     case CategoryDeleted = 'category_deleted';

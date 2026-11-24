@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Accounts\PolicyAcceptanceController;
+use App\Http\Controllers\Accounts\RequiredUsernameController;
 use App\Http\Controllers\Accounts\UnverifiedEmailController;
 use App\Http\Controllers\Accounts\UsernameAvailabilityController;
 use App\Http\Controllers\Articles\PublicArticlesController;
@@ -48,6 +49,12 @@ Route::middleware('auth')->group(function () {
     // Novo aceite quando os Termos ou a Privacidade mudam (D73)
     Route::get('policies/accept', [PolicyAcceptanceController::class, 'show'])->name('policies.acceptance.show');
     Route::post('policies/accept', [PolicyAcceptanceController::class, 'store'])->name('policies.acceptance.store');
+
+    // Username considerado inadequado: troca antes de continuar (RF-178, D91)
+    Route::get('trocar-username', [RequiredUsernameController::class, 'show'])->name('username.required');
+    Route::put('trocar-username', [RequiredUsernameController::class, 'update'])
+        ->middleware('throttle:10,1')
+        ->name('username.required.update');
 
     // "Usar outro e-mail" antes de confirmar (D72)
     Route::put('email/unverified', UnverifiedEmailController::class)

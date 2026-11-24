@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Domain\Articles\Queries\PublicArticles;
 use App\Domain\Moderation\Queries\ApprovalQueue;
+use App\Domain\Reports\Queries\ReportQueue;
 use App\Http\Controllers\Controller;
 use App\Models\ArticleVersion;
 use App\Models\User;
@@ -20,13 +21,15 @@ class DashboardController extends Controller
     /** Avisos de atraso mostrados no painel. */
     public const ATTENTION = 5;
 
-    public function __invoke(ApprovalQueue $queue, PublicArticles $articles): Response
+    public function __invoke(ApprovalQueue $queue, PublicArticles $articles, ReportQueue $reports): Response
     {
         return Inertia::render('admin/dashboard', [
             'metrics' => [
                 'users' => User::query()->count(),
                 'published' => $articles->query()->count(),
                 'pending' => $queue->count(),
+                // Itens com denúncia aberta (RF-262)
+                'reports' => $reports->openCount(),
             ],
             'attention' => $queue->late(self::ATTENTION)->map(fn (ArticleVersion $version) => [
                 'type' => 'late_version',

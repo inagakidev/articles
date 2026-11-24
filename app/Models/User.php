@@ -32,6 +32,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property-read string|null $avatar
  * @property string|null $pending_email
  * @property Carbon|null $email_suppressed_at
+ * @property Carbon|null $username_change_required_at
+ * @property string|null $username_change_policy_item
  * @property Carbon|null $pending_email_expires_at
  * @property Carbon|null $email_verified_at
  * @property string $password
@@ -163,6 +165,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             'is_admin' => 'boolean',
             'pending_email_expires_at' => 'datetime',
             'email_suppressed_at' => 'datetime',
+            'username_change_required_at' => 'datetime',
         ];
     }
 }

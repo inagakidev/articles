@@ -8,7 +8,9 @@ export type NotificationItem = {
         | 'article.deleted'
         | 'comment.posted'
         | 'comment.replied'
-        | 'like.received';
+        | 'like.received'
+        | 'report.reviewed'
+        | 'profile.moderated';
     read: boolean;
     at: string | null;
     /** Abre o destino e marca como lida. */
@@ -21,6 +23,8 @@ export type NotificationItem = {
     /** Curtidas: o que foi curtido e quantas pessoas, nunca quem. */
     target: 'article' | 'comment' | null;
     count: number | null;
+    /** Perfil moderado: o que voltou ao padrão. */
+    parts: ('photo' | 'bio' | 'username')[];
 };
 
 /** O sino do cabeçalho: não lidas e as últimas. */

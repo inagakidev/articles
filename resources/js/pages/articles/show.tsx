@@ -7,6 +7,7 @@ import type { CommentsData } from '@/components/interactions/comment-section';
 import LikeButton from '@/components/interactions/like-button';
 import ModerationMenu from '@/components/moderation/moderation-menu';
 import type { PolicyItem } from '@/components/moderation/decision-fields';
+import ReportButton from '@/components/reports/report-button';
 import ShareButton from '@/components/share/share-button';
 import Mascot from '@/components/ui/mascot';
 import { formatShortDate } from '@/lib/format';
@@ -32,6 +33,8 @@ type Props = {
     /** Favoritos: a contagem é pública, a lista não (RF-160, RF-161). */
     favorites: { count: number; favorited: boolean; canFavorite: boolean };
     comments: CommentsData;
+    /** Denunciar o artigo (RF-164): quem pode e se já denunciou. */
+    report: { canReport: boolean; reported: boolean };
     /** Só para a administradora: despublicar e excluir de vez (D87). */
     moderation?: { articleId: number; policyItems: PolicyItem[] } | null;
 };
@@ -39,13 +42,14 @@ type Props = {
 /**
  * Leitura pública (prancha "Leitura", RF-137): o artigo, quem escreveu,
  * curtir, favoritar, compartilhar, o fim da leitura e os comentários (D86,
- * D88, D89). Denunciar entra com a fatia 20.
+ * D88, D89) e denunciar (D91).
  */
 export default function Show({
     article,
     likes,
     favorites,
     comments,
+    report,
     moderation,
 }: Props) {
     const { t, locale } = useTranslation();
@@ -112,6 +116,17 @@ export default function Show({
                             title={t('share.article_title')}
                             linkLabel={t('share.article_link')}
                             text={article.title ?? ''}
+                            iconOnly
+                        />
+                        <ReportButton
+                            target="article"
+                            id={likes.articleId}
+                            subject={t('reports.subject.article', {
+                                title: article.title ?? '',
+                                author: article.author.username ?? '',
+                            })}
+                            canReport={report.canReport}
+                            reported={report.reported}
                             iconOnly
                         />
                         {moderation && (

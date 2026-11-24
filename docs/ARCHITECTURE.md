@@ -85,13 +85,13 @@ Cada ação dos perfis de `REQUIREMENTS.md` §3 tem uma regra no servidor. As li
 | Comentar, responder, editar e excluir o próprio comentário                 | `verified` + `CommentPolicy`                                                              | `routes/interactions.php`, feito  |
 | Curtir artigos e comentários de outras pessoas                             | `verified` + `LikeContent` (não é o próprio; só artigo visível)                           | `routes/interactions.php`, feito  |
 | Favoritar                                                                  | `verified` + `FavoriteArticle` (só artigo visível); a lista é sempre a da pessoa logada   | `routes/interactions.php`, feito  |
-| Denunciar artigo, comentário ou perfil                                     | `verified` + `ReportPolicy` (não é o próprio; uma aberta por item)                        | fatia 20                          |
+| Denunciar artigo, comentário ou perfil                                     | `verified` + `SubmitReport` (não é o próprio; uma aberta por item, pelo banco)            | `routes/interactions.php`, feito  |
 | Ver, marcar e excluir as próprias notificações                             | `auth`; só as da pessoa (`UserNotifications::find`)                                       | `routes/notifications.php`, feito |
 | Pedir a exclusão da conta                                                  | `auth` + sem suspensão ativa                                                              | fatia 22                          |
 | Ativar o 2FA (administradora); desligar (ninguém no MVP)                   | `EnableTwoFactor` e `DisableTwoFactor` no lugar das ações do Fortify (RF-017, RF-019)     | `Domain/Accounts/Actions`, feito  |
 | Gerenciar categorias e tags (administradora)                               | Rotas do painel + `CategoryPolicy` e `TagPolicy` (RF-124, RF-129)                         | `routes/admin.php`, feito         |
 | Abrir o painel da administração                                            | `verified` + Gate `access-admin` + 2FA confirmado (`EnsureTwoFactorConfirmed`)            | `routes/admin.php`, feito         |
-| Aprovar, rejeitar, despublicar, penalizar, julgar denúncias e contestações | Rotas do painel + Policies de cada modelo, com as restrições da administradora (P05, R08) | fatias 16, 20 e 21                |
+| Aprovar, rejeitar, despublicar, penalizar, julgar denúncias e contestações | Rotas do painel + Policies de cada modelo, com as restrições da administradora (P05, R08) | denúncias feitas; fatia 21        |
 
 ### 2.4 Configuração
 

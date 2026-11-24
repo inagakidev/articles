@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { CalendarDays, FileText, PenLine } from 'lucide-react';
 import ArticleCard from '@/components/articles/article-card';
+import ReportButton from '@/components/reports/report-button';
 import ShareButton from '@/components/share/share-button';
 import { Button } from '@/components/ui/button';
 import Mascot from '@/components/ui/mascot';
@@ -20,6 +21,8 @@ type Props = {
         /** AAAA-MM-DD */
         memberSince: string;
     };
+    /** Denunciar o perfil (RF-164): quem pode e se já denunciou. */
+    report: { id: number; canReport: boolean; reported: boolean };
     /** Os artigos visíveis da pessoa, por página (p5-06). */
     articles: {
         data: ArticleSummary[];
@@ -46,7 +49,12 @@ function profileUrl(username: string, order: string, page = 1): string {
  * Perfil público em /@username (prancha "Perfil do autor", RF-025, D77):
  * quem é, os artigos publicados e "Compartilhar perfil" (RF-163).
  */
-export default function ProfileShow({ profile, articles, order }: Props) {
+export default function ProfileShow({
+    profile,
+    articles,
+    order,
+    report,
+}: Props) {
     const articleCount = articles.total;
     const { auth } = usePage().props;
     const { t, locale } = useTranslation();
@@ -114,6 +122,15 @@ export default function ProfileShow({ profile, articles, order }: Props) {
                                 text={profile.name}
                                 path={show({ username: profile.username }).url}
                                 size="sm"
+                            />
+                            <ReportButton
+                                target="profile"
+                                id={report.id}
+                                subject={t('reports.subject.profile', {
+                                    username: profile.username,
+                                })}
+                                canReport={report.canReport}
+                                reported={report.reported}
                             />
                             {own && (
                                 <Button

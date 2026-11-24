@@ -1,5 +1,6 @@
 import { Form, Link, router, useForm, usePage } from '@inertiajs/react';
 import {
+    Flag,
     MoreHorizontal,
     Pencil,
     Send,
@@ -9,6 +10,7 @@ import {
 import { useEffect, useState } from 'react';
 import type { FormEvent, KeyboardEvent } from 'react';
 import LikeButton from '@/components/interactions/like-button';
+import ReportDialog from '@/components/reports/report-dialog';
 import DecisionFields from '@/components/moderation/decision-fields';
 import type { PolicyItem } from '@/components/moderation/decision-fields';
 import { Button } from '@/components/ui/button';
@@ -53,7 +55,10 @@ export type CommentNode = {
         edit: boolean;
         delete: boolean;
         moderate: boolean;
+        report: boolean;
     };
+    /** Quem lê já denunciou e a denúncia está em análise (RF-167). */
+    reported: boolean;
     replies: CommentNode[];
 };
 
@@ -111,6 +116,7 @@ export default function CommentSection({
     const [editing, setEditing] = useState<number | null>(null);
     const [deleting, setDeleting] = useState<CommentNode | null>(null);
     const [moderating, setModerating] = useState<CommentNode | null>(null);
+    const [reporting, setReporting] = useState<CommentNode | null>(null);
     const [fresh, setFresh] = useState<number | null>(null);
     const [, tick] = useState(0);
     const { url } = usePage();
@@ -211,6 +217,7 @@ export default function CommentSection({
                             }
                             onDelete={() => setDeleting(comment)}
                             onModerate={() => setModerating(comment)}
+                            onReport={() => setReporting(comment)}
                         />
                     ))}
                 </ul>
@@ -232,6 +239,18 @@ export default function CommentSection({
                 />
             </div>
 
+            {reporting && (
+                <ReportDialog
+                    key={reporting.id}
+                    open
+                    onClose={() => setReporting(null)}
+                    target="comment"
+                    id={reporting.id}
+                    subject={t('reports.subject.comment', {
+                        author: reporting.author.username,
+                    })}
+                />
+            )}
             <DeleteDialog
                 comment={deleting}
                 onClose={() => setDeleting(null)}
@@ -445,6 +464,7 @@ function CommentItem({
     onEdit,
     onDelete,
     onModerate,
+    onReport,
 }: {
     comment: CommentNode;
     articleId: number;
@@ -458,11 +478,15 @@ function CommentItem({
     onEdit: (open: boolean) => void;
     onDelete: () => void;
     onModerate: () => void;
+    onReport: () => void;
 }) {
     const { t, locale } = useTranslation();
     const nested = comment.depth > 1;
     const hasMenu =
-        comment.can.edit || comment.can.delete || comment.can.moderate;
+        comment.can.edit ||
+        comment.can.delete ||
+        comment.can.moderate ||
+        comment.can.report;
 
     return (
         <>
@@ -599,6 +623,19 @@ function CommentItem({
                                                     {t('comments.moderate')}
                                                 </DropdownMenuItem>
                                             )}
+                                        {comment.can.report && (
+                                            <DropdownMenuItem
+                                                onSelect={onReport}
+                                                disabled={comment.reported}
+                                            >
+                                                <Flag aria-hidden="true" />
+                                                {comment.reported
+                                                    ? t('reports.already')
+                                                    : t(
+                                                          'reports.action.comment',
+                                                      )}
+                                            </DropdownMenuItem>
+                                        )}
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             )}

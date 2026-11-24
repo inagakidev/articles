@@ -32,6 +32,8 @@ const article = (number: number): ArticleSummary => ({
     readingMinutes: 4,
 });
 
+const noReport = { id: 7, canReport: false, reported: false };
+
 describe('perfil público', () => {
     beforeEach(() => {
         Object.assign(testPage.props, {
@@ -42,7 +44,12 @@ describe('perfil público', () => {
 
     it('mostra nome, username, bio, artigos e desde quando', () => {
         render(
-            <ProfileShow profile={profile} articles={none} order="recentes" />,
+            <ProfileShow
+                profile={profile}
+                articles={none}
+                order="recentes"
+                report={noReport}
+            />,
         );
 
         expect(
@@ -67,7 +74,12 @@ describe('perfil público', () => {
             auth: { user: { name: 'Rafa Moreira', username: 'rafa-moreira' } },
         });
         render(
-            <ProfileShow profile={profile} articles={none} order="recentes" />,
+            <ProfileShow
+                profile={profile}
+                articles={none}
+                order="recentes"
+                report={noReport}
+            />,
         );
 
         expect(
@@ -91,6 +103,7 @@ describe('perfil público', () => {
                     to: 12,
                 }}
                 order="recentes"
+                report={noReport}
             />,
         );
 
@@ -111,7 +124,12 @@ describe('perfil público', () => {
 
     it('compartilha o perfil com o link dele', () => {
         render(
-            <ProfileShow profile={profile} articles={none} order="recentes" />,
+            <ProfileShow
+                profile={profile}
+                articles={none}
+                order="recentes"
+                report={noReport}
+            />,
         );
 
         fireEvent.click(

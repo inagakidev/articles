@@ -30,6 +30,12 @@ class NotificationItem
             'actor' => $data['actor'] ?? null,
             'excerpt' => $data['excerpt'] ?? null,
             'target' => $data['target'] ?? null,
+            // Perfil moderado: o que foi redefinido (RF-187)
+            'parts' => array_keys(array_filter([
+                'photo' => $data['photo'] ?? false,
+                'bio' => $data['bio'] ?? false,
+                'username' => $data['username'] ?? false,
+            ])),
             'count' => isset($data['likers']) && is_array($data['likers']) ? count($data['likers']) : null,
         ];
     }

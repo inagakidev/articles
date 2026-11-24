@@ -104,7 +104,7 @@ export default function TagsSection({
                     />
                 )
             ) : (
-                <div className="overflow-x-auto">
+                <div className="relative overflow-x-auto">
                     <table className="w-full min-w-150 text-left text-meta">
                         <thead className="text-caption font-bold text-text-secondary">
                             <tr className="border-b border-border">

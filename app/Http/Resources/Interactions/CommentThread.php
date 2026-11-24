@@ -19,14 +19,15 @@ class CommentThread
 {
     /**
      * @param  Collection<int, Comment>  $comments  Em ordem de conversa
+     * @param  list<int>  $reported  Comentários que quem lê já denunciou e estão em análise
      * @return list<array<string, mixed>>
      */
-    public function build(Collection $comments, Article $article, ?User $viewer): array
+    public function build(Collection $comments, Article $article, ?User $viewer, array $reported = []): array
     {
         $participates = $viewer?->hasVerifiedEmail() ?? false;
         $byParent = $comments->groupBy(fn (Comment $comment) => $comment->parent_id ?? 0);
 
-        $node = function (Comment $comment) use (&$node, $byParent, $article, $viewer, $participates): array {
+        $node = function (Comment $comment) use (&$node, $byParent, $article, $viewer, $participates, $reported): array {
             $own = $viewer !== null && $comment->user_id === $viewer->id;
 
             return [
@@ -52,7 +53,10 @@ class CommentThread
                     'edit' => $viewer !== null && Gate::forUser($viewer)->allows('update', $comment),
                     'delete' => $viewer !== null && Gate::forUser($viewer)->allows('delete', $comment),
                     'moderate' => $viewer !== null && Gate::forUser($viewer)->allows('moderate', $comment),
+                    // A autora do artigo também denuncia comentários nele (RF-169)
+                    'report' => $participates && ! $own,
                 ],
+                'reported' => in_array($comment->id, $reported, true),
                 'replies' => array_values($byParent->get($comment->id, collect())->map($node)->all()),
             ];
         };

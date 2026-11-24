@@ -17,54 +17,62 @@ export default function DecisionFields({
     items,
     errors,
     reasonHint,
+    withItem = true,
 }: {
     idPrefix: string;
     items: PolicyItem[];
     errors: Partial<Record<'policy_item' | 'reason', string>>;
     /** Quem vai ler a justificativa e o que acontece depois. */
     reasonHint: string;
+    /** Sem o item da Política (decisão improcedente, RF-173). */
+    withItem?: boolean;
 }) {
     const { t } = useTranslation();
     const [item, setItem] = useState('');
 
     return (
         <>
-            <FormField
-                id={`${idPrefix}-item`}
-                label={t('moderation.fields.policy_item')}
-                error={errors.policy_item}
-                hint={
-                    item ? (
-                        <Link
-                            href={content({ query: { item } })}
-                            target="_blank"
-                            className="inline-flex items-center gap-1.5 font-bold text-primary-text hover:underline"
+            {withItem && (
+                <FormField
+                    id={`${idPrefix}-item`}
+                    label={t('moderation.fields.policy_item')}
+                    error={errors.policy_item}
+                    hint={
+                        item ? (
+                            <Link
+                                href={content({ query: { item } })}
+                                target="_blank"
+                                className="inline-flex items-center gap-1.5 font-bold text-primary-text hover:underline"
+                            >
+                                <BookOpen
+                                    aria-hidden="true"
+                                    className="size-4"
+                                />
+                                {t('moderation.read_item', { item })}
+                            </Link>
+                        ) : undefined
+                    }
+                >
+                    {(field) => (
+                        <select
+                            {...field}
+                            name="policy_item"
+                            value={item}
+                            onChange={(event) => setItem(event.target.value)}
+                            className="h-11 w-full rounded-xl border border-border-strong bg-surface px-3 text-[0.9375rem] text-text-primary focus-visible:outline-offset-[-1px]"
                         >
-                            <BookOpen aria-hidden="true" className="size-4" />
-                            {t('moderation.read_item', { item })}
-                        </Link>
-                    ) : undefined
-                }
-            >
-                {(field) => (
-                    <select
-                        {...field}
-                        name="policy_item"
-                        value={item}
-                        onChange={(event) => setItem(event.target.value)}
-                        className="h-11 w-full rounded-xl border border-border-strong bg-surface px-3 text-[0.9375rem] text-text-primary focus-visible:outline-offset-[-1px]"
-                    >
-                        <option value="">
-                            {t('moderation.fields.policy_item_placeholder')}
-                        </option>
-                        {items.map((option) => (
-                            <option key={option.id} value={option.id}>
-                                {option.id} · {option.title}
+                            <option value="">
+                                {t('moderation.fields.policy_item_placeholder')}
                             </option>
-                        ))}
-                    </select>
-                )}
-            </FormField>
+                            {items.map((option) => (
+                                <option key={option.id} value={option.id}>
+                                    {option.id} · {option.title}
+                                </option>
+                            ))}
+                        </select>
+                    )}
+                </FormField>
+            )}
             <FormField
                 id={`${idPrefix}-reason`}
                 label={t('moderation.fields.reason')}

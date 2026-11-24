@@ -4,7 +4,7 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-import { audit, dashboard, queue, taxonomy } from '@/routes/admin';
+import { audit, dashboard, queue, reports, taxonomy } from '@/routes/admin';
 
 type Item = {
     label: TranslationKey;
@@ -14,17 +14,22 @@ type Item = {
 };
 
 /**
- * Seções do painel. Cada uma entra aqui com a fatia dela (D75): Denúncias,
- * Usuários e Contestações chegam com as fatias 20 e 21.
+ * Seções do painel. Cada uma entra aqui com a fatia dela (D75): Usuários e
+ * Contestações chegam com a fatia 21.
  */
 function useItems(): Item[] {
     const { adminCounts } = usePage<{
-        adminCounts?: { queue: number } | null;
+        adminCounts?: { queue: number; reports: number } | null;
     }>().props;
 
     return [
         { label: 'admin.nav.dashboard', href: dashboard() },
         { label: 'admin.nav.queue', href: queue(), count: adminCounts?.queue },
+        {
+            label: 'admin.nav.reports',
+            href: reports(),
+            count: adminCounts?.reports,
+        },
         { label: 'admin.nav.taxonomy', href: taxonomy() },
         { label: 'admin.nav.audit', href: audit() },
     ];

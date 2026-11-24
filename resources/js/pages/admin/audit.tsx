@@ -5,6 +5,7 @@ import type { FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/ui/empty-state';
 import Pagination from '@/components/ui/pagination';
+import TableRegion from '@/components/ui/table-region';
 import { shortDate, time } from '@/lib/dates';
 import { useTranslation } from '@/lib/i18n';
 import { audit } from '@/routes/admin';
@@ -164,12 +165,7 @@ export default function Audit({ records, filters, actions, periods }: Props) {
                 />
             ) : (
                 <>
-                    <div
-                        tabIndex={0}
-                        role="region"
-                        aria-label={t('audit.caption')}
-                        className="overflow-x-auto rounded-card border border-border bg-surface"
-                    >
+                    <TableRegion label={t('audit.caption')}>
                         <table className="w-full min-w-200 text-left text-meta">
                             <caption className="sr-only">
                                 {t('audit.caption')}
@@ -228,7 +224,7 @@ export default function Audit({ records, filters, actions, periods }: Props) {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    </TableRegion>
                     <p
                         role="status"
                         className="text-center text-meta text-text-secondary"

@@ -3,6 +3,7 @@ import {
     CircleCheck,
     Clock,
     FileText,
+    Flag,
     Hourglass,
     Info,
     Users,
@@ -24,7 +25,12 @@ type LateVersion = {
 };
 
 type Props = {
-    metrics: { users: number; published: number; pending: number };
+    metrics: {
+        users: number;
+        published: number;
+        pending: number;
+        reports: number;
+    };
     /** Avisos para a administradora; denúncias e contestações chegam com as fatias 20 e 21. */
     attention: LateVersion[];
     lateHours: number;
@@ -95,6 +101,12 @@ export default function Dashboard({
                         title={t('admin.dashboard.pending.title')}
                         value={metrics.pending}
                         hint={t('admin.dashboard.pending.hint')}
+                    />
+                    <MetricCard
+                        Icon={Flag}
+                        title={t('admin.dashboard.reports.title')}
+                        value={metrics.reports}
+                        hint={t('admin.dashboard.reports.hint')}
                     />
                 </dl>
             </section>
