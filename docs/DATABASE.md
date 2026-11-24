@@ -33,6 +33,8 @@ A conta (D72). Além das colunas do Laravel e do Fortify (`name`, `email`, `emai
 | `avatar_path`              | string, nulo       | Caminho da foto no disco de mídia (`avatars/<uuid>.webp`, D77)                   |
 | `pending_email`            | string, nulo       | E-mail novo esperando a confirmação (RF-030)                                     |
 | `pending_email_expires_at` | timestamp, nulo    | Fim do prazo de 24 h da troca                                                    |
+| `email_suppressed_at`      | timestamp, nulo    | O endereço voltou ou reclamou: não recebe mais e-mails até trocar (p6-17, D71)   |
+| `email_suppressed_reason`  | string(20), nulo   | `bounce` ou `complaint`                                                          |
 
 **Retenção:** conta que não confirma o e-mail em 7 dias é apagada no 8º dia (`User::prunable()`, RF-023), e username e e-mail ficam livres na hora. Nenhuma data de nascimento é guardada (RF-012).
 
@@ -200,3 +202,9 @@ Curtidas (RF-151, RF-152, D88). Chave primária (`article_id`, `user_id`) e (`co
 ### `favorites`
 
 Artigos salvos nos favoritos (RF-159 a RF-162, D89). Chave primária (`article_id`, `user_id`): o favorito duplicado é impedido pelo banco. Só `created_at`, que ordena "Salvos recentemente" e que o "Desfazer" devolve. Excluir o artigo de vez ou a conta apaga o favorito (`cascadeOnDelete`); um artigo na lixeira ou despublicado continua na lista como indisponível. Índice em (`user_id`, `created_at`) para a lista de cada pessoa.
+
+### `notifications`
+
+Notificações dentro do site (RF-179 a RF-192, D90), na tabela das notificações do Laravel: `id` (uuid), `type`, `notifiable` (a conta), `data` (JSON), `read_at` e os timestamps. O `type` diz o que aconteceu (`article.approved`, `article.rejected`, `article.unpublished`, `article.deleted`, `comment.posted`, `comment.replied`, `like.received`); `data` guarda só o que o texto precisa (título, item da Política, nome de quem comentou, trecho e o link), nunca a justificativa nem quem curtiu. As curtidas de um item viram uma linha só enquanto não lida, com os ids de quem curtiu apenas para não contar a mesma pessoa duas vezes.
+
+**Retenção:** apagadas pelo `model:prune` diário 90 dias depois da última novidade (`Notification::prunable()`, RF-191). Índice em `updated_at` para isso.

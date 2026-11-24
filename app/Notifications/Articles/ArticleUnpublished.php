@@ -15,4 +15,14 @@ class ArticleUnpublished extends ModerationNotification
             ->line(__('mail.moderation.rejected.next'))
             ->action(__('mail.moderation.rejected.action'), route('articles.mine'));
     }
+
+    public function databaseType(object $notifiable): string
+    {
+        return 'article.unpublished';
+    }
+
+    protected function target(): string
+    {
+        return route('articles.mine', absolute: false);
+    }
 }

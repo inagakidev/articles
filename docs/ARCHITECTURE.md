@@ -76,22 +76,22 @@ app/
 
 Cada ação dos perfis de `REQUIREMENTS.md` §3 tem uma regra no servidor. As linhas marcadas "fatia N" ganham a Policy junto com a funcionalidade; o frontend só esconde o que a regra já recusa.
 
-| Ação (perfil)                                                              | Regra no servidor                                                                         | Onde                             |
-| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------- |
-| Ler artigos, comentários e perfis; buscar e filtrar (todos)                | Sem login; o que aparece passa pela regra única de visibilidade (§5.3)                    | Query, fatias 12 a 14            |
-| Entrar, ver e atualizar a própria conta (não verificado em diante)         | `auth`; só a própria conta (`$request->user()`)                                           | Fortify e Configurações          |
-| Criar e salvar rascunho (verificado)                                       | `verified` + `ArticlePolicy::create` (conta sem suspensão)                                | fatia 8                          |
-| Editar, enviar, retirar da fila, excluir e restaurar o próprio artigo      | `ArticlePolicy` (autoria e estado da versão)                                              | fatias 8 e 10                    |
-| Comentar, responder, editar e excluir o próprio comentário                 | `verified` + `CommentPolicy`                                                              | `routes/interactions.php`, feito |
-| Curtir artigos e comentários de outras pessoas                             | `verified` + `LikeContent` (não é o próprio; só artigo visível)                           | `routes/interactions.php`, feito |
-| Favoritar                                                                  | `verified` + `FavoriteArticle` (só artigo visível); a lista é sempre a da pessoa logada   | `routes/interactions.php`, feito |
-| Denunciar artigo, comentário ou perfil                                     | `verified` + `ReportPolicy` (não é o próprio; uma aberta por item)                        | fatia 20                         |
-| Ver as próprias notificações                                               | `auth`; só as da pessoa                                                                   | fatia 19                         |
-| Pedir a exclusão da conta                                                  | `auth` + sem suspensão ativa                                                              | fatia 22                         |
-| Ativar o 2FA (administradora); desligar (ninguém no MVP)                   | `EnableTwoFactor` e `DisableTwoFactor` no lugar das ações do Fortify (RF-017, RF-019)     | `Domain/Accounts/Actions`, feito |
-| Gerenciar categorias e tags (administradora)                               | Rotas do painel + `CategoryPolicy` e `TagPolicy` (RF-124, RF-129)                         | `routes/admin.php`, feito        |
-| Abrir o painel da administração                                            | `verified` + Gate `access-admin` + 2FA confirmado (`EnsureTwoFactorConfirmed`)            | `routes/admin.php`, feito        |
-| Aprovar, rejeitar, despublicar, penalizar, julgar denúncias e contestações | Rotas do painel + Policies de cada modelo, com as restrições da administradora (P05, R08) | fatias 16, 20 e 21               |
+| Ação (perfil)                                                              | Regra no servidor                                                                         | Onde                              |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------- |
+| Ler artigos, comentários e perfis; buscar e filtrar (todos)                | Sem login; o que aparece passa pela regra única de visibilidade (§5.3)                    | Query, fatias 12 a 14             |
+| Entrar, ver e atualizar a própria conta (não verificado em diante)         | `auth`; só a própria conta (`$request->user()`)                                           | Fortify e Configurações           |
+| Criar e salvar rascunho (verificado)                                       | `verified` + `ArticlePolicy::create` (conta sem suspensão)                                | fatia 8                           |
+| Editar, enviar, retirar da fila, excluir e restaurar o próprio artigo      | `ArticlePolicy` (autoria e estado da versão)                                              | fatias 8 e 10                     |
+| Comentar, responder, editar e excluir o próprio comentário                 | `verified` + `CommentPolicy`                                                              | `routes/interactions.php`, feito  |
+| Curtir artigos e comentários de outras pessoas                             | `verified` + `LikeContent` (não é o próprio; só artigo visível)                           | `routes/interactions.php`, feito  |
+| Favoritar                                                                  | `verified` + `FavoriteArticle` (só artigo visível); a lista é sempre a da pessoa logada   | `routes/interactions.php`, feito  |
+| Denunciar artigo, comentário ou perfil                                     | `verified` + `ReportPolicy` (não é o próprio; uma aberta por item)                        | fatia 20                          |
+| Ver, marcar e excluir as próprias notificações                             | `auth`; só as da pessoa (`UserNotifications::find`)                                       | `routes/notifications.php`, feito |
+| Pedir a exclusão da conta                                                  | `auth` + sem suspensão ativa                                                              | fatia 22                          |
+| Ativar o 2FA (administradora); desligar (ninguém no MVP)                   | `EnableTwoFactor` e `DisableTwoFactor` no lugar das ações do Fortify (RF-017, RF-019)     | `Domain/Accounts/Actions`, feito  |
+| Gerenciar categorias e tags (administradora)                               | Rotas do painel + `CategoryPolicy` e `TagPolicy` (RF-124, RF-129)                         | `routes/admin.php`, feito         |
+| Abrir o painel da administração                                            | `verified` + Gate `access-admin` + 2FA confirmado (`EnsureTwoFactorConfirmed`)            | `routes/admin.php`, feito         |
+| Aprovar, rejeitar, despublicar, penalizar, julgar denúncias e contestações | Rotas do painel + Policies de cada modelo, com as restrições da administradora (P05, R08) | fatias 16, 20 e 21                |
 
 ### 2.4 Configuração
 

@@ -3,6 +3,7 @@
 namespace App\Domain\Interactions\Actions;
 
 use App\Domain\Articles\Queries\PublicArticles;
+use App\Domain\Interactions\Events\ContentLiked;
 use App\Domain\Interactions\Exceptions\InteractionRefused;
 use App\Models\Article;
 use App\Models\ArticleLike;
@@ -29,9 +30,16 @@ class LikeContent
             throw InteractionRefused::ownContent();
         }
 
-        $like
-            ? ArticleLike::query()->insertOrIgnore(['article_id' => $article->id, 'user_id' => $user->id, 'created_at' => now()])
-            : ArticleLike::query()->where(['article_id' => $article->id, 'user_id' => $user->id])->delete();
+        if (! $like) {
+            ArticleLike::query()->where(['article_id' => $article->id, 'user_id' => $user->id])->delete();
+
+            return;
+        }
+
+        // Só uma curtida nova avisa a autora (RF-184)
+        if (ArticleLike::query()->insertOrIgnore(['article_id' => $article->id, 'user_id' => $user->id, 'created_at' => now()]) > 0) {
+            ContentLiked::dispatch($user, $article);
+        }
     }
 
     /** @throws InteractionRefused */
@@ -43,9 +51,15 @@ class LikeContent
             throw InteractionRefused::ownContent();
         }
 
-        $like
-            ? CommentLike::query()->insertOrIgnore(['comment_id' => $comment->id, 'user_id' => $user->id, 'created_at' => now()])
-            : CommentLike::query()->where(['comment_id' => $comment->id, 'user_id' => $user->id])->delete();
+        if (! $like) {
+            CommentLike::query()->where(['comment_id' => $comment->id, 'user_id' => $user->id])->delete();
+
+            return;
+        }
+
+        if (CommentLike::query()->insertOrIgnore(['comment_id' => $comment->id, 'user_id' => $user->id, 'created_at' => now()]) > 0) {
+            ContentLiked::dispatch($user, $comment);
+        }
     }
 
     private function ensureVisible(int $articleId): void

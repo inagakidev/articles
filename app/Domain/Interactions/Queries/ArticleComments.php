@@ -55,9 +55,14 @@ class ArticleComments
         ];
     }
 
-    /** Em que página da conversa está um comentário de primeiro nível. */
-    public function pageOf(Comment $root): int
+    /** Em que página da conversa está um comentário (pelo de primeiro nível dele). */
+    public function pageOf(Comment $comment): int
     {
+        $root = $comment;
+        while ($root->parent_id !== null) {
+            $root = Comment::query()->findOrFail($root->parent_id);
+        }
+
         $before = Comment::query()
             ->where('article_id', $root->article_id)
             ->whereNull('parent_id')

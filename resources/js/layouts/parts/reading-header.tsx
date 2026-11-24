@@ -3,6 +3,7 @@ import { ArrowLeft, ListTree, Search } from 'lucide-react';
 import { useState } from 'react';
 import ArticleToc from '@/components/articles/article-toc';
 import AccountMenu from '@/layouts/parts/account-menu';
+import NotificationBell from '@/components/notifications/notification-bell';
 import { LanguageToggle } from '@/components/preferences/language-switch';
 import SiteLogo from '@/layouts/parts/site-logo';
 import { ThemeToggle } from '@/components/preferences/theme-toggle';
@@ -65,6 +66,7 @@ export default function ReadingHeader() {
                     </Button>
                     <ThemeToggle className="max-sm:hidden" />
                     <LanguageToggle className="max-sm:hidden" />
+                    <NotificationBell />
                     {auth.user ? (
                         <AccountMenu />
                     ) : (

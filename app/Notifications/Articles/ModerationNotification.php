@@ -8,9 +8,9 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
- * Base dos avisos da moderação para a autora (RF-327, p6-05): por e-mail,
- * pela fila, só depois que a decisão está gravada. O aviso dentro do site
- * entra com as notificações (fatia 19).
+ * Base dos avisos da moderação para a autora (RF-179 a RF-182, RF-327):
+ * por e-mail e dentro do site (D90), pela fila, só depois que a decisão
+ * está gravada.
  */
 abstract class ModerationNotification extends Notification implements ShouldQueue
 {
@@ -32,7 +32,28 @@ abstract class ModerationNotification extends Notification implements ShouldQueu
     /** @return list<string> */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
+    }
+
+    /** O tipo da notificação no site (`article.approved`…). */
+    abstract public function databaseType(object $notifiable): string;
+
+    /** Para onde o aviso no site leva. */
+    abstract protected function target(): string;
+
+    /**
+     * O aviso no site: só o que o texto precisa, montado no idioma de quem
+     * lê. A justificativa fica em Meus artigos, não aqui.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'title' => $this->title,
+            'policyItem' => $this->policyItem,
+            'url' => $this->target(),
+        ];
     }
 
     /** A justificativa e o item da Política, quando a decisão os tem. */

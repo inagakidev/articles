@@ -36,6 +36,9 @@ class ConfirmEmailChange
                 'email_verified_at' => now(),
                 'pending_email' => null,
                 'pending_email_expires_at' => null,
+                // Endereço novo volta a receber e-mails (p6-17)
+                'email_suppressed_at' => null,
+                'email_suppressed_reason' => null,
             ])->save();
 
             SecurityEvent::create([

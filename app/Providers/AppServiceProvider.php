@@ -3,7 +3,14 @@
 namespace App\Providers;
 
 use App\Domain\Accounts\Listeners\RecordLoginLockout;
+use App\Domain\Accounts\Listeners\SuppressEmailAddress;
+use App\Domain\Interactions\Events\CommentPosted;
+use App\Domain\Interactions\Events\ContentLiked;
+use App\Domain\Notifications\Listeners\NotifyCommentPosted;
+use App\Domain\Notifications\Listeners\NotifyContentLiked;
 use App\Models\User;
+use App\Support\Mail\Events\EmailBounced;
+use App\Support\Mail\Events\EmailComplained;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\DevCommands;
@@ -52,6 +59,13 @@ class AppServiceProvider extends ServiceProvider
     protected function configureEvents(): void
     {
         Event::listen(Lockout::class, RecordLoginLockout::class);
+
+        // Notificações reagem a Interactions sem que ele saiba delas (D90)
+        Event::listen(CommentPosted::class, NotifyCommentPosted::class);
+        Event::listen(ContentLiked::class, NotifyContentLiked::class);
+
+        // Avisos do provedor de e-mail, já traduzidos para eventos próprios (D71)
+        Event::listen([EmailBounced::class, EmailComplained::class], SuppressEmailAddress::class);
     }
 
     /**

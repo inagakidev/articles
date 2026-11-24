@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -30,6 +31,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string|null $avatar_path
  * @property-read string|null $avatar
  * @property string|null $pending_email
+ * @property Carbon|null $email_suppressed_at
  * @property Carbon|null $pending_email_expires_at
  * @property Carbon|null $email_verified_at
  * @property string $password
@@ -115,6 +117,25 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     }
 
     /**
+     * As notificações do site, pelo modelo com a retenção de 90 dias (D90).
+     *
+     * @return MorphMany<Notification, $this>
+     */
+    public function notifications(): MorphMany
+    {
+        return $this->morphMany(Notification::class, 'notifiable')->latest('updated_at');
+    }
+
+    /**
+     * Endereço que voltou ou reclamou não recebe mais e-mails (p6-17): sem
+     * endereço, o Laravel não envia pelo canal de e-mail.
+     */
+    public function routeNotificationForMail(): ?string
+    {
+        return $this->email_suppressed_at === null ? $this->email : null;
+    }
+
+    /**
      * Os e-mails de conta vão pela fila, no idioma em que a pessoa está
      * usando o site quando os pede.
      */
@@ -141,6 +162,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             'two_factor_confirmed_at' => 'datetime',
             'is_admin' => 'boolean',
             'pending_email_expires_at' => 'datetime',
+            'email_suppressed_at' => 'datetime',
         ];
     }
 }

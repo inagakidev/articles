@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { Menu, Newspaper, PenLine, Search } from 'lucide-react';
 import { useState } from 'react';
 import AccountMenu from '@/layouts/parts/account-menu';
+import NotificationBell from '@/components/notifications/notification-bell';
 import SearchForm from '@/components/search/search-form';
 import { Button } from '@/components/ui/button';
 import { LanguageToggle } from '@/components/preferences/language-switch';
@@ -105,6 +106,7 @@ export default function SiteHeader() {
                             {t('site.nav.write')}
                         </Link>
                     </Button>
+                    {auth.user && <NotificationBell />}
                     {auth.user && <AccountMenu />}
                     <Button
                         type="button"
