@@ -1,11 +1,14 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { CalendarDays, FileText, PenLine } from 'lucide-react';
 import ArticleCard from '@/components/articles/article-card';
+import ShareButton from '@/components/share/share-button';
 import { Button } from '@/components/ui/button';
 import Mascot from '@/components/ui/mascot';
+import Pagination from '@/components/ui/pagination';
 import UserAvatar from '@/components/ui/user-avatar';
 import { useTranslation } from '@/lib/i18n';
 import { edit } from '@/routes/profile';
+import { show } from '@/routes/profiles';
 import type { ArticleSummary } from '@/types';
 
 type Props = {
@@ -17,17 +20,34 @@ type Props = {
         /** AAAA-MM-DD */
         memberSince: string;
     };
-    /** Chegam com a leitura pública (fatia 14). */
-    articles: ArticleSummary[];
-    articleCount: number;
+    /** Os artigos visíveis da pessoa, por página (p5-06). */
+    articles: {
+        data: ArticleSummary[];
+        currentPage: number;
+        lastPage: number;
+        total: number;
+        from: number | null;
+        to: number | null;
+    };
+    order: 'recentes' | 'antigos';
 };
 
-/** Perfil público em /@username (prancha "Perfil do autor", RF-025, D77). */
-export default function ProfileShow({
-    profile,
-    articles,
-    articleCount,
-}: Props) {
+/** Endereço do perfil com a ordem e a página, sem o que for padrão. */
+function profileUrl(username: string, order: string, page = 1): string {
+    const query: Record<string, string | number> = {};
+
+    if (order === 'antigos') query.ordem = order;
+    if (page > 1) query.page = page;
+
+    return show({ username }, { query }).url;
+}
+
+/**
+ * Perfil público em /@username (prancha "Perfil do autor", RF-025, D77):
+ * quem é, os artigos publicados e "Compartilhar perfil" (RF-163).
+ */
+export default function ProfileShow({ profile, articles, order }: Props) {
+    const articleCount = articles.total;
     const { auth } = usePage().props;
     const { t, locale } = useTranslation();
     const own = auth.user?.username === profile.username;
@@ -86,19 +106,29 @@ export default function ProfileShow({
                                 </span>
                             </div>
                         </div>
-                        {own && (
-                            <Button
-                                asChild
-                                variant="outline"
+                        <div className="flex gap-2 self-start">
+                            <ShareButton
+                                label={t('share.profile_action')}
+                                title={t('share.profile_title')}
+                                linkLabel={t('share.profile_link')}
+                                text={profile.name}
+                                path={show({ username: profile.username }).url}
                                 size="sm"
-                                className="self-start"
-                            >
-                                <Link href={edit()}>
-                                    <PenLine aria-hidden="true" />
-                                    {t('profile.edit')}
-                                </Link>
-                            </Button>
-                        )}
+                            />
+                            {own && (
+                                <Button
+                                    asChild
+                                    variant="outline"
+                                    size="sm"
+                                    className="self-start"
+                                >
+                                    <Link href={edit()}>
+                                        <PenLine aria-hidden="true" />
+                                        {t('profile.edit')}
+                                    </Link>
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </section>
 
@@ -106,21 +136,76 @@ export default function ProfileShow({
                     aria-labelledby="published-title"
                     className="flex flex-col gap-5"
                 >
-                    <h2
-                        id="published-title"
-                        className="font-display text-[1.625rem] font-extrabold"
-                    >
-                        {t('profile.articles.title')}
-                    </h2>
-                    {articles.length > 0 ? (
-                        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                            {articles.map((article) => (
-                                <ArticleCard
-                                    key={article.url}
-                                    article={article}
-                                />
-                            ))}
-                        </div>
+                    <div className="flex flex-wrap items-end justify-between gap-4">
+                        <h2
+                            id="published-title"
+                            className="font-display text-[1.625rem] font-extrabold"
+                        >
+                            {t('profile.articles.title')}
+                        </h2>
+                        {articleCount > 1 && (
+                            <div className="flex flex-col gap-1.5">
+                                <label
+                                    htmlFor="perfil-ordem"
+                                    className="text-caption font-bold"
+                                >
+                                    {t('search.sort.label')}
+                                </label>
+                                <select
+                                    id="perfil-ordem"
+                                    value={order}
+                                    onChange={(event) =>
+                                        router.get(
+                                            profileUrl(
+                                                profile.username,
+                                                event.target.value,
+                                            ),
+                                            {},
+                                            { preserveScroll: true },
+                                        )
+                                    }
+                                    className="h-11 min-w-50 rounded-xl border border-border-strong bg-surface px-3 text-[0.9375rem] focus-visible:outline-offset-[-1px]"
+                                >
+                                    <option value="recentes">
+                                        {t('search.sort.recent')}
+                                    </option>
+                                    <option value="antigos">
+                                        {t('search.sort.oldest')}
+                                    </option>
+                                </select>
+                            </div>
+                        )}
+                    </div>
+                    {articleCount > 0 ? (
+                        <>
+                            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))] gap-6">
+                                {articles.data.map((article) => (
+                                    <ArticleCard
+                                        key={article.url}
+                                        article={article}
+                                    />
+                                ))}
+                            </div>
+                            {articles.lastPage > 1 && (
+                                <p
+                                    role="status"
+                                    className="-mb-2 text-center text-meta text-text-secondary"
+                                >
+                                    {t('listing.showing', {
+                                        first: articles.from ?? 0,
+                                        last: articles.to ?? 0,
+                                        count: articles.total,
+                                    })}
+                                </p>
+                            )}
+                            <Pagination
+                                current={articles.currentPage}
+                                last={articles.lastPage}
+                                href={(page) =>
+                                    profileUrl(profile.username, order, page)
+                                }
+                            />
+                        </>
                     ) : (
                         <div className="flex flex-col items-center gap-3 rounded-card border border-dashed border-border bg-surface px-6 py-10 text-center">
                             <Mascot

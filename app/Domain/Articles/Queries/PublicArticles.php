@@ -6,6 +6,7 @@ use App\Domain\Articles\Enums\ArticleState;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,8 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * A regra única de visibilidade pública (REQUIREMENTS §5.3, p5-01):
  * publicado, fora da lixeira, com versão em vigor e endereço. Listagem,
- * busca, leitura, apresentação e imagens partem de `query()`; o perfil
- * também vai partir. A situação do autor (suspenso ou banido, RF-353) entra
+ * busca, leitura, apresentação, perfil e imagens partem de `query()`. A situação do autor (suspenso ou banido, RF-353) entra
  * aqui com as penalidades (fatia 21).
  */
 class PublicArticles
@@ -37,6 +37,26 @@ class PublicArticles
                 ->whereHas('currentVersion', fn (Builder $version) => $version->where('category_id', $category->id)))
             ->limit($limit)
             ->get();
+    }
+
+    /** Artigos por página no perfil (RF-025). */
+    public const PER_AUTHOR_PAGE = 12;
+
+    /**
+     * Os artigos visíveis de quem escreveu, para o perfil (p5-06): do mais
+     * novo para o mais antigo, ou o contrário.
+     *
+     * @return LengthAwarePaginator<int, Article>
+     */
+    public function byAuthor(User $author, bool $oldestFirst = false): LengthAwarePaginator
+    {
+        $query = $this->withSummary($this->query()->where('user_id', $author->id));
+
+        $oldestFirst
+            ? $query->orderBy('first_published_at')->orderBy('id')
+            : $query->orderByDesc('first_published_at')->orderByDesc('id');
+
+        return $query->paginate(self::PER_AUTHOR_PAGE)->withQueryString();
     }
 
     public function findBySlug(string $slug): ?Article

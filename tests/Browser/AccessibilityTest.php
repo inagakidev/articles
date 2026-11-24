@@ -296,3 +296,23 @@ it('não tem problemas de acessibilidade nos filtros da busca', function () {
         ->assertSee('Publicado em')
         ->assertNoAccessibilityIssues();
 });
+
+it('não tem problemas de acessibilidade no compartilhar', function () {
+    $user = User::factory()->create(['username' => 'rafa-moreira']);
+    $article = Article::factory()->for($user, 'author')->published()->create();
+
+    visit('/artigos/'.$article->slug)
+        ->withLocale('pt-BR')
+        ->press('Compartilhar')
+        ->wait(ENTRANCE_SECONDS)
+        ->assertSee('Compartilhar artigo')
+        ->assertNoAccessibilityIssues();
+
+    visit('/@rafa-moreira')
+        ->withLocale('pt-BR')
+        ->on()->mobile()
+        ->press('Compartilhar perfil')
+        ->wait(ENTRANCE_SECONDS)
+        ->assertSee('Link do perfil')
+        ->assertNoAccessibilityIssues();
+});
