@@ -77,6 +77,17 @@ As imagens dos artigos têm até 10 MB, e o PHP costuma vir com limite de envio 
 
     O painel fica em http://localhost:8000/admin. O 2FA está desligado por enquanto (D84): o painel abre só com a senha. Para religar, mude `admin_two_factor` para `true` em `config/auth.php`; aí o primeiro acesso pede a ativação e mostra os códigos de recuperação, e `php artisan admin:reset-2fa` é o último recurso se ela perder o aparelho e os códigos.
 
+## Prévia em outros aparelhos
+
+Para abrir o projeto no celular ou em outro computador, um túnel da Cloudflare expõe a aplicação local num endereço https temporário, sem conta:
+
+1. Pare o `composer dev` (o Vite de desenvolvimento não passa pelo túnel) e compile o frontend: `npm run build`.
+2. No `.env`, use `APP_DEBUG=false` (quem tiver o link veria os detalhes dos erros) e `TRUSTED_PROXIES=127.0.0.1,::1`.
+3. Suba a aplicação e a fila: `php artisan serve` e `php artisan queue:listen`.
+4. Abra o túnel com o [cloudflared](https://github.com/cloudflare/cloudflared/releases): `cloudflared tunnel --url http://127.0.0.1:8000`. O endereço `https://….trycloudflare.com` aparece no terminal e muda a cada vez.
+
+O link funciona enquanto o computador e o túnel estiverem ligados. Contas novas não conseguem confirmar o e-mail na prévia: os e-mails continuam no Mailpit.
+
 ## Testes e verificações
 
 | Comando            | O que faz                                                                                           |
