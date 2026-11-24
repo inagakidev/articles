@@ -1,4 +1,5 @@
 import type { Locale } from '@/lib/i18n';
+import type { SharedNotifications } from '@/components/notifications/types';
 import type { Auth } from '@/types/auth';
 import type { FlashToast } from '@/types/ui';
 
@@ -14,6 +15,8 @@ declare module '@inertiajs/core' {
             name: string;
             locale: Locale;
             auth: Auth;
+            /** O sino: só para quem está logada (D90). */
+            notifications?: SharedNotifications | null;
             [key: string]: unknown;
         };
         flashDataType: {

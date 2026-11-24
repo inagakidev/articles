@@ -3,6 +3,7 @@
 namespace App\Domain\Interactions\Actions;
 
 use App\Domain\Articles\Queries\PublicArticles;
+use App\Domain\Interactions\Events\CommentPosted;
 use App\Domain\Interactions\Exceptions\InteractionRefused;
 use App\Domain\Interactions\Rules\CommentRules;
 use App\Models\Article;
@@ -43,13 +44,18 @@ class PostComment
                 }
             }
 
-            return Comment::query()->create([
+            $comment = Comment::query()->create([
                 'article_id' => $article->id,
                 'user_id' => $user->id,
                 'parent_id' => $parent?->id,
                 'depth' => $parent === null ? 1 : $parent->depth + 1,
                 'body' => $body,
             ]);
+
+            // Avisa quem escreveu o artigo ou o comentário respondido (RF-183, RF-185)
+            CommentPosted::dispatch($comment);
+
+            return $comment;
         });
     }
 }

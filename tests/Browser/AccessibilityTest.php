@@ -12,6 +12,7 @@ use App\Models\CommentLike;
 use App\Models\Favorite;
 use App\Models\Tag;
 use App\Models\User;
+use App\Notifications\Articles\VersionRejected;
 use Illuminate\Support\Facades\Storage;
 
 /*
@@ -419,4 +420,37 @@ it('não tem problemas de acessibilidade nos favoritos', function (string $mode)
     $page->wait(ENTRANCE_SECONDS)
         ->assertSee($mode === 'vazio' ? 'Nada salvo ainda' : 'Este artigo não está mais disponível')
         ->assertNoAccessibilityIssues();
+})->with(['claro', 'escuro', 'celular', 'vazio']);
+
+it('não tem problemas de acessibilidade nas notificações', function (string $mode) {
+    $author = User::factory()->create();
+    $this->actingAs($author);
+
+    if ($mode !== 'vazio') {
+        $article = Article::factory()->for($author, 'author')->published()->create();
+        $author->notify(new VersionRejected('Zustand ou Context', 'Texto copiado.', '4.2', false));
+        $author->notifications()->update(['read_at' => now(), 'updated_at' => now()->subDays(3)]);
+        $this->actingAs(User::factory()->create(['name' => 'Caio Lima']))
+            ->post(route('comments.store', $article), ['body' => 'O foco volta certinho para o botão?']);
+        $this->actingAs(User::factory()->create())->post(route('likes.article.store', $article));
+        $this->actingAs($author);
+    }
+
+    $page = visit('/notificacoes')->withLocale('pt-BR');
+    $page = match ($mode) {
+        'escuro' => $page->inDarkMode(),
+        'celular' => $page->on()->mobile(),
+        default => $page,
+    };
+
+    $page->wait(ENTRANCE_SECONDS)
+        ->assertSee($mode === 'vazio' ? 'Tudo tranquilo por aqui' : 'Caio Lima comentou')
+        ->assertNoAccessibilityIssues();
+
+    if ($mode === 'claro') {
+        $page->click('button[aria-label^="Notificações"]')
+            ->wait(0.5)
+            ->assertSee('Ver todas as notificações')
+            ->assertNoAccessibilityIssues();
+    }
 })->with(['claro', 'escuro', 'celular', 'vazio']);

@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { LanguageToggle } from '@/components/preferences/language-switch';
 import AccountMenu from '@/layouts/parts/account-menu';
+import NotificationBell from '@/components/notifications/notification-bell';
 import SiteLogo from '@/layouts/parts/site-logo';
 import { ThemeToggle } from '@/components/preferences/theme-toggle';
 import { Button } from '@/components/ui/button';
@@ -70,6 +71,7 @@ export default function LandingHeader() {
                                     {t('site.nav.write')}
                                 </Link>
                             </Button>
+                            <NotificationBell />
                             <AccountMenu />
                         </>
                     ) : (

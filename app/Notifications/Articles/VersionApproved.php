@@ -19,4 +19,20 @@ class VersionApproved extends ModerationNotification
             ->line(__($this->edit ? 'mail.moderation.approved_edit.intro' : 'mail.moderation.approved.intro', ['title' => $this->title]))
             ->action(__('mail.moderation.approved.action'), $this->url);
     }
+
+    public function databaseType(object $notifiable): string
+    {
+        return 'article.approved';
+    }
+
+    protected function target(): string
+    {
+        return parse_url($this->url, PHP_URL_PATH) ?: $this->url;
+    }
+
+    /** @return array<string, mixed> */
+    public function toArray(object $notifiable): array
+    {
+        return [...parent::toArray($notifiable), 'edit' => $this->edit];
+    }
 }

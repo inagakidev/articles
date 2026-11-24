@@ -30,4 +30,20 @@ class VersionRejected extends ModerationNotification
             ->line(__('mail.moderation.rejected.next'))
             ->action(__('mail.moderation.rejected.action'), route('articles.mine'));
     }
+
+    public function databaseType(object $notifiable): string
+    {
+        return 'article.rejected';
+    }
+
+    protected function target(): string
+    {
+        return route('articles.mine', absolute: false);
+    }
+
+    /** @return array<string, mixed> */
+    public function toArray(object $notifiable): array
+    {
+        return [...parent::toArray($notifiable), 'edit' => $this->edit];
+    }
 }

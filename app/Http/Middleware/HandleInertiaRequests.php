@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Domain\Moderation\Queries\ApprovalQueue;
+use App\Domain\Notifications\Queries\UserNotifications;
+use App\Http\Resources\Notifications\NotificationItem;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -44,6 +46,11 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 // O painel mostra "2FA ativo" só com o 2FA ligado (D84)
                 'adminTwoFactor' => (bool) config('auth.admin_two_factor'),
+            ],
+            // O sino: não lidas e as últimas, para quem está logada (RF-188)
+            'notifications' => fn () => $request->user() === null ? null : [
+                'unread' => app(UserNotifications::class)->unreadCount($request->user()),
+                'latest' => app(UserNotifications::class)->latest($request->user())->map(NotificationItem::from(...))->all(),
             ],
             // A contagem da fila na lateral do painel, só para a administradora
             'adminCounts' => fn () => $request->user()?->is_admin

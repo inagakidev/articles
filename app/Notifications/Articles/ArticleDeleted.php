@@ -14,4 +14,14 @@ class ArticleDeleted extends ModerationNotification
             ->line(__('mail.moderation.deleted.intro', ['title' => $this->title])))
             ->action(__('mail.moderation.policy_action'), $this->policyUrl());
     }
+
+    public function databaseType(object $notifiable): string
+    {
+        return 'article.deleted';
+    }
+
+    protected function target(): string
+    {
+        return route('policies.content', ['item' => $this->policyItem], absolute: false);
+    }
 }
