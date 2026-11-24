@@ -14,6 +14,8 @@ export type User = {
 
 export type Auth = {
     user: User;
+    /** O 2FA da administradora está ligado (D84). */
+    adminTwoFactor?: boolean;
 };
 
 export type TwoFactorSetupData = {

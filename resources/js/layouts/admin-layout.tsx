@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Globe, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
 import AdminNav from '@/components/admin/admin-nav';
@@ -10,11 +10,12 @@ import { home } from '@/routes';
 
 /**
  * Moldura do painel da administração (prancha "Admin · Painel"): cabeçalho
- * com o selo do 2FA e o menu da conta, seções à esquerda e o conteúdo.
+ * com o selo do 2FA (quando ligado, D84) e o menu da conta, seções à esquerda e o conteúdo.
  * Sem mascote (DESIGN §5.3).
  */
 export default function AdminLayout({ children }: { children: ReactNode }) {
     const { t } = useTranslation();
+    const { auth } = usePage().props;
 
     return (
         <div className="flex min-h-svh flex-col bg-bg text-text-primary">
@@ -31,13 +32,15 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                         >
                             {t('admin.header.site')}
                         </Link>
-                        <span className="inline-flex items-center gap-1.5 text-caption font-bold text-success-fg">
-                            <ShieldCheck
-                                aria-hidden="true"
-                                className="size-4"
-                            />
-                            {t('admin.header.two_factor')}
-                        </span>
+                        {auth.adminTwoFactor && (
+                            <span className="inline-flex items-center gap-1.5 text-caption font-bold text-success-fg">
+                                <ShieldCheck
+                                    aria-hidden="true"
+                                    className="size-4"
+                                />
+                                {t('admin.header.two_factor')}
+                            </span>
+                        )}
                         <AccountMenu
                             items={[
                                 {

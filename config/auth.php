@@ -114,4 +114,17 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | 2FA da administradora
+    |--------------------------------------------------------------------------
+    |
+    | Desligado por enquanto (D84): o painel não exige o 2FA, o login não pede
+    | o código e as telas de ativação ficam escondidas. O código continua no
+    | projeto; ligar aqui devolve tudo como na D75.
+    |
+    */
+
+    'admin_two_factor' => false,
+
 ];

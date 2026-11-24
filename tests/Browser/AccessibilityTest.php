@@ -72,6 +72,8 @@ it('não tem problemas de acessibilidade no painel da administração', function
 });
 
 it('não tem problemas de acessibilidade na confirmação de senha e na ativação do 2FA', function () {
+    // Telas do 2FA ligado (D75); hoje ele fica desligado (D84).
+    config(['auth.admin_two_factor' => true]);
     $this->actingAs(User::factory()->admin()->create());
 
     visit('/admin')
@@ -90,6 +92,8 @@ it('não tem problemas de acessibilidade na confirmação de senha e na ativaç�
 });
 
 it('não tem problemas de acessibilidade no código do 2FA ao entrar', function () {
+    // Telas do 2FA ligado (D75); hoje ele fica desligado (D84).
+    config(['auth.admin_two_factor' => true]);
     $admin = User::factory()->admin()->withTwoFactor()->create();
 
     visit('/login')
@@ -219,7 +223,7 @@ it('não tem problemas de acessibilidade em Meus artigos vazio', function () {
     visit('/my-articles')->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
 });
 
-it('não tem problemas de acessibilidade na listagem, na leitura e no 404', function () {
+it('não tem problemas de acessibilidade na listagem, na leitura e no 404', function (string $url, string $mode) {
     $category = Category::query()->firstOrFail();
     $articles = Article::factory()->published()->count(13)->create();
     $article = $articles->first();
@@ -233,11 +237,20 @@ it('não tem problemas de acessibilidade na listagem, na leitura e no 404', func
             ['type' => 'codeBlock', 'attrs' => ['language' => 'php'], 'content' => [['type' => 'text', 'text' => 'php artisan queue:work']]],
         ]],
     ]);
+    $page = visit(str_replace('{slug}', (string) $article->slug, $url));
 
-    foreach (['/', '/artigos', '/artigos?page=2', '/artigos/'.$article->slug, '/nada-por-aqui'] as $url) {
-        visit($url)->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
-        visit($url)->inDarkMode()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
-        visit($url)->withLocale('en-US')->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
-        visit($url)->on()->mobile()->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
-    }
-});
+    $page = match ($mode) {
+        'escuro' => $page->inDarkMode(),
+        'inglês' => $page->withLocale('en-US'),
+        'celular' => $page->on()->mobile(),
+        default => $page,
+    };
+
+    $page->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+})->with([
+    'início com artigos' => '/',
+    'listagem' => '/artigos',
+    'listagem, página 2' => '/artigos?page=2',
+    'leitura' => '/artigos/{slug}',
+    '404' => '/nada-por-aqui',
+])->with(['claro', 'escuro', 'inglês', 'celular']);

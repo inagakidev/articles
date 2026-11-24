@@ -75,7 +75,7 @@ As imagens dos artigos têm até 10 MB, e o PHP costuma vir com limite de envio 
     php artisan admin:create voce@exemplo.dev
     ```
 
-    No primeiro acesso a http://localhost:8000/admin, o painel pede a ativação do 2FA e mostra os códigos de recuperação. Se ela perder o aparelho e os códigos, o último recurso é rodar no servidor `php artisan admin:reset-2fa`, que apaga o 2FA e encerra as sessões dela.
+    O painel fica em http://localhost:8000/admin. O 2FA está desligado por enquanto (D84): o painel abre só com a senha. Para religar, mude `admin_two_factor` para `true` em `config/auth.php`; aí o primeiro acesso pede a ativação e mostra os códigos de recuperação, e `php artisan admin:reset-2fa` é o último recurso se ela perder o aparelho e os códigos.
 
 ## Testes e verificações
 

@@ -30,6 +30,7 @@ test('a sessão cai depois de 14 dias sem uso', function () {
 });
 
 test('usuários com 2FA ativado vão para o desafio de 2FA', function () {
+    config(['auth.admin_two_factor' => true]);
     $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
 
     Features::twoFactorAuthentication([

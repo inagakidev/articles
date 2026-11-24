@@ -8,6 +8,9 @@ use Inertia\Testing\AssertableInertia as Assert;
  * comum recebe 403, e a administradora só passa com o 2FA confirmado.
  */
 
+// Estes testes descrevem o 2FA ligado (D75); hoje ele fica desligado (D84).
+beforeEach(fn () => config(['auth.admin_two_factor' => true]));
+
 test('visitante vai para o login', function () {
     $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
     $this->get(route('admin.two-factor.show'))->assertRedirect(route('login'));

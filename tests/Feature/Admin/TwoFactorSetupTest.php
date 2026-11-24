@@ -14,6 +14,9 @@ function confirmedPassword(): array
     return ['auth.password_confirmed_at' => time()];
 }
 
+// Estes testes descrevem o 2FA ligado (D75); hoje ele fica desligado (D84).
+beforeEach(fn () => config(['auth.admin_two_factor' => true]));
+
 test('pede a senha antes da ativação', function () {
     $this->actingAs(User::factory()->admin()->create())
         ->get(route('admin.two-factor.show'))

@@ -40,7 +40,7 @@ class SecurityController extends Controller
             ] : null,
             'passwordChangedAt' => $passwordChangedAt?->toIso8601String(),
             'passwordRules' => Password::defaults()->toPasswordRulesString(),
-            'canManageTwoFactor' => $user->is_admin && Features::canManageTwoFactorAuthentication(),
+            'canManageTwoFactor' => $user->is_admin && config('auth.admin_two_factor') && Features::canManageTwoFactorAuthentication(),
         ];
 
         if ($props['canManageTwoFactor']) {

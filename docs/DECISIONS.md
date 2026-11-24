@@ -749,3 +749,15 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Meus artigos (D82):** o publicado ganha "Ver", que abre a leitura.
 - **Fora desta fatia:** ordenar e filtrar (botão "Filtros" e "Ordenar por") e a caixa de busca no cabeçalho e no 404 (fatia 13; "mais curtidos" depende das curtidas, fatia 17); curtir, favoritar, compartilhar, denunciar e comentários na leitura (fatias 14, 17, 18 e 20); tags como links de filtro (fatia 13). O subtítulo abaixo do título da prancha não existe nos dados: não há campo de resumo no editor.
 - **Alternativas descartadas:** id no endereço (`/artigos/42-titulo`, que acompanha o título mas carrega o número); slug que muda com o título (quebraria links compartilhados); escopo no modelo para a visibilidade (a ARCHITECTURE pede a regra como `Query`, que também agrupa as consultas da listagem); páginas 404 diferentes para "não existe" e "saiu do ar" (revelaria artigos despublicados).
+
+### D84 — 2FA da administradora desligado por enquanto
+
+- **Status:** Aprovada (23/11/2026).
+- **Contexto:** a D75 exige o 2FA para abrir o painel (RF-017). A pessoa responsável pelo produto pediu para tirar o 2FA agora e colocar outra forma de proteção depois, ainda sem definição.
+- **Decisão:**
+    - **Desligado, não removido:** um interruptor, `auth.admin_two_factor` em `config/auth.php`, fica em `false`. Com ele desligado, o painel abre só com a senha (o `EnsureTwoFactorConfirmed` deixa passar), o login não pede o código mesmo para quem já tinha o 2FA (o pipeline do Fortify pula o desafio), a ativação em `/admin/two-factor` responde 404, Configurações › Segurança não mostra o 2FA e o selo "2FA ativo" some do cabeçalho do painel.
+    - **O código continua:** telas, ações, colunas, o comando `admin:reset-2fa` e os testes do 2FA ligado ficam no projeto; os testes ligam o interruptor para descrever a D75. Ligar o interruptor devolve tudo como era.
+    - **O que continua protegendo o painel:** conta confirmada, a permissão de administradora (só uma, criada por comando), o limite de tentativas de login e o registro de eventos de segurança.
+- **Riscos:** com a senha como único fator, uma senha vazada abre o painel. Até a nova proteção existir, a senha da administradora deve ser longa e única. Abrir o site ao público sem segundo fator é uma decisão a revisar antes da p8-06.
+- **Pendente:** escolher a nova proteção (por exemplo, passkeys/WebAuthn, código por e-mail ou religar o TOTP) e registrar a decisão. RF-017 e RF-018 ficam suspensos até lá.
+- **Alternativas descartadas:** remover todo o código do 2FA (a nova proteção pode reaproveitar parte dele, e religar ficaria caro); desligar só no ambiente local (o pedido vale para o produto).

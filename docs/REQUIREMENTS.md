@@ -63,8 +63,8 @@ Requisitos:
 - **RF-014** Verificação de e-mail obrigatória para publicar e interagir.
 - **RF-015** Usuários não verificados podem acessar a conta e ler artigos.
 - **RF-016** Recuperação de senha por link enviado ao e-mail.
-- **RF-017** 2FA obrigatório para administradores, com **códigos de recuperação obrigatórios** gerados na ativação. **[A08]**
-- **RF-018** Reset do 2FA do administrador por comando no servidor, como último recurso. **[A08]**
+- **RF-017** 2FA obrigatório para administradores, com **códigos de recuperação obrigatórios** gerados na ativação. **[A08]** Suspenso por enquanto: outra proteção será definida (D84).
+- **RF-018** Reset do 2FA do administrador por comando no servidor, como último recurso. **[A08]** Suspenso junto com o RF-017 (D84).
 - **RF-019** 2FA opcional para usuários comuns (depois do MVP). **[A09]**
 - **RF-020** Rate limiting e cooldown após tentativas repetidas de autenticação.
 - **RF-021** CAPTCHA diante de comportamentos suspeitos (depois do MVP). **[A09]**
