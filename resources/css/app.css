@@ -415,12 +415,10 @@
     .motion-paused .border-beam::before,
     .motion-paused .marquee-track,
     .motion-paused .ripple,
-    .motion-paused .aurora,
     .motion-paused .caret,
     .motion-paused .skeleton-sweep::after,
     .motion-paused .lang-swap::before,
     .motion-paused .swatch-wave > *,
-    .motion-paused .step-number::after,
     .motion-paused .mascot-shadow-float {
         animation-play-state: paused;
     }
@@ -910,52 +908,44 @@
         outline-offset: 3px;
     }
 
-    /* Entra ao rolar até a seção; a linha do tempo se preenche com a rolagem */
-    .timeline-fill {
-        transform-origin: top;
-    }
+    /* Entra ao rolar até a seção */
     @supports (animation-timeline: view()) {
         .reveal {
             animation: rise linear both;
             animation-timeline: view();
             animation-range: entry 5% entry 45%;
         }
-        .timeline-fill {
-            animation: grow-y linear both;
-            animation-timeline: view();
-            animation-range: entry 30% exit 60%;
-        }
-    }
-    @keyframes grow-y {
-        from {
-            transform: scaleY(0);
-        }
-        to {
-            transform: scaleY(1);
-        }
     }
 
-    /* Manchas de cor que derivam devagar atrás da abertura */
-    .aurora {
-        position: absolute;
-        border-radius: 999px;
-        filter: blur(64px);
-        opacity: 0.55;
-        pointer-events: none;
-        animation: aurora 18s ease-in-out infinite alternate;
+    /*
+     * "Como funciona": cada card fica preso abaixo do cabeçalho, um pouco mais
+     * baixo que o anterior, e o próximo sobe por cima, formando uma pilha. Ao
+     * entrar na tela, o card cresce e aparece ("pop"), preso à rolagem.
+     */
+    .stack-card {
+        position: sticky;
+        top: calc(5.5rem + var(--stack-index, 0) * 1.25rem);
     }
-    .dark .aurora {
-        opacity: 0.22;
-    }
-    @keyframes aurora {
-        from {
-            transform: translate(0, 0) scale(1);
+    @supports (animation-timeline: view()) {
+        .stack-pop {
+            animation: stack-pop linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 70%;
         }
-        50% {
-            transform: translate(8%, -6%) scale(1.12);
+    }
+    /* O card coberto encolhe um pouco, como se afundasse na pilha */
+    .stack-covered {
+        scale: calc(1 - var(--covered, 0) * 0.05);
+        transform-origin: top center;
+    }
+    @keyframes stack-pop {
+        from {
+            opacity: 0;
+            transform: translateY(48px) scale(0.92);
         }
         to {
-            transform: translate(-6%, 8%) scale(0.95);
+            opacity: 1;
+            transform: none;
         }
     }
 
@@ -981,46 +971,6 @@
     @media (hover: hover) and (pointer: fine) {
         .spotlight:hover::before {
             opacity: 1;
-        }
-    }
-
-    /* Número do passo: entra com mola ao rolar e pulsa sem parar */
-    .step-number::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        animation: step-pulse 2.4s ease-out infinite;
-        pointer-events: none;
-    }
-    @keyframes step-pulse {
-        from {
-            box-shadow: 0 0 0 0
-                color-mix(in srgb, var(--color-primary) 45%, transparent);
-        }
-        to {
-            box-shadow: 0 0 0 14px transparent;
-        }
-    }
-    @supports (animation-timeline: view()) {
-        .step-number {
-            animation: step-pop linear both;
-            animation-timeline: view();
-            animation-range: entry 10% cover 35%;
-        }
-    }
-    @keyframes step-pop {
-        from {
-            opacity: 0;
-            transform: scale(0.5) rotate(-18deg);
-        }
-        60% {
-            opacity: 1;
-            transform: scale(1.15) rotate(6deg);
-        }
-        to {
-            opacity: 1;
-            transform: none;
         }
     }
 
@@ -1236,7 +1186,7 @@
             display: none;
         }
         .reveal,
-        .timeline-fill {
+        .stack-pop {
             animation: none;
         }
     }

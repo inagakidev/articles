@@ -37,13 +37,13 @@ export default function LandingHeader() {
                 <SiteLogo compactOnMobile />
                 <nav
                     aria-label={t('landing.nav.label')}
-                    className="ml-4 hidden gap-0.5 min-[961px]:flex"
+                    className="ml-4 hidden gap-0.5 min-[1180px]:flex"
                 >
                     {sections.map(({ id, label }) => (
                         <a
                             key={id}
                             href={`#${id}`}
-                            className="inline-flex h-10 items-center rounded-full px-3.5 text-label font-semibold text-text-primary hover:bg-surface-hover"
+                            className="inline-flex h-10 items-center rounded-full px-3.5 text-label font-semibold whitespace-nowrap text-text-primary hover:bg-surface-hover"
                         >
                             {t(label)}
                         </a>
@@ -55,7 +55,7 @@ export default function LandingHeader() {
                     <MotionToggle variant="icon" />
                     <Link
                         href={articles()}
-                        className="hidden rounded-full px-2.5 text-label font-bold hover:underline min-[961px]:inline"
+                        className="hidden rounded-full px-2.5 text-label font-bold whitespace-nowrap hover:underline min-[1180px]:inline"
                     >
                         {t('landing.cta.read_short')}
                     </Link>
@@ -76,7 +76,7 @@ export default function LandingHeader() {
                         <>
                             <Link
                                 href={login()}
-                                className="hidden rounded-full px-2.5 text-label font-bold text-primary-text hover:underline min-[561px]:inline"
+                                className="hidden rounded-full px-2.5 text-label font-bold whitespace-nowrap text-primary-text hover:underline min-[561px]:inline"
                             >
                                 {t('site.nav.login')}
                             </Link>
