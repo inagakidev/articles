@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+        $middleware->encryptCookies(except: ['appearance']);
 
         // No documento do editor, o espaço no começo ou no fim de um trecho
         // ("eu achava que " + **negrito**) é parte do texto (D80).

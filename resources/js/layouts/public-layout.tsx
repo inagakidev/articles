@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import SiteFooter from '@/components/site/site-footer';
-import SiteHeader from '@/components/site/site-header';
+import SiteFooter from '@/layouts/parts/site-footer';
+import SiteHeader from '@/layouts/parts/site-header';
 
 /** Páginas públicas: cabeçalho, conteúdo e rodapé. */
 export default function PublicLayout({ children }: { children: ReactNode }) {

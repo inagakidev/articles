@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vite-plus/test';
 import { testPage } from '@/test/inertia';
-import { MARQUEE_MIN } from '@/components/blocks/community';
+import { MARQUEE_MIN } from '@/components/landing/community';
 import Home from '@/pages/home';
 import type { ArticleSummary } from '@/types';
 

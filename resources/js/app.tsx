@@ -3,7 +3,6 @@ import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
 import AdminLayout from '@/layouts/admin-layout';
-import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import EditorLayout from '@/layouts/editor-layout';
 import LandingLayout from '@/layouts/landing-layout';
@@ -37,7 +36,7 @@ void createInertiaApp({
             case name.startsWith('settings/'):
                 return [PublicLayout, SettingsLayout];
             default:
-                return AppLayout;
+                return PublicLayout;
         }
     },
     strictMode: true,

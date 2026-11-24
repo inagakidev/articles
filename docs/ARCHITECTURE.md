@@ -1,6 +1,6 @@
 # ARCHITECTURE — he4rt ink
 
-**Atualizado em:** 19/11/2026
+**Atualizado em:** 24/11/2026
 
 Como o código é organizado e escrito. Os princípios estão no `AGENTS.md`; as decisões técnicas, no `DECISIONS.md`; as convenções do banco, na seção 3.6 do `DECISIONS.md` e no `DATABASE.md`.
 
@@ -42,18 +42,18 @@ app/
 
 ### 2.1 Módulos
 
-| Módulo          | Responsabilidade                                                                        |
-| --------------- | --------------------------------------------------------------------------------------- |
-| `Accounts`      | Cadastro, username, verificação, segurança, perfil, termos e aceites, exclusão de conta |
-| `Articles`      | Artigos, versões, estados, rascunho, envio e retirada, lixeira                          |
-| `Media`         | Imagens: upload, processamento, referências e limpeza                                   |
-| `Taxonomy`      | Categorias e tags                                                                       |
-| `Moderation`    | Fila, aprovação, rejeição, despublicação, penalidades e contestações                    |
-| `Interactions`  | Comentários, curtidas e favoritos                                                       |
-| `Reports`       | Denúncias                                                                               |
-| `Notifications` | Notificações internas e escolha dos e-mails                                             |
-| `Audit`         | Registro de auditoria, só inclusões                                                     |
-| `Search`        | Busca e descoberta                                                                      |
+| Módulo          | Responsabilidade                                                                         |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| `Accounts`      | Cadastro, username, verificação, segurança, perfil, termos e aceites, exclusão de conta  |
+| `Articles`      | Artigos, versões, estados, rascunho, envio e retirada, lixeira                           |
+| `Media`         | Imagens: upload (`StoreArticleImage`), processamento, referências e limpeza              |
+| `Taxonomy`      | Categorias e tags                                                                        |
+| `Moderation`    | Fila, aprovação, rejeição, despublicação, penalidades e contestações                     |
+| `Interactions`  | Comentários, curtidas e favoritos                                                        |
+| `Reports`       | Denúncias                                                                                |
+| `Notifications` | Notificações internas e escolha dos e-mails                                              |
+| `Audit`         | Registro de auditoria, só inclusões                                                      |
+| `Search`        | Busca e filtros (`ArticleSearch`), a partir da regra única de visibilidade de `Articles` |
 
 **Dependências entre módulos** são explícitas e num sentido só. Um módulo usa outro apenas pelas classes de `Actions` e `Queries` dele, nunca pelos detalhes internos. Quando um módulo precisa reagir a algo de outro sem depender dele, usa um evento: `Articles` dispara `VersionSubmitted`, e `Notifications` reage. Dependências circulares não são permitidas.
 
@@ -99,23 +99,32 @@ Cada ação dos perfis de `REQUIREMENTS.md` §3 tem uma regra no servidor. As li
 
 ## 3. Frontend
 
+O frontend segue os mesmos módulos do backend: cada área tem a própria pasta em `components/` e em `pages/`, e o que é de interface genérica fica em `ui/`, separado da estrutura das páginas, que fica em `layouts/`.
+
 ```
 resources/js/
-├── pages/<área>/        Páginas Inertia (o nome segue a rota: auth/login)
-├── layouts/             Layouts das páginas (público, conta, aplicação, admin)
+├── pages/<módulo>/       Páginas Inertia (o nome segue a rota: auth/login)
+├── layouts/              Moldura de cada tipo de página (público, leitura, apresentação, conta, editor, admin)
+│   └── parts/            Peças que só os layouts usam: cabeçalhos, rodapé, menu da conta e logo
 ├── components/
-│   ├── ui/              Componentes de interface usados em mais de uma tela: a base do shadcn/ui ajustada aos tokens e os próprios (mascote, logo, campo de senha)
-│   ├── effects/         Efeitos copiados de bibliotecas, com fonte e licença no topo
-│   ├── blocks/          Seções da página de apresentação
-│   ├── site/            Cabeçalho, rodapé, logo, tema e idioma
-│   └── <domínio>/       Componentes de uma área (articles/article-card)
-├── hooks/               Hooks reutilizáveis
-├── lib/                 Utilidades (i18n, cn)
-├── types/               Tipos compartilhados
-└── test/                Utilidades de teste
+│   ├── ui/               Primitivos e design system: botão, campos, pill, mascote, paginação, campo de busca
+│   ├── articles/         Cartão, leitura, sumário e selo de status do artigo
+│   ├── editor/           Editor, imagens e detalhes do artigo
+│   ├── my-articles/      Linhas e avisos de Meus artigos
+│   ├── search/           Caixa de busca e filtros
+│   ├── landing/          Seções da página de apresentação
+│   ├── account/          Configurações, segurança e 2FA
+│   ├── admin/            Navegação e peças do painel
+│   ├── policies/         Termos e políticas
+│   └── preferences/      Tema e idioma (cabeçalhos, rodapé e Configurações)
+├── hooks/                Hooks reutilizáveis
+├── lib/                  Utilidades (i18n, datas, cn)
+├── types/                Tipos compartilhados
+└── test/                 Utilidades de teste
 ```
 
-- **Onde fica cada componente:** um componente de interface usado em mais de uma tela fica em `components/ui` (botão, campo, aviso, mascote), com as variações como props ou variantes (`size="xl"`), em vez de classes repetidas em cada página. A estrutura das páginas fica em `layouts/`. O que só uma área usa fica na pasta da área.
+- **Dependências num sentido só:** `pages` usa `layouts` (pelo `app.tsx`), módulos e `ui`; `layouts` usa `parts`, módulos e `ui`; um módulo usa `ui`, `lib`, `hooks`, `types` e, quando precisa, outro módulo, sem ciclos (hoje só `landing` usa `articles`); `ui` não importa nenhum módulo, layout ou rota. Nenhum módulo importa `layouts` ou `pages`.
+- **Onde fica cada componente:** um componente genérico, sem regra de negócio nem rota, usado em mais de um lugar, fica em `components/ui` (botão, campo, aviso, mascote), com as variações como props ou variantes (`size="xl"`), em vez de classes repetidas em cada página. O que pertence a uma área fica na pasta do módulo, mesmo que outra área o use (o cartão de artigo é de `articles`). A estrutura das páginas fica em `layouts/`.
 - **Arquivos** em kebab-case (`article-card.tsx`); componentes em PascalCase (`ArticleCard`).
 - **Componentes de bibliotecas** entram só como código-fonte do componente usado, quando a tela que o usa é implementada, nunca como dependência (D63).
 - **Estilo:** só os tokens do `DESIGN.md`, por classes do Tailwind. Sem hex nem paleta padrão do Tailwind; a paleta padrão foi removida (D60).

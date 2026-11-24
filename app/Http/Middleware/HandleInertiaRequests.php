@@ -44,7 +44,6 @@ class HandleInertiaRequests extends Middleware
                 // O painel mostra "2FA ativo" só com o 2FA ligado (D84)
                 'adminTwoFactor' => (bool) config('auth.admin_two_factor'),
             ],
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
 }

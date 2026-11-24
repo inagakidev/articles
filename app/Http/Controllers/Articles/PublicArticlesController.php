@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Articles;
 
-use App\Domain\Articles\Queries\ArticleSearch;
 use App\Domain\Articles\Queries\PublicArticles;
+use App\Domain\Search\Queries\ArticleSearch;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Articles\SearchRequest;
 use App\Http\Resources\Articles\ArticlePage;

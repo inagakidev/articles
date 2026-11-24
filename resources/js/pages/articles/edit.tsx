@@ -17,7 +17,7 @@ import type { ChecklistItem } from '@/components/editor/submit-checklist';
 import Toolbar from '@/components/editor/toolbar';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
-import StatusBadge from '@/components/ui/status-badge';
+import StatusBadge from '@/components/articles/status-badge';
 import { needsAlt } from '@/components/editor/image-alt-field';
 import { useAutosave } from '@/hooks/use-autosave';
 import type { DraftFields, SaveStatus } from '@/hooks/use-autosave';

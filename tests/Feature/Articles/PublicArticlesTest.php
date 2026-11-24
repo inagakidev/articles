@@ -2,8 +2,8 @@
 
 use App\Domain\Articles\Enums\ArticleState;
 use App\Domain\Articles\Enums\VersionStatus;
-use App\Domain\Articles\Queries\ArticleSearch;
 use App\Domain\Articles\Queries\PublicArticles;
+use App\Domain\Search\Queries\ArticleSearch;
 use App\Models\Article;
 use App\Models\ArticleVersion;
 use App\Models\Category;

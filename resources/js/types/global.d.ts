@@ -14,7 +14,6 @@ declare module '@inertiajs/core' {
             name: string;
             locale: Locale;
             auth: Auth;
-            sidebarOpen: boolean;
             [key: string]: unknown;
         };
         flashDataType: {

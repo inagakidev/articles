@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Articles;
 
-use App\Domain\Articles\Queries\SearchCriteria;
+use App\Domain\Search\Queries\SearchCriteria;
 use App\Domain\Taxonomy\Rules\TagName;
 use Illuminate\Foundation\Http\FormRequest;
 
