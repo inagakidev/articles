@@ -27,6 +27,7 @@ vi.mock('@inertiajs/react', async (original) => ({
         only: _only,
         replace: _replace,
         prefetch: _prefetch,
+        onSuccess: _onSuccess,
         ...props
     }: {
         href: Href;
@@ -36,6 +37,7 @@ vi.mock('@inertiajs/react', async (original) => ({
         only?: unknown;
         replace?: unknown;
         prefetch?: unknown;
+        onSuccess?: unknown;
     }) => createElement('a', { href: toUrl(href), ...props }, children),
     Form: ({
         children,

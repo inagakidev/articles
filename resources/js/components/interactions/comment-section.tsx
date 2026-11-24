@@ -25,6 +25,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import InputError from '@/components/ui/input-error';
+import Pagination from '@/components/ui/pagination';
 import { Spinner } from '@/components/ui/spinner';
 import UserAvatar from '@/components/ui/user-avatar';
 import { shortDate } from '@/lib/dates';
@@ -57,9 +58,9 @@ export type CommentNode = {
 export type CommentsData = {
     total: number;
     items: CommentNode[];
-    /** Páginas da conversa abertas e se há mais comentários depois delas. */
+    /** Página da conversa, de 5 comentários de primeiro nível cada (D88). */
     page: number;
-    hasMore: boolean;
+    lastPage: number;
     canComment: boolean;
     maxLength: number;
 };
@@ -93,35 +94,26 @@ export default function CommentSection({
     const [editing, setEditing] = useState<number | null>(null);
     const [deleting, setDeleting] = useState<CommentNode | null>(null);
     const [moderating, setModerating] = useState<CommentNode | null>(null);
-    const [loading, setLoading] = useState(false);
+    const { url } = usePage();
+    const path = url.split(/[?#]/)[0];
 
-    // Abre a próxima página e leva o foco ao primeiro comentário dela
-    function loadMore() {
-        const shown = data.items.length;
-
-        router.reload({
-            data: { comentarios: data.page + 1 },
-            only: RELOAD,
-            onStart: () => setLoading(true),
-            onFinish: () => setLoading(false),
-            onSuccess: (page) => {
-                const next = (page.props.comments as CommentsData).items[shown];
-
-                if (next) {
-                    document.getElementById(`comentario-${next.id}`)?.focus();
-                }
-            },
-        });
+    // Trocar de página leva a leitura e o foco ao começo da conversa
+    function toTop() {
+        const title = document.getElementById('comentarios-titulo');
+        title?.scrollIntoView({ block: 'start' });
+        title?.focus({ preventScroll: true });
     }
 
     return (
         <section
+            id="comentarios"
             aria-labelledby="comentarios-titulo"
-            className="mt-14 flex flex-col gap-2"
+            className="mt-14 flex scroll-mt-24 flex-col gap-2"
         >
             <h2
                 id="comentarios-titulo"
-                className="mb-2 font-display text-[1.625rem] font-extrabold"
+                tabIndex={-1}
+                className="mb-2 scroll-mt-24 font-display text-[1.625rem] font-extrabold focus:outline-none"
             >
                 {t('comments.title')}{' '}
                 <span className="font-bold text-text-secondary">
@@ -166,19 +158,21 @@ export default function CommentSection({
                 </ul>
             )}
 
-            {data.hasMore && (
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="md"
-                    className="self-center"
-                    disabled={loading}
-                    onClick={loadMore}
-                >
-                    {loading && <Spinner />}
-                    {t('comments.load_more')}
-                </Button>
-            )}
+            <div className="mt-2">
+                <Pagination
+                    current={data.page}
+                    last={data.lastPage}
+                    label={t('comments.pages')}
+                    href={(page) =>
+                        page === 1 ? path : `${path}?comentarios=${page}`
+                    }
+                    visit={{
+                        preserveScroll: true,
+                        only: RELOAD,
+                        onSuccess: toTop,
+                    }}
+                />
+            </div>
 
             <DeleteDialog
                 comment={deleting}
@@ -339,8 +333,6 @@ function CommentItem({
         <>
             <li
                 id={`comentario-${comment.id}`}
-                // Recebe o foco ao abrir mais comentários
-                tabIndex={nested ? undefined : -1}
                 className={cn(
                     'flex gap-3.5 py-3.5',
                     nested && 'border-l-2 border-border pl-4.5',

@@ -2,6 +2,7 @@ import { Share2 } from 'lucide-react';
 import { useState } from 'react';
 import ShareDialog from '@/components/share/share-dialog';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import type { VariantProps } from 'class-variance-authority';
 import type { buttonVariants } from '@/components/ui/button';
 
@@ -17,6 +18,7 @@ export default function ShareButton({
     path,
     variant = 'outline',
     size = 'md',
+    iconOnly = false,
     className,
 }: {
     label: string;
@@ -27,6 +29,8 @@ export default function ShareButton({
     path?: string;
     variant?: VariantProps<typeof buttonVariants>['variant'];
     size?: VariantProps<typeof buttonVariants>['size'];
+    /** Só o ícone, com o nome para leitores de tela e na dica. */
+    iconOnly?: boolean;
     className?: string;
 }) {
     const [open, setOpen] = useState(false);
@@ -40,16 +44,32 @@ export default function ShareButton({
 
     return (
         <>
-            <Button
-                type="button"
-                variant={variant}
-                size={size}
-                onClick={share}
-                className={className}
-            >
-                <Share2 aria-hidden="true" />
-                {label}
-            </Button>
+            {iconOnly ? (
+                <Button
+                    type="button"
+                    variant="ghost"
+                    aria-label={label}
+                    title={label}
+                    onClick={share}
+                    className={cn(
+                        'size-10 rounded-full text-text-secondary hover:text-text-primary [&_svg]:size-5',
+                        className,
+                    )}
+                >
+                    <Share2 aria-hidden="true" />
+                </Button>
+            ) : (
+                <Button
+                    type="button"
+                    variant={variant}
+                    size={size}
+                    onClick={share}
+                    className={className}
+                >
+                    <Share2 aria-hidden="true" />
+                    {label}
+                </Button>
+            )}
             <ShareDialog
                 open={open}
                 onOpenChange={setOpen}

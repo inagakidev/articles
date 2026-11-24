@@ -1,6 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { router } from '@inertiajs/react';
-import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import { beforeEach, describe, expect, it } from 'vite-plus/test';
 import { testPage } from '@/test/inertia';
 import Show from '@/pages/articles/show';
 
@@ -31,7 +30,7 @@ const social = {
         canComment: false,
         maxLength: 2000,
         page: 1,
-        hasMore: false,
+        lastPage: 1,
     },
 };
 
@@ -179,7 +178,7 @@ describe('leitura do artigo', () => {
             />,
         );
 
-        expect(screen.getAllByLabelText('48 curtidas')).toHaveLength(2);
+        expect(screen.getAllByText('48 curtidas')).toHaveLength(2);
         expect(screen.queryByRole('button', { name: /Curtir,/ })).toBeNull();
         expect(screen.getByText('Comentário 1')).toBeInTheDocument();
         expect(screen.queryByLabelText('Escreva um comentário')).toBeNull();
@@ -199,7 +198,7 @@ describe('leitura do artigo', () => {
                     canComment: true,
                     maxLength: 2000,
                     page: 1,
-                    hasMore: false,
+                    lastPage: 1,
                     items: [
                         comment(1, {
                             replies: [
@@ -250,7 +249,7 @@ describe('leitura do artigo', () => {
                     canComment: true,
                     maxLength: 2000,
                     page: 1,
-                    hasMore: false,
+                    lastPage: 1,
                     items: [
                         comment(1, {
                             own: true,
@@ -278,13 +277,12 @@ describe('leitura do artigo', () => {
         ).toBeInTheDocument();
     });
 
-    it('abre a próxima página da conversa só quando há mais comentários', () => {
-        const reload = vi.spyOn(router, 'reload').mockImplementation(() => {});
+    it('a conversa troca de página pelos botões, sem rolagem sem fim', () => {
         const { rerender } = render(<Show article={article} {...social} />);
 
         expect(
-            screen.queryByRole('button', {
-                name: 'Carregar mais comentários',
+            screen.queryByRole('navigation', {
+                name: 'Páginas de comentários',
             }),
         ).not.toBeInTheDocument();
 
@@ -294,22 +292,33 @@ describe('leitura do artigo', () => {
                 likes={social.likes}
                 comments={{
                     ...social.comments,
-                    total: 21,
+                    total: 6,
                     items: [comment(1)],
-                    hasMore: true,
+                    page: 1,
+                    lastPage: 2,
                 }}
             />,
         );
-        fireEvent.click(
-            screen.getByRole('button', { name: 'Carregar mais comentários' }),
-        );
 
-        expect(reload).toHaveBeenCalledWith(
-            expect.objectContaining({
-                data: { comentarios: 2 },
-                only: ['comments'],
-            }),
-        );
-        reload.mockRestore();
+        const pages = screen.getByRole('navigation', {
+            name: 'Páginas de comentários',
+        });
+        expect(
+            within(pages).getByRole('link', { name: 'Próxima' }),
+        ).toHaveAttribute('href', '/?comentarios=2');
+        expect(
+            within(pages).getByRole('link', { name: 'Página 1' }),
+        ).toHaveAttribute('aria-current', 'page');
+    });
+
+    it('curtir, comentar e compartilhar são só ícones, com nome acessível', () => {
+        render(<Show article={article} {...social} />);
+
+        expect(
+            screen.getAllByRole('link', { name: 'Ver os comentários (0)' })[0],
+        ).toHaveAttribute('href', '#comentarios');
+        expect(
+            screen.getAllByRole('button', { name: 'Compartilhar' })[0],
+        ).not.toHaveTextContent('Compartilhar');
     });
 });

@@ -15,27 +15,28 @@ use Illuminate\Database\Eloquent\Collection;
  * Quem curtiu cada um nunca sai daqui (RF-151, RF-156).
  *
  * A conversa vem em páginas de comentários de primeiro nível, cada um com
- * todas as respostas, para um artigo muito comentado não carregar tudo de
- * uma vez (D88).
+ * todas as respostas, para a leitura não virar uma rolagem sem fim (D88).
  */
 class ArticleComments
 {
-    public const PER_PAGE = 20;
+    public const PER_PAGE = 5;
 
     /**
-     * As primeiras `$pages` páginas da conversa.
+     * Uma página da conversa.
      *
-     * @return array{comments: Collection<int, Comment>, total: int, pages: int, hasMore: bool}
+     * @return array{comments: Collection<int, Comment>, total: int, page: int, lastPage: int}
      */
-    public function for(Article $article, ?User $viewer, int $pages = 1): array
+    public function for(Article $article, ?User $viewer, int $page = 1): array
     {
         $roots = Comment::query()->where('article_id', $article->id)->whereNull('parent_id')->count();
-        // Página que não existe mostra até a última, sem carregar além dela
-        $pages = max(1, min($pages, (int) ceil($roots / self::PER_PAGE)));
+        $lastPage = max(1, (int) ceil($roots / self::PER_PAGE));
+        // Página que não existe (inclusive depois de apagar) mostra a mais próxima
+        $page = max(1, min($page, $lastPage));
 
         $comments = $this->query($article, $viewer)
             ->whereNull('parent_id')
-            ->limit($pages * self::PER_PAGE)
+            ->offset(($page - 1) * self::PER_PAGE)
+            ->limit(self::PER_PAGE)
             ->get();
 
         // As respostas, nível a nível, só das conversas desta página
@@ -49,8 +50,8 @@ class ArticleComments
         return [
             'comments' => $comments,
             'total' => Comment::query()->where('article_id', $article->id)->count(),
-            'pages' => $pages,
-            'hasMore' => $pages * self::PER_PAGE < $roots,
+            'page' => $page,
+            'lastPage' => $lastPage,
         ];
     }
 

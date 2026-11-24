@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { MessageCircle } from 'lucide-react';
 import ArticleView from '@/components/articles/article-view';
 import CommentSection from '@/components/interactions/comment-section';
 import type { CommentsData } from '@/components/interactions/comment-section';
@@ -76,13 +77,27 @@ export default function Show({ article, likes, comments, moderation }: Props) {
                                     ? t('likes.own_article')
                                     : undefined
                             }
-                            className="border border-border-strong"
                         />
+                        <a
+                            href="#comentarios"
+                            aria-label={t('comments.go_to', {
+                                count: comments.total,
+                            })}
+                            title={t('comments.title')}
+                            className="inline-flex h-10 items-center gap-1.5 rounded-full px-2.5 text-meta font-bold text-text-secondary transition-colors hover:bg-surface-hover hover:text-text-primary"
+                        >
+                            <MessageCircle
+                                aria-hidden="true"
+                                className="size-5"
+                            />
+                            <span aria-hidden="true">{comments.total}</span>
+                        </a>
                         <ShareButton
                             label={t('share.action')}
                             title={t('share.article_title')}
                             linkLabel={t('share.article_link')}
                             text={article.title ?? ''}
+                            iconOnly
                         />
                         {moderation && (
                             <ModerationMenu

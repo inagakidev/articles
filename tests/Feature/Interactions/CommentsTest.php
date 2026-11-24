@@ -148,43 +148,43 @@ test('apagar a conta apaga os comentários dela (RF-361)', function () {
     expect(Comment::query()->count())->toBe(0);
 });
 
-test('a conversa vem em páginas de 20, com as respostas de cada comentário (D88)', function () {
-    $roots = collect(range(1, 21))->map(fn (int $minute) => Comment::factory()
+test('a conversa vem em páginas de 5, com as respostas de cada comentário (D88)', function () {
+    $roots = collect(range(1, 6))->map(fn (int $minute) => Comment::factory()
         ->for($this->article)
         ->create(['body' => "Comentário {$minute}", 'created_at' => now()->subHour()->addMinutes($minute)]));
     Comment::factory()->replyTo(Comment::factory()->replyTo($roots[0])->create())->create(['body' => 'Terceiro nível']);
-    Comment::factory()->replyTo($roots[20])->create(['body' => 'Resposta da página 2']);
+    Comment::factory()->replyTo($roots[5])->create(['body' => 'Resposta da página 2']);
 
     $this->get(route('articles.show', $this->article->slug))
         ->assertInertia(fn (Assert $page) => $page
-            ->where('comments.total', 24)
-            ->has('comments.items', 20)
+            ->where('comments.total', 9)
+            ->has('comments.items', 5)
             ->where('comments.page', 1)
-            ->where('comments.hasMore', true)
+            ->where('comments.lastPage', 2)
             ->where('comments.items.0.replies.0.replies.0.body', 'Terceiro nível'));
 
     $this->get(route('articles.show', [$this->article->slug, 'comentarios' => 2]))
         ->assertInertia(fn (Assert $page) => $page
-            ->has('comments.items', 21)
-            ->where('comments.hasMore', false)
-            ->where('comments.items.20.replies.0.body', 'Resposta da página 2'));
+            ->has('comments.items', 1)
+            ->where('comments.items.0.body', 'Comentário 6')
+            ->where('comments.items.0.replies.0.body', 'Resposta da página 2'));
 
-    // Página que não existe mostra até a última
+    // Página que não existe mostra a mais próxima
     $this->get(route('articles.show', [$this->article->slug, 'comentarios' => 999]))
-        ->assertInertia(fn (Assert $page) => $page->where('comments.page', 2)->has('comments.items', 21));
+        ->assertInertia(fn (Assert $page) => $page->where('comments.page', 2)->has('comments.items', 1));
 });
 
-test('comentário novo abre a conversa até a página dele; resposta volta para onde estava', function () {
-    Comment::factory()->for($this->article)->count(20)->create(['created_at' => now()->subHour()]);
+test('comentário novo abre a página dele; resposta volta para onde estava', function () {
+    Comment::factory()->for($this->article)->count(5)->create(['created_at' => now()->subHour()]);
     $user = User::factory()->create();
 
     $this->actingAs($user)
-        ->post(route('comments.store', $this->article), ['body' => 'Vigésimo primeiro'])
+        ->post(route('comments.store', $this->article), ['body' => 'Sexto'])
         ->assertRedirect(route('articles.show', [$this->article->slug, 'comentarios' => 2]));
 
     $this->travel(31)->seconds();
     $this->actingAs($user)
-        ->from(route('articles.show', $this->article->slug))
+        ->from(route('articles.show', [$this->article->slug, 'comentarios' => 2]))
         ->post(route('comments.store', $this->article), ['body' => 'Resposta', 'parent_id' => Comment::query()->value('id')])
-        ->assertRedirect(route('articles.show', $this->article->slug));
+        ->assertRedirect(route('articles.show', [$this->article->slug, 'comentarios' => 2]));
 });

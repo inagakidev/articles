@@ -70,7 +70,7 @@ class PublicArticlesController extends Controller
         abort_if($article === null, 404);
         $viewer = $request->user();
         $participates = $viewer?->hasVerifiedEmail() ?? false;
-        // `comentarios` diz quantas páginas da conversa já estão abertas (D88)
+        // `comentarios` é a página da conversa (D88)
         $conversation = $comments->for($article, $viewer, $request->integer('comentarios', 1));
         $version = $article->currentVersion;
 
@@ -95,8 +95,8 @@ class PublicArticlesController extends Controller
             'comments' => [
                 'total' => $conversation['total'],
                 'items' => $thread->build($conversation['comments'], $article, $viewer),
-                'page' => $conversation['pages'],
-                'hasMore' => $conversation['hasMore'],
+                'page' => $conversation['page'],
+                'lastPage' => $conversation['lastPage'],
                 'canComment' => $participates,
                 'maxLength' => CommentRules::MAX_LENGTH,
             ],

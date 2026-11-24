@@ -35,13 +35,15 @@ class CommentController extends Controller
             throw ValidationException::withMessages(['body' => __($refused->getMessage(), ['seconds' => $refused->seconds])]);
         }
 
-        // Um comentário novo entra no fim da conversa: abre até a página dele.
-        // Uma resposta já está à vista, junto do comentário respondido.
-        $page = $parent === null ? $conversation->pageOf($comment) : 1;
+        // Um comentário novo entra no fim da conversa: abre a página dele.
+        // Uma resposta fica na mesma página do comentário respondido.
+        if ($parent !== null) {
+            return back();
+        }
 
-        return $page > 1
-            ? redirect()->route('articles.show', ['slug' => $article->slug, 'comentarios' => $page])
-            : back();
+        $page = $conversation->pageOf($comment);
+
+        return redirect()->route('articles.show', array_filter(['slug' => $article->slug, 'comentarios' => $page > 1 ? $page : null]));
     }
 
     public function update(CommentRequest $request, Comment $comment, EditComment $edit): RedirectResponse

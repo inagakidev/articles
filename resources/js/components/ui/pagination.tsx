@@ -40,10 +40,20 @@ export default function Pagination({
     current,
     last,
     href,
+    label,
+    visit,
 }: {
     current: number;
     last: number;
     href: (page: number) => string;
+    /** Nome da navegação, quando a página tem mais de uma paginação. */
+    label?: string;
+    /** Opções da visita, para trocar só um trecho da página. */
+    visit?: {
+        preserveScroll?: boolean;
+        only?: string[];
+        onSuccess?: () => void;
+    };
 }) {
     const { t } = useTranslation();
 
@@ -53,12 +63,13 @@ export default function Pagination({
 
     return (
         <nav
-            aria-label={t('pagination.label')}
+            aria-label={label ?? t('pagination.label')}
             className="flex items-center justify-center gap-1"
         >
             {current > 1 ? (
                 <Link
                     href={href(current - 1)}
+                    {...visit}
                     rel="prev"
                     className={cn(step, 'text-primary-text hover:bg-surface-hover')}
                 >
@@ -92,6 +103,7 @@ export default function Pagination({
                     <Link
                         key={page}
                         href={href(page)}
+                        {...visit}
                         aria-current={page === current ? 'page' : undefined}
                         aria-label={t('pagination.page', { page })}
                         className={cn(
@@ -109,6 +121,7 @@ export default function Pagination({
             {current < last ? (
                 <Link
                     href={href(current + 1)}
+                    {...visit}
                     rel="next"
                     className={cn(step, 'text-primary-text hover:bg-surface-hover')}
                 >

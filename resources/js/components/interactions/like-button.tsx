@@ -1,17 +1,34 @@
 import { router } from '@inertiajs/react';
 import { Heart } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
-/** Partículas do "estouro" ao curtir (DESIGN §7, LikeButton). */
-const PARTICLES = 6;
+/**
+ * Corações de cada rajada ao curtir: deslocamento lateral, altura, atraso e
+ * tamanho de cada um. Cada clique solta uma rajada nova, e as anteriores
+ * seguem subindo até sumir.
+ */
+const HEARTS = [
+    { x: -18, y: -46, delay: 0, scale: 0.9 },
+    { x: 14, y: -54, delay: 60, scale: 0.7 },
+    { x: -6, y: -64, delay: 120, scale: 1 },
+    { x: 22, y: -40, delay: 180, scale: 0.6 },
+    { x: -24, y: -58, delay: 240, scale: 0.75 },
+    { x: 6, y: -72, delay: 300, scale: 0.85 },
+    { x: -12, y: -36, delay: 360, scale: 0.55 },
+    { x: 18, y: -66, delay: 420, scale: 0.65 },
+];
+
+/** Duração de uma rajada, igual à animação `like-heart` mais o último atraso. */
+const BURST_MS = 1300;
 
 /**
- * Curtir (RF-148 a RF-156): o coração e a contagem pública. Muda na hora e
- * confirma com o servidor; se falhar, volta. Quem não pode curtir (visita,
- * conta sem confirmar, o próprio conteúdo) vê só a contagem, sem convite
- * (RF-141).
+ * Curtir (RF-148 a RF-156): só o coração e a contagem pública. Muda na hora
+ * e confirma com o servidor; se falhar, volta. Quem não pode curtir
+ * (visita, conta sem confirmar, o próprio conteúdo) vê só a contagem, sem
+ * convite (RF-141).
  */
 export default function LikeButton({
     count,
@@ -31,7 +48,7 @@ export default function LikeButton({
     url: string;
     /** As props que a página recarrega depois (`likes`, `comments`). */
     reload: string[];
-    /** "Curtir", "Curtir comentário". */
+    /** "Curtir", "Curtir comentário": o nome do botão, que não aparece. */
     label: string;
     /** Dica para quem vê a contagem do próprio conteúdo. */
     ownHint?: string;
@@ -40,39 +57,50 @@ export default function LikeButton({
 }) {
     const { t } = useTranslation();
     const [state, setState] = useState({ count, liked });
-    const [burst, setBurst] = useState(0);
+    const [bursts, setBursts] = useState<number[]>([]);
+    const next = useRef(0);
 
     useEffect(() => setState({ count, liked }), [count, liked]);
 
     const sizes =
         size === 'sm'
-            ? 'h-8 gap-1.5 rounded-[10px] px-2.5 text-caption'
-            : 'h-11 gap-2 rounded-xl px-4.5 text-[0.9375rem]';
+            ? 'h-8 gap-1 rounded-full px-2 text-caption [&_svg]:size-4'
+            : 'h-10 gap-1.5 rounded-full px-2.5 text-meta [&_svg]:size-5';
 
     if (!canLike) {
         return (
             <span
                 title={ownHint}
-                aria-label={t('likes.count', { count: state.count })}
                 className={cn(
                     'inline-flex items-center font-bold text-text-secondary',
                     sizes,
                     className,
                 )}
             >
-                <Heart aria-hidden="true" className="size-4" />
-                {state.count}
+                <Heart aria-hidden="true" />
+                <span aria-hidden="true">{state.count}</span>
+                <span className="sr-only">
+                    {t('likes.count', { count: state.count })}
+                </span>
             </span>
         );
     }
 
     function toggle() {
-        const next = !state.liked;
+        const liking = !state.liked;
         const previous = state;
-        setState({ liked: next, count: state.count + (next ? 1 : -1) });
+        setState({ liked: liking, count: state.count + (liking ? 1 : -1) });
 
-        if (next) {
-            setBurst((value) => value + 1);
+        if (liking) {
+            const id = ++next.current;
+            setBursts((current) => [...current, id]);
+            window.setTimeout(
+                () =>
+                    setBursts((current) =>
+                        current.filter((burst) => burst !== id),
+                    ),
+                BURST_MS,
+            );
         }
 
         const options = {
@@ -82,7 +110,7 @@ export default function LikeButton({
             onError: () => setState(previous),
         };
 
-        if (next) {
+        if (liking) {
             router.post(url, {}, options);
         } else {
             router.delete(url, options);
@@ -94,31 +122,43 @@ export default function LikeButton({
             type="button"
             aria-pressed={state.liked}
             aria-label={t('likes.button', { label, count: state.count })}
+            title={label}
             onClick={toggle}
             className={cn(
-                'relative inline-flex items-center font-bold transition-colors',
+                'inline-flex items-center font-bold transition-colors hover:bg-surface-hover',
                 sizes,
                 state.liked
-                    ? 'bg-surface-selected text-text-on-selected'
-                    : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary',
+                    ? 'text-primary-text'
+                    : 'text-text-secondary hover:text-text-primary',
                 className,
             )}
         >
-            {burst > 0 && state.liked && (
-                <span key={burst} aria-hidden="true" className="like-burst">
-                    {Array.from({ length: PARTICLES }, (_, index) => (
-                        <i key={index} />
-                    ))}
-                </span>
-            )}
-            <Heart
-                aria-hidden="true"
-                className={cn('size-4', state.liked && 'fill-current')}
-            />
-            <span aria-hidden="true">
-                {size === 'md' && `${label} · `}
-                {state.count}
+            <span className="relative inline-flex">
+                {bursts.map((id) => (
+                    <span key={id} aria-hidden="true" className="like-hearts">
+                        {HEARTS.map((heart, index) => (
+                            <i
+                                key={index}
+                                style={
+                                    {
+                                        '--heart-x': `${heart.x}px`,
+                                        '--heart-y': `${heart.y}px`,
+                                        '--heart-scale': heart.scale,
+                                        animationDelay: `${heart.delay}ms`,
+                                    } as CSSProperties
+                                }
+                            >
+                                <Heart className="fill-current" />
+                            </i>
+                        ))}
+                    </span>
+                ))}
+                <Heart
+                    aria-hidden="true"
+                    className={cn(state.liked && 'like-pop fill-current')}
+                />
             </span>
+            <span aria-hidden="true">{state.count}</span>
         </button>
     );
 }

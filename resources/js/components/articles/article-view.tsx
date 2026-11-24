@@ -127,7 +127,7 @@ export default function ArticleView({
                     )}
 
                     {actions && (
-                        <div className="mt-8 flex flex-wrap items-center gap-2">
+                        <div className="mt-8 flex flex-wrap items-center gap-1 border-y border-border py-2">
                             {actions}
                         </div>
                     )}
@@ -174,7 +174,7 @@ export default function ArticleView({
                     <div className="sticky top-24 flex flex-col gap-6">
                         <ArticleToc items={article.toc} />
                         {actions && (
-                            <div className="flex flex-col gap-2 [&>*]:w-full [&>*]:justify-start">
+                            <div className="flex flex-wrap items-center gap-1 border-t border-border pt-4">
                                 {actions}
                             </div>
                         )}
