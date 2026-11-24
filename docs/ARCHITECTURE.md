@@ -82,9 +82,9 @@ Cada ação dos perfis de `REQUIREMENTS.md` §3 tem uma regra no servidor. As li
 | Entrar, ver e atualizar a própria conta (não verificado em diante)         | `auth`; só a própria conta (`$request->user()`)                                           | Fortify e Configurações          |
 | Criar e salvar rascunho (verificado)                                       | `verified` + `ArticlePolicy::create` (conta sem suspensão)                                | fatia 8                          |
 | Editar, enviar, retirar da fila, excluir e restaurar o próprio artigo      | `ArticlePolicy` (autoria e estado da versão)                                              | fatias 8 e 10                    |
-| Comentar, responder, editar e excluir o próprio comentário                 | `verified` + `CommentPolicy`                                                              | fatia 17                         |
-| Curtir artigos e comentários de outras pessoas                             | `verified` + `LikePolicy` (não é o próprio)                                               | fatia 17                         |
-| Favoritar                                                                  | `verified`; a lista só aparece para a dona                                                | fatia 18                         |
+| Comentar, responder, editar e excluir o próprio comentário                 | `verified` + `CommentPolicy`                                                              | `routes/interactions.php`, feito |
+| Curtir artigos e comentários de outras pessoas                             | `verified` + `LikeContent` (não é o próprio; só artigo visível)                           | `routes/interactions.php`, feito |
+| Favoritar                                                                  | `verified` + `FavoriteArticle` (só artigo visível); a lista é sempre a da pessoa logada   | `routes/interactions.php`, feito |
 | Denunciar artigo, comentário ou perfil                                     | `verified` + `ReportPolicy` (não é o próprio; uma aberta por item)                        | fatia 20                         |
 | Ver as próprias notificações                                               | `auth`; só as da pessoa                                                                   | fatia 19                         |
 | Pedir a exclusão da conta                                                  | `auth` + sem suspensão ativa                                                              | fatia 22                         |

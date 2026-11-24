@@ -22,7 +22,7 @@ use Inertia\Response;
 /**
  * Listagem em `/artigos` e leitura em `/artigos/{slug}` (RF-002, RF-133,
  * RF-137, RF-379), sempre pela regra única de visibilidade. A leitura traz
- * as curtidas e os comentários (D88).
+ * as curtidas, os favoritos e os comentários (D88, D89).
  */
 class PublicArticlesController extends Controller
 {
@@ -90,6 +90,12 @@ class PublicArticlesController extends Controller
                 'count' => $article->likes()->count(),
                 'liked' => $viewer !== null && $article->likes()->where('user_id', $viewer->id)->exists(),
                 'canLike' => $participates && $article->user_id !== $viewer->id,
+            ],
+            // Favoritos: a contagem é pública; a lista, não (RF-159 a RF-161)
+            'favorites' => [
+                'count' => $article->favorites()->count(),
+                'favorited' => $viewer !== null && $article->favorites()->where('user_id', $viewer->id)->exists(),
+                'canFavorite' => $participates,
             ],
             // Qualquer pessoa lê; só conta confirmada participa (RF-140, RF-141)
             'comments' => [

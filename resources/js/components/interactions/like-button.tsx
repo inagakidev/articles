@@ -80,7 +80,9 @@ export default function LikeButton({
                 <Heart aria-hidden="true" />
                 <span aria-hidden="true">{state.count}</span>
                 <span className="sr-only">
-                    {t('likes.count', { count: state.count })}
+                    {t(state.count === 1 ? 'likes.count_one' : 'likes.count', {
+                        count: state.count,
+                    })}
                 </span>
             </span>
         );
@@ -121,7 +123,13 @@ export default function LikeButton({
         <button
             type="button"
             aria-pressed={state.liked}
-            aria-label={t('likes.button', { label, count: state.count })}
+            aria-label={t(
+                state.count === 1 ? 'likes.button_one' : 'likes.button',
+                {
+                    label,
+                    count: state.count,
+                },
+            )}
             title={label}
             onClick={toggle}
             className={cn(

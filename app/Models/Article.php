@@ -112,6 +112,12 @@ class Article extends Model
         return $this->hasMany(ArticleLike::class);
     }
 
+    /** @return HasMany<Favorite, $this> */
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
     /** @return BelongsTo<ArticleVersion, $this> */
     public function currentVersion(): BelongsTo
     {

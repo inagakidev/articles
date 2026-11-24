@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import type { ReactNode } from 'react';
 import Pill, { pastelTones } from '@/components/ui/pill';
 import UserAvatar from '@/components/ui/user-avatar';
 import { formatShortDate } from '@/lib/format';
@@ -13,9 +14,12 @@ import type { ArticleSummary } from '@/types';
  */
 export default function ArticleCard({
     article,
+    action,
     className,
 }: {
     article: ArticleSummary;
+    /** Botão sobre a capa, acima do link do cartão (remover dos favoritos). */
+    action?: ReactNode;
     className?: string;
 }) {
     const { t, locale } = useTranslation();
@@ -76,6 +80,9 @@ export default function ArticleCard({
                     </div>
                 </div>
             </div>
+            {action && (
+                <div className="absolute top-5.5 right-5.5 z-2">{action}</div>
+            )}
         </article>
     );
 }

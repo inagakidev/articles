@@ -196,3 +196,7 @@ Comentários e respostas dos artigos (RF-140 a RF-150, D88). Excluir o artigo, a
 ### `article_likes` e `comment_likes`
 
 Curtidas (RF-151, RF-152, D88). Chave primária (`article_id`, `user_id`) e (`comment_id`, `user_id`): a curtida duplicada é impedida pelo banco. Só `created_at`. `article_likes` tem índice em (`article_id`, `created_at`), para "Mais curtidos" no período de popularidade.
+
+### `favorites`
+
+Artigos salvos nos favoritos (RF-159 a RF-162, D89). Chave primária (`article_id`, `user_id`): o favorito duplicado é impedido pelo banco. Só `created_at`, que ordena "Salvos recentemente" e que o "Desfazer" devolve. Excluir o artigo de vez ou a conta apaga o favorito (`cascadeOnDelete`); um artigo na lixeira ou despublicado continua na lista como indisponível. Índice em (`user_id`, `created_at`) para a lista de cada pessoa.

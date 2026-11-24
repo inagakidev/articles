@@ -829,3 +829,18 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Meus artigos:** os publicados mostram o número de curtidas, como na prancha.
 - **Fora desta fatia:** "Denunciar" no menu do comentário (fatia 20); notificações de comentários e curtidas (fatia 19); esconder comentários de contas suspensas ou em exclusão (fatias 21 e 22); favoritos (p6-03).
 - **Alternativas descartadas:** contadores guardados nas tabelas de artigos e comentários (mais escrita e risco de divergir, sem necessidade com os índices atuais); profundidade ilimitada com recursão (a prancha e os requisitos param no terceiro nível, e a leitura no celular ficaria estreita demais); exclusão lógica do comentário com "comentário removido" (nenhum requisito pede o rastro, e o texto não deve sobreviver).
+
+### D89 — Favoritos
+
+- **Status:** Aprovada (24/11/2026).
+- **Contexto:** a fatia 18 entrega os favoritos (p6-03), nas pranchas "Favoritos" (desktop e mobile) e "Favoritos vazio". A prancha "Leitura" tem o botão "Favoritar"; a D88 deixou as ações da leitura só com ícones.
+- **Decisão:**
+    - **Módulo:** `Domain/Interactions`, junto de comentários e curtidas: `FavoriteArticle` (salvar e tirar) e `UserFavorites` (a lista). Depende só da regra única de visibilidade (`PublicArticles`).
+    - **Quem favorita (RF-159, RF-150):** conta com e-mail confirmado, só em artigo visível. A autora pode favoritar o próprio artigo. Um favorito por pessoa e artigo, pela chave primária; salvar de novo não faz nada.
+    - **Na leitura (RF-161):** o marcador com a contagem pública, na barra de ícones, depois do balão de comentários. Muda na hora e confirma com o servidor. Quem não pode favoritar vê só a contagem, sem convite (RF-141).
+    - **A lista (RF-160):** `/favoritos`, sempre da pessoa logada, com "Só você vê esta lista.", a ordem "Salvos recentemente" (padrão) ou "Publicados recentemente" (`ordem=publicados`) e 12 por página. Entra no menu do avatar, junto de "Meus artigos". Sem ordenação pública por favoritos (RF-162) e sem contagens nos cartões (RF-161).
+    - **Artigo fora do ar:** despublicado ou na lixeira, continua na lista como um cartão tracejado "Este artigo não está mais disponível", sem nada do conteúdo, até a pessoa remover. Não volta a ser favoritado enquanto estiver fora do ar. Excluído de vez, some da lista (RF-372).
+    - **Remover:** sai na hora, com o aviso "Removido dos favoritos" e "Desfazer" (DESIGN, tabela de ações). Desfazer devolve o artigo ao mesmo lugar da lista: o servidor aceita a data em que ele tinha sido salvo, se estiver no passado.
+    - **Lista vazia:** o mascote lendo, "Nada salvo ainda" e "Explorar artigos", como na prancha.
+- **Fora desta fatia:** apagar os favoritos na exclusão definitiva da conta já acontece pelo banco; o fluxo de exclusão entra na fatia 22. Rankings de mais favoritados ficam com as métricas do painel.
+- **Alternativas descartadas:** contador guardado no artigo (mesmo motivo da D88); tirar da lista os artigos fora do ar sem avisar (a prancha pede o aviso, e a pessoa perderia o registro sem saber); "Desfazer" refazendo o favorito com a data de agora (o artigo pularia para o topo de "Salvos recentemente").

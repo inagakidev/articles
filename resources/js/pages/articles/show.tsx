@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { MessageCircle } from 'lucide-react';
 import ArticleView from '@/components/articles/article-view';
 import CommentSection from '@/components/interactions/comment-section';
+import FavoriteButton from '@/components/interactions/favorite-button';
 import type { CommentsData } from '@/components/interactions/comment-section';
 import LikeButton from '@/components/interactions/like-button';
 import ModerationMenu from '@/components/moderation/moderation-menu';
@@ -28,6 +29,8 @@ type Props = {
         liked: boolean;
         canLike: boolean;
     };
+    /** Favoritos: a contagem é pública, a lista não (RF-160, RF-161). */
+    favorites: { count: number; favorited: boolean; canFavorite: boolean };
     comments: CommentsData;
     /** Só para a administradora: despublicar e excluir de vez (D87). */
     moderation?: { articleId: number; policyItems: PolicyItem[] } | null;
@@ -35,10 +38,16 @@ type Props = {
 
 /**
  * Leitura pública (prancha "Leitura", RF-137): o artigo, quem escreveu,
- * curtir, compartilhar, o fim da leitura e os comentários (D86, D88).
- * Favoritar e denunciar entram com as fatias 18 e 20.
+ * curtir, favoritar, compartilhar, o fim da leitura e os comentários (D86,
+ * D88, D89). Denunciar entra com a fatia 20.
  */
-export default function Show({ article, likes, comments, moderation }: Props) {
+export default function Show({
+    article,
+    likes,
+    favorites,
+    comments,
+    moderation,
+}: Props) {
     const { t, locale } = useTranslation();
 
     return (
@@ -92,6 +101,12 @@ export default function Show({ article, likes, comments, moderation }: Props) {
                             />
                             <span aria-hidden="true">{comments.total}</span>
                         </a>
+                        <FavoriteButton
+                            articleId={likes.articleId}
+                            count={favorites.count}
+                            favorited={favorites.favorited}
+                            canFavorite={favorites.canFavorite}
+                        />
                         <ShareButton
                             label={t('share.action')}
                             title={t('share.article_title')}
