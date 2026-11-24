@@ -56,14 +56,14 @@ test('cada termo precisa aparecer, em qualquer lugar', function () {
 });
 
 test('acha pelo nome do autor, pela categoria e pela tag', function () {
-    $byAuthor = searchable('Primeiro', article: ['user_id' => User::factory()->create(['name' => 'Rafaela Moreira'])->id]);
+    $byAuthor = searchable('Primeiro', article: ['user_id' => User::factory()->create(['name' => 'Xandrielle Moreira'])->id]);
     $byCategory = searchable('Segundo');
     $category = Category::factory()->create(['name_pt_br' => 'Infraestrutura', 'name_en' => 'Infrastructure']);
     ArticleVersion::query()->whereKey($byCategory->current_version_id)->update(['category_id' => $category->id]);
     $byTag = searchable('Terceiro');
     $byTag->currentVersion->tags()->attach(Tag::query()->create(['name' => 'kubernetes', 'loose_key' => 'kubernetes']));
 
-    expect(found('rafaela'))->toBe(['/artigos/'.$byAuthor->slug])
+    expect(found('xandrielle'))->toBe(['/artigos/'.$byAuthor->slug])
         ->and(found('infraestrutura'))->toBe(['/artigos/'.$byCategory->slug])
         ->and(found('kubernetes'))->toBe(['/artigos/'.$byTag->slug]);
 });
