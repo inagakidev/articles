@@ -5,6 +5,7 @@ import type { FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/ui/empty-state';
 import Pagination from '@/components/ui/pagination';
+import TableRegion from '@/components/ui/table-region';
 import UserAvatar from '@/components/ui/user-avatar';
 import { waiting } from '@/components/moderation/waiting';
 import { isToday, shortDate, time } from '@/lib/dates';
@@ -143,12 +144,7 @@ export default function Queue({ versions, filters, lateHours }: Props) {
                 />
             ) : (
                 <>
-                    <div
-                        tabIndex={0}
-                        role="region"
-                        aria-label={t('admin.queue.caption')}
-                        className="overflow-x-auto rounded-card border border-border bg-surface"
-                    >
+                    <TableRegion label={t('admin.queue.caption')}>
                         <table className="w-full min-w-200 text-left text-meta">
                             <caption className="sr-only">
                                 {t('admin.queue.caption')}
@@ -190,7 +186,7 @@ export default function Queue({ versions, filters, lateHours }: Props) {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    </TableRegion>
                     <p
                         role="status"
                         className="text-center text-meta text-text-secondary"

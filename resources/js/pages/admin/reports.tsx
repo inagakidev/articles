@@ -6,6 +6,7 @@ import type { PolicyItem } from '@/components/moderation/decision-fields';
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/ui/empty-state';
 import Pagination from '@/components/ui/pagination';
+import TableRegion from '@/components/ui/table-region';
 import { Spinner } from '@/components/ui/spinner';
 import UserAvatar from '@/components/ui/user-avatar';
 import { shortDate } from '@/lib/dates';
@@ -217,12 +218,7 @@ export default function Reports({
                 />
             ) : (
                 <>
-                    <div
-                        tabIndex={0}
-                        role="region"
-                        aria-label={t('reports.admin.caption')}
-                        className="overflow-x-auto rounded-card border border-border bg-surface"
-                    >
+                    <TableRegion label={t('reports.admin.caption')}>
                         <table className="w-full min-w-200 text-left text-meta">
                             <caption className="sr-only">
                                 {t('reports.admin.caption')}
@@ -350,7 +346,7 @@ export default function Reports({
                                 })}
                             </tbody>
                         </table>
-                    </div>
+                    </TableRegion>
                     <p className="text-center text-meta text-text-secondary">
                         {t('reports.admin.footnote')}
                     </p>

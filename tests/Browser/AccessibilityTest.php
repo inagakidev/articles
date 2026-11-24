@@ -338,7 +338,7 @@ it('não tem problemas de acessibilidade na moderação', function (string $mode
     ]);
     app(RecordAudit::class)->handle($admin, AuditAction::TagBlocked, '#spam', policyItem: '1.2', reason: 'Usada só em spam.');
 
-    foreach (['/admin', '/admin/queue', '/admin/audit'] as $url) {
+    foreach (['/admin', '/admin/queue', '/admin/audit', '/admin/reports', '/admin/taxonomy'] as $url) {
         $page = visit($url);
         $page = match ($mode) {
             'escuro' => $page->inDarkMode(),
@@ -346,6 +346,11 @@ it('não tem problemas de acessibilidade na moderação', function (string $mode
             default => $page,
         };
         $page->wait(ENTRANCE_SECONDS)->assertNoAccessibilityIssues();
+
+        // No celular, nada estica a página além da tela (as tabelas rolam sozinhas)
+        if ($mode === 'celular') {
+            expect($page->script('window.innerWidth <= screen.width'))->toBeTrue("{$url} passa da largura da tela");
+        }
     }
 
     $review = visit('/admin/versions/'.$version->id);
@@ -492,8 +497,8 @@ it('não tem problemas de acessibilidade nas denúncias', function (string $mode
         default => $admin,
     };
     $admin->wait(ENTRANCE_SECONDS)
-        ->script("document.querySelector('input[value=\"delete_comment\"]').click()");
-    $admin->assertSee('apaga também a resposta')
+        ->click('input[value="delete_comment"]')
+        ->assertSee('apaga também a resposta')
         ->assertNoAccessibilityIssues();
 })->with(['claro', 'escuro', 'celular']);
 
