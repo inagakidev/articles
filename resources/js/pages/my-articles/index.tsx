@@ -356,6 +356,12 @@ export default function MyArticles({
                                         locale,
                                     ),
                                 }),
+                            article.likes !== undefined &&
+                                (article.likes === 1
+                                    ? t('my_articles.meta.likes_one')
+                                    : t('my_articles.meta.likes', {
+                                          count: article.likes,
+                                      })),
                         ]
                             .filter(Boolean)
                             .join(' · ')}

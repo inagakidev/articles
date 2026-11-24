@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Article;
+use App\Models\ArticleLike;
 use App\Models\ArticleVersion;
 use App\Models\Category;
 use App\Models\Tag;
@@ -55,7 +56,8 @@ test('filtra por categoria, idioma, autor, tags e período', function () {
         'user_id' => User::factory()->create(['name' => 'Rafa Moreira', 'username' => 'rafa'])->id,
     ]), ['category_id' => $category->id, 'language' => 'en']);
     tagged(tagged($match, 'laravel'), 'php');
-    tagged(Article::factory()->published()->create(), 'laravel');
+    // Categoria fixa: a factory sorteia, e poderia cair na mesma do teste
+    tagged(inVersion(Article::factory()->published()->create(), ['category_id' => Category::factory()->create()->id]), 'laravel');
     $old = inVersion(Article::factory()->published()->create(), ['category_id' => $category->id]);
     $old->forceFill(['first_published_at' => now()->subMonths(2)])->save();
 
@@ -116,7 +118,7 @@ test('o que não faz sentido no endereço é ignorado, sem erro', function () {
     ]))->assertOk()->assertInertia(fn (Assert $page) => $page
         ->where('query.idioma', null)
         ->where('query.periodo', null)
-        ->where('query.ordem', 'recentes')
+        ->where('query.ordem', 'curtidos')
         ->where('query.q', '')
         ->where('query.tags', [])
         ->has('results.data', 1),
@@ -140,4 +142,24 @@ test('com resultado, não sugere nada', function () {
     Article::factory()->published()->create();
 
     $this->get(route('search'))->assertInertia(fn (Assert $page) => $page->where('suggested', []));
+});
+
+test('mais curtidos é a ordem padrão, contando as curtidas do período (RF-132, RF-134)', function () {
+    $quiet = Article::factory()->published()->create();
+    $recentLikes = Article::factory()->published()->create();
+    $oldLikes = Article::factory()->published()->create();
+    $like = fn (Article $article, int $daysAgo) => ArticleLike::query()->insert([
+        'article_id' => $article->id, 'user_id' => User::factory()->create()->id, 'created_at' => now()->subDays($daysAgo),
+    ]);
+    $like($recentLikes, 2);
+    foreach (range(1, 3) as $i) {
+        $like($oldLikes, 60);
+    }
+
+    expect(searchUrls([]))->toBe(['/artigos/'.$recentLikes->slug, '/artigos/'.$oldLikes->slug, '/artigos/'.$quiet->slug])
+        ->and(searchUrls(['popularidade' => 'sempre']))->toBe(['/artigos/'.$oldLikes->slug, '/artigos/'.$recentLikes->slug, '/artigos/'.$quiet->slug])
+        ->and(searchUrls(['popularidade' => '7'])[0])->toBe('/artigos/'.$recentLikes->slug);
+
+    $this->get(route('search', ['popularidade' => 'sempre']))
+        ->assertInertia(fn (Assert $page) => $page->where('query.ordem', 'curtidos')->where('query.popularidade', 'sempre'));
 });

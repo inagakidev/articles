@@ -30,7 +30,9 @@ export function filterUrl(
     if (query.idioma) params.idioma = query.idioma;
     if (query.tags.length > 0) params.tags = query.tags;
     if (query.periodo) params.periodo = query.periodo;
-    if (query.ordem === 'antigos') params.ordem = query.ordem;
+    // Os padrões ficam fora do endereço: mais curtidos em 30 dias
+    if (query.ordem !== 'curtidos') params.ordem = query.ordem;
+    if (query.popularidade !== '30') params.popularidade = query.popularidade;
     if (pageNumber > 1) params.page = pageNumber;
 
     const route = page === 'search' ? search : articles;
@@ -170,6 +172,9 @@ export function useFilterBar({
                         }
                         className="h-11 min-w-55 rounded-xl border border-border-strong bg-surface px-3 text-[0.9375rem] focus-visible:outline-offset-[-1px]"
                     >
+                        <option value="curtidos">
+                            {t('search.sort.liked')}
+                        </option>
                         <option value="recentes">
                             {t('search.sort.recent')}
                         </option>

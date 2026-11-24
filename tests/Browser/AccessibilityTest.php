@@ -7,6 +7,8 @@ use App\Models\Article;
 use App\Models\ArticleImage;
 use App\Models\ArticleVersion;
 use App\Models\Category;
+use App\Models\Comment;
+use App\Models\CommentLike;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
@@ -368,3 +370,25 @@ it('não tem problemas de acessibilidade na moderação pela leitura', function 
         ->assertSee('Despublicar o artigo')
         ->assertNoAccessibilityIssues();
 });
+
+it('não tem problemas de acessibilidade nos comentários e curtidas', function (string $mode) {
+    $reader = User::factory()->create(['name' => 'Lia Martins']);
+    $article = Article::factory()->published()->create();
+    $first = Comment::factory()->for($article)->create(['body' => 'O afterCommit me salvou.']);
+    $reply = Comment::factory()->replyTo($first)->create(['user_id' => $article->user_id, 'body' => 'Esse é o cenário!']);
+    Comment::factory()->replyTo($reply)->create(['user_id' => $reader->id, 'body' => 'Uso no job também.']);
+    CommentLike::query()->insert(['comment_id' => $first->id, 'user_id' => $reader->id, 'created_at' => now()]);
+
+    if ($mode !== 'visitante') {
+        $this->actingAs($reader);
+    }
+
+    $page = visit('/artigos/'.$article->slug);
+    $page = match ($mode) {
+        'escuro' => $page->inDarkMode(),
+        'celular' => $page->on()->mobile(),
+        default => $page,
+    };
+
+    $page->wait(ENTRANCE_SECONDS)->assertSee('Uso no job também.')->assertNoAccessibilityIssues();
+})->with(['claro', 'escuro', 'celular', 'visitante']);

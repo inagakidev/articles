@@ -100,6 +100,18 @@ class Article extends Model
         return $this->hasMany(ArticleImage::class);
     }
 
+    /** @return HasMany<Comment, $this> */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /** @return HasMany<ArticleLike, $this> */
+    public function likes(): HasMany
+    {
+        return $this->hasMany(ArticleLike::class);
+    }
+
     /** @return BelongsTo<ArticleVersion, $this> */
     public function currentVersion(): BelongsTo
     {

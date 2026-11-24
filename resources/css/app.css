@@ -1153,6 +1153,68 @@
         }
     }
 
+    /* Estouro ao curtir: seis pontos saem do coração e somem, uma vez */
+    .like-burst {
+        position: absolute;
+        left: 1.15rem;
+        top: 50%;
+        pointer-events: none;
+    }
+    .like-burst i {
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-radius: 999px;
+        background: var(--color-primary);
+        animation: like-burst 0.55s var(--ease-emphasized) forwards;
+    }
+    .like-burst i:nth-child(1) {
+        --burst-x: 0;
+        --burst-y: -16px;
+    }
+    .like-burst i:nth-child(2) {
+        --burst-x: 14px;
+        --burst-y: -8px;
+    }
+    .like-burst i:nth-child(3) {
+        --burst-x: 14px;
+        --burst-y: 8px;
+    }
+    .like-burst i:nth-child(4) {
+        --burst-x: 0;
+        --burst-y: 16px;
+    }
+    .like-burst i:nth-child(5) {
+        --burst-x: -14px;
+        --burst-y: 8px;
+    }
+    .like-burst i:nth-child(6) {
+        --burst-x: -14px;
+        --burst-y: -8px;
+    }
+    @keyframes like-burst {
+        from {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: translate(
+                    calc(-50% + var(--burst-x)),
+                    calc(-50% + var(--burst-y))
+                )
+                scale(0.4);
+        }
+    }
+    .motion-paused .like-burst {
+        display: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .like-burst {
+            display: none;
+        }
+    }
+
     /* Pausado ou sem movimento: cada efeito no estado final legível */
     .motion-paused .flip-words > span {
         animation: none;

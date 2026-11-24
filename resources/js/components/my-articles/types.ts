@@ -15,6 +15,8 @@ export type MyArticle = {
     /** Endereço público do publicado (D83). */
     url?: string | null;
     firstPublishedAt?: string | null;
+    /** Curtidas do publicado (D88). */
+    likes?: number;
     currentSince?: string | null;
     editRejected?: boolean;
 };

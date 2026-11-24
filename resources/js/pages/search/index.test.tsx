@@ -31,7 +31,8 @@ const baseQuery: SearchQuery = {
     idioma: null,
     tags: [],
     periodo: null,
-    ordem: 'recentes',
+    ordem: 'curtidos',
+    popularidade: '30',
 };
 
 const options = {
@@ -111,6 +112,13 @@ describe('busca', () => {
             '/busca?q=filas&categoria=devops',
             {},
             expect.objectContaining({ preserveState: true }),
+        );
+
+        fireEvent.click(within(panel).getByLabelText('7 dias'));
+        expect(get).toHaveBeenLastCalledWith(
+            '/busca?q=filas&popularidade=7',
+            {},
+            expect.anything(),
         );
 
         fireEvent.click(within(panel).getByLabelText('Último mês'));

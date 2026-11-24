@@ -44,9 +44,17 @@ class ArticleSearch
     {
         $query = $this->articles->withSummary($this->filtered($criteria));
 
-        $criteria->sort === 'oldest'
-            ? $query->orderBy('first_published_at')->orderBy('id')
-            : $query->orderByDesc('first_published_at')->orderByDesc('id');
+        match ($criteria->sort) {
+            'oldest' => $query->orderBy('first_published_at')->orderBy('id'),
+            'recent' => $query->orderByDesc('first_published_at')->orderByDesc('id'),
+            // As curtidas do período; no empate, a mais nova (RF-132, RF-134)
+            default => $query
+                ->withCount(['likes as popularity' => fn (Builder $likes) => $likes
+                    ->when($criteria->popularity, fn (Builder $recent, int $days) => $recent->where('created_at', '>=', now()->subDays($days)))])
+                ->orderByDesc('popularity')
+                ->orderByDesc('first_published_at')
+                ->orderByDesc('id'),
+        };
 
         return $query->paginate(self::PER_PAGE)->withQueryString();
     }

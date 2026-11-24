@@ -177,3 +177,22 @@ Registro das ações administrativas (RF-291 a RF-293, D87). Só inclusões: o m
 | `reason`                     | text, nulo            | Justificativa                                                                          |
 | `details`                    | JSON, nulo            | Contexto da ação (edição ou artigo novo, nome anterior da categoria); nunca o conteúdo |
 | `created_at`                 | timestamp             | Sem `updated_at`: registro não muda                                                    |
+
+### `comments`
+
+Comentários e respostas dos artigos (RF-140 a RF-150, D88). Excluir o artigo, a conta ou o comentário de cima apaga o comentário (`cascadeOnDelete`).
+
+| Coluna       | Tipo                | Observação                                     |
+| ------------ | ------------------- | ---------------------------------------------- |
+| `article_id` | `articles.id`       | Artigo comentado                               |
+| `user_id`    | `users.id`          | Quem escreveu                                  |
+| `parent_id`  | `comments.id`, nulo | Comentário respondido; nulo no primeiro nível  |
+| `depth`      | tinyint             | Nível (1 a 3), para não recalcular pela cadeia |
+| `body`       | text                | Texto puro, até 2000 caracteres                |
+| `edited_at`  | timestamp, nulo     | Última edição que mudou o texto                |
+
+Índices em (`article_id`, `created_at`) para a leitura e em (`user_id`, `created_at`) para o intervalo entre comentários.
+
+### `article_likes` e `comment_likes`
+
+Curtidas (RF-151, RF-152, D88). Chave primária (`article_id`, `user_id`) e (`comment_id`, `user_id`): a curtida duplicada é impedida pelo banco. Só `created_at`. `article_likes` tem índice em (`article_id`, `created_at`), para "Mais curtidos" no período de popularidade.

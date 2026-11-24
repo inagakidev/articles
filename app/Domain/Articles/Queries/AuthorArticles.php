@@ -30,6 +30,7 @@ class AuthorArticles
         Article::query()
             ->where('user_id', $author->id)
             ->with(['versions' => fn ($query) => $query->select(self::COLUMNS)->orderBy('id')])
+            ->withCount('likes')
             ->latest('updated_at')
             ->get()
             ->each(function (Article $article) use (&$sections) {
@@ -67,6 +68,8 @@ class AuthorArticles
                 // Endereço público, para "Ver" (D83)
                 'url' => $article->slug === null ? null : route('articles.show', $article->slug, absolute: false),
                 'firstPublishedAt' => $article->first_published_at?->toIso8601String(),
+                // Curtidas do artigo, como na linha da prancha (D88)
+                'likes' => (int) $article->getAttribute('likes_count'),
                 'currentSince' => $current->decided_at?->toIso8601String(),
                 'editRejected' => $pending === null && $lastDecided !== null,
             ]];
