@@ -49,8 +49,10 @@ passo a passo cobre a p8-02 e a p8-04; o backup (p8-05) e a validação
    `APP_KEY`.
 3. No Cloudflare, crie o bucket **privado** de imagens e um token R2 com
    acesso só a esse bucket (D53); preencha as variáveis `R2_*`.
-4. Se o domínio passar pelo proxy do Cloudflare, avise: a aplicação precisa
-   confiar no proxy para saber o IP real e o https.
+4. Se o domínio passar pelo proxy do Cloudflare, preencha `TRUSTED_PROXIES`
+   com as faixas de IP do Cloudflare (ou `*`, se o servidor só aceitar
+   conexões vindas dele): sem isso, a aplicação não sabe o IP real nem que a
+   visita veio por https (`config/trustedproxy.php`).
 
 ## 5. Fila e agendador
 
