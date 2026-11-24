@@ -62,7 +62,7 @@ final class ArticleRenderer
             text: $text,
             words: $words,
             characters: mb_strlen($text),
-            readingMinutes: max(1, (int) ceil($words / EditorSchema::WORDS_PER_MINUTE)),
+            readingMinutes: self::readingMinutes($words),
         );
     }
 
@@ -77,6 +77,12 @@ final class ArticleRenderer
         $this->collectText($document, $blocks);
 
         return trim(implode("\n", array_filter($blocks, fn (string $block) => trim($block) !== '')));
+    }
+
+    /** Tempo de leitura, em minutos inteiros, nunca zero (RF-137). */
+    public static function readingMinutes(int $words): int
+    {
+        return max(1, (int) ceil($words / EditorSchema::WORDS_PER_MINUTE));
     }
 
     public static function countWords(string $text): int

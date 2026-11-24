@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import Pill, { pastelTones } from '@/components/ui/pill';
 import UserAvatar from '@/components/ui/user-avatar';
-import { formatDate } from '@/lib/format';
+import { formatShortDate } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
 import { followPointer } from '@/lib/spotlight';
 import { cn } from '@/lib/utils';
@@ -68,8 +68,7 @@ export default function ArticleCard({
                             {author.name}
                         </span>
                         <span className="text-caption text-text-secondary">
-                            {formatDate(locale, article.publishedAt, 'medium')}{' '}
-                            ·{' '}
+                            {formatShortDate(locale, article.publishedAt)} ·{' '}
                             {t('article.reading_time', {
                                 minutes: article.readingMinutes,
                             })}

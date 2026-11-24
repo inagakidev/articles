@@ -1,5 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { PenLine, PencilLine, Trash2 } from 'lucide-react';
+import { Eye, PenLine, PencilLine, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import ArticleRow from '@/components/my-articles/article-row';
@@ -347,25 +347,41 @@ export default function MyArticles({
                             .filter(Boolean)
                             .join(' · ')}
                         actions={
-                            article.pendingSubmittedAt ? (
-                                withdrawButton(
-                                    'my_articles.withdraw.edit_action',
-                                )
-                            ) : (
-                                <Button asChild variant="outline" size="md">
-                                    <Link
-                                        href={edit(article.id)}
-                                        aria-label={t(
-                                            'my_articles.edit_named',
-                                            {
-                                                title: name(article),
-                                            },
-                                        )}
-                                    >
-                                        {t('my_articles.edit')}
-                                    </Link>
-                                </Button>
-                            )
+                            <>
+                                {article.url && (
+                                    <Button asChild variant="subtle" size="md">
+                                        <Link
+                                            href={article.url}
+                                            aria-label={t(
+                                                'my_articles.view_named',
+                                                { title: name(article) },
+                                            )}
+                                        >
+                                            <Eye aria-hidden="true" />
+                                            {t('my_articles.view')}
+                                        </Link>
+                                    </Button>
+                                )}
+                                {article.pendingSubmittedAt ? (
+                                    withdrawButton(
+                                        'my_articles.withdraw.edit_action',
+                                    )
+                                ) : (
+                                    <Button asChild variant="outline" size="md">
+                                        <Link
+                                            href={edit(article.id)}
+                                            aria-label={t(
+                                                'my_articles.edit_named',
+                                                {
+                                                    title: name(article),
+                                                },
+                                            )}
+                                        >
+                                            {t('my_articles.edit')}
+                                        </Link>
+                                    </Button>
+                                )}
+                            </>
                         }
                     />
                 );

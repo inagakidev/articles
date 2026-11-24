@@ -84,6 +84,7 @@ describe('Meus artigos', () => {
                         article({
                             id: 3,
                             title: 'Git',
+                            url: '/artigos/git',
                             firstPublishedAt: now,
                             currentSince: now,
                             pendingSubmittedAt: now,
@@ -125,6 +126,9 @@ describe('Meus artigos', () => {
                 name: 'Retirar da fila a edição de Git',
             }),
         ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: 'Ver artigo Git' }),
+        ).toHaveAttribute('href', '/artigos/git');
     });
 
     it('retirar da fila com rascunho mais novo pede a escolha antes', () => {

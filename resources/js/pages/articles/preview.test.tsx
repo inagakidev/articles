@@ -6,7 +6,11 @@ import Preview from '@/pages/articles/preview';
 const article = {
     title: 'Filas no Laravel',
     language: 'pt_BR',
-    category: { name: 'Back-end', color: 'lavender' as const },
+    category: {
+        name: 'Back-end',
+        color: 'lavender' as const,
+        slug: 'back-end',
+    },
     tags: ['laravel', 'filas'],
     cover: null,
     html: '<h2 id="quem-tira">Quem tira o job</h2><pre class="code-block" data-language="php"><code>echo 1;</code></pre>',

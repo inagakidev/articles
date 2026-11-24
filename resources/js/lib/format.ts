@@ -14,3 +14,19 @@ export function formatDate(
         timeZone: 'UTC',
     }).format(new Date(`${isoDate}T00:00:00Z`));
 }
+
+/**
+ * Data curta dos cartões e da leitura, como nas pranchas: "12 nov 2026"
+ * ("Nov 12, 2026" em inglês). Também em UTC.
+ */
+export function formatShortDate(locale: Locale, isoDate: string): string {
+    return new Intl.DateTimeFormat(locale.replace('_', '-'), {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC',
+    })
+        .format(new Date(`${isoDate}T00:00:00Z`))
+        .replace(/ de /g, ' ')
+        .replace('.', '');
+}

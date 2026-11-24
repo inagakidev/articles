@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import Mascot from '@/components/ui/mascot';
 import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
+import { index as articles } from '@/routes/articles';
 
 const ripples = [260, 360, 460, 560];
 
@@ -49,6 +50,11 @@ export default function FinalCta() {
                                 {auth.user
                                     ? t('landing.cta.write')
                                     : t('landing.final.cta')}
+                            </Link>
+                        </Button>
+                        <Button asChild size="xl" variant="outline">
+                            <Link href={articles()}>
+                                {t('landing.cta.read')}
                             </Link>
                         </Button>
                     </div>

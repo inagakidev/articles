@@ -1185,6 +1185,24 @@
         }
     }
 
+    /* Quanto do artigo já foi lido, preso à rolagem da página. Sem suporte a
+       animation-timeline, a barra simplesmente não aparece. */
+    .reading-progress {
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+    @supports (animation-timeline: scroll()) {
+        .reading-progress {
+            animation: grow-x linear both;
+            animation-timeline: scroll(root);
+        }
+    }
+    @keyframes grow-x {
+        to {
+            transform: scaleX(1);
+        }
+    }
+
     /* Pausado ou sem movimento: cada efeito no estado final legível */
     .motion-paused .flip-words > span {
         animation: none;

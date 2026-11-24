@@ -105,13 +105,14 @@ Categorias fixas, administradas pela administradora (RF-124, D79). As dez inicia
 
 O artigo, independente das versões (REQUIREMENTS §5.1, D79).
 
-| Coluna               | Tipo                        | Observação                                                              |
-| -------------------- | --------------------------- | ----------------------------------------------------------------------- |
-| `user_id`            | `users.id`, nulo            | Autoria; o artigo sobrevive à conta (`nullOnDelete`)                    |
-| `state`              | string(20)                  | `unpublished` ou `published` → `ArticleState`                           |
-| `current_version_id` | `article_versions.id`, nulo | A versão aprovada em vigor, a que o público lê                          |
-| `first_published_at` | timestamp, nulo             | Primeira publicação (RF-137)                                            |
-| `deleted_at`         | timestamp, nulo             | Na lixeira; o `state` fica guardado para a restauração (RF-340, RF-341) |
+| Coluna               | Tipo                        | Observação                                                                |
+| -------------------- | --------------------------- | ------------------------------------------------------------------------- |
+| `user_id`            | `users.id`, nulo            | Autoria; o artigo sobrevive à conta (`nullOnDelete`)                      |
+| `state`              | string(20)                  | `unpublished` ou `published` → `ArticleState`                             |
+| `slug`               | string(120), único, nulo    | Endereço `/artigos/{slug}`; nasce na primeira publicação e não muda (D83) |
+| `current_version_id` | `article_versions.id`, nulo | A versão aprovada em vigor, a que o público lê                            |
+| `first_published_at` | timestamp, nulo             | Primeira publicação (RF-137)                                              |
+| `deleted_at`         | timestamp, nulo             | Na lixeira; o `state` fica guardado para a restauração (RF-340, RF-341)   |
 
 ### `article_versions`
 

@@ -10,6 +10,8 @@ export type MyArticle = {
     reason?: string | null;
     hasDraft: boolean;
     pendingSubmittedAt: string | null;
+    /** Endereço público do publicado (D83). */
+    url?: string | null;
     firstPublishedAt?: string | null;
     currentSince?: string | null;
     editRejected?: boolean;

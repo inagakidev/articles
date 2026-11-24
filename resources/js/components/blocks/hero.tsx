@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import {
+    BookOpen,
     ChevronRight,
     CircleCheck,
     CloudCheck,
@@ -14,6 +15,7 @@ import MascotOrbit from '@/components/ui/mascot-orbit';
 import StatusBadge from '@/components/ui/status-badge';
 import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
+import { index as articles } from '@/routes/articles';
 import type { TranslationKey } from '@/lib/i18n';
 import type { CategorySummary } from '@/types';
 
@@ -108,6 +110,15 @@ export default function Hero({
                                     className="size-[18px]"
                                 />
                                 {t('landing.cta.write')}
+                            </Link>
+                        </Button>
+                        <Button asChild size="xl" variant="outline">
+                            <Link href={articles()}>
+                                <BookOpen
+                                    aria-hidden="true"
+                                    className="size-[18px]"
+                                />
+                                {t('landing.cta.read')}
                             </Link>
                         </Button>
                     </div>

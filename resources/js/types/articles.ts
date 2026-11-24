@@ -1,7 +1,6 @@
 /**
  * Formato dos artigos, categorias e autores mostrados nas páginas públicas.
- * A página de apresentação já espera estes dados; quem os envia são as
- * fatias de categorias e de leitura pública (D74).
+ * Os artigos saem sempre da regra única de visibilidade (`PublicArticles`).
  */
 
 /** Pastéis fixos do DESIGN §2.7, pelo nome guardado na categoria. */
@@ -32,7 +31,34 @@ export type ArticleSummary = {
     cover: string | null;
     category: CategorySummary | null;
     author: AuthorSummary;
-    /** Dia da publicação da versão atual (AAAA-MM-DD). */
+    /** Dia da primeira publicação (AAAA-MM-DD, RF-136). */
     publishedAt: string;
     readingMinutes: number;
+};
+
+export type TocItem = { id: string; text: string; level: number };
+
+/** O artigo montado para ler, igual na prévia e na leitura (`ArticlePage`). */
+export type ReadableArticle = {
+    title: string | null;
+    language: string | null;
+    category: (CategorySummary & { slug: string }) | null;
+    tags: string[];
+    cover: {
+        src: string;
+        srcset: string;
+        width: number;
+        height: number;
+        alt: string;
+    } | null;
+    html: string;
+    toc: TocItem[];
+    readingMinutes: number;
+    author: {
+        name: string;
+        /** Nulo quando a conta foi excluída (RF-051). */
+        username: string | null;
+        bio: string | null;
+        avatar: string | null;
+    };
 };
