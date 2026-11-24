@@ -139,7 +139,7 @@ export default function ArticleView({
                         <UserAvatar
                             name={author.name}
                             avatar={author.avatar}
-                            className="size-16 rounded-2xl text-h3"
+                            className="size-16 text-h3"
                         />
                         <div className="flex min-w-0 flex-[1_1_240px] flex-col gap-1.5">
                             <span className="text-caption font-bold tracking-[0.06em] text-text-secondary uppercase">

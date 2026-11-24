@@ -334,7 +334,7 @@ function CommentForm({
                 <UserAvatar
                     name={auth.user.name}
                     avatar={auth.user.avatar ?? null}
-                    className="size-10 rounded-[10px] text-caption"
+                    className="size-10 text-caption"
                 />
             )}
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -351,7 +351,7 @@ function CommentForm({
                 </label>
                 <textarea
                     id={id}
-                    rows={parent ? 2 : 3}
+                    rows={parent ? 2 : open ? 3 : 1}
                     value={form.data.body}
                     onChange={(event) =>
                         form.setData('body', event.target.value)
@@ -365,8 +365,12 @@ function CommentForm({
                     aria-invalid={form.errors.body ? true : undefined}
                     aria-describedby={describedBy}
                     className={cn(
-                        'w-full resize-none rounded-xl border border-border-strong bg-surface px-3.5 py-3 text-body text-text-primary transition-[height] duration-200 placeholder:text-text-secondary focus-visible:outline-offset-[-1px]',
-                        compact && (open ? 'h-28 resize-y' : 'h-12'),
+                        'w-full resize-none rounded-2xl border border-border-strong bg-surface px-4 py-3 text-body text-text-primary transition-[height] duration-200 placeholder:text-text-secondary focus-visible:outline-offset-[-1px]',
+                        // Fechado, uma linha só, sem barra de rolagem
+                        compact &&
+                            (open
+                                ? 'h-28'
+                                : 'h-12 overflow-hidden leading-6 whitespace-nowrap'),
                     )}
                 />
                 <InputError id={`${id}-erro`} message={form.errors.body} />
@@ -478,7 +482,7 @@ function CommentItem({
                 <UserAvatar
                     name={comment.author.name}
                     avatar={comment.author.avatar}
-                    className="size-10 shrink-0 rounded-[10px] text-caption"
+                    className="size-10 shrink-0 text-caption"
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                     <div className="flex flex-wrap items-center gap-2">
