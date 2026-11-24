@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use App\Domain\Articles\Enums\ArticleState;
+use App\Domain\Articles\Queries\WorkingVersion;
+use App\Domain\Audit\Actions\RecordAudit;
+use App\Domain\Audit\Enums\AuditAction;
+use App\Domain\Moderation\Rules\AuditLabel;
 use Carbon\CarbonInterface;
 use Database\Factories\ArticleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -59,6 +63,17 @@ class Article extends Model
     public function prunable(): Builder
     {
         return static::query()->onlyTrashed()->where('deleted_at', '<', now()->subDays(self::TRASH_DAYS));
+    }
+
+    /**
+     * Antes de a rotina apagar, registra na auditoria, sem o conteúdo e sem
+     * ninguém como responsável (RF-293, D87).
+     */
+    protected function pruning(): void
+    {
+        $title = app(WorkingVersion::class)->for($this)?->title;
+
+        app(RecordAudit::class)->handle(null, AuditAction::ArticleTrashExpired, AuditLabel::article($this, $title), $this);
     }
 
     /** Até quando a restauração vale (RF-118). */

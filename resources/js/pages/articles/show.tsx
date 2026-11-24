@@ -1,5 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import ArticleView from '@/components/articles/article-view';
+import ModerationMenu from '@/components/moderation/moderation-menu';
+import type { PolicyItem } from '@/components/moderation/decision-fields';
 import ShareButton from '@/components/share/share-button';
 import Mascot from '@/components/ui/mascot';
 import { formatShortDate } from '@/lib/format';
@@ -14,6 +16,8 @@ type Props = {
         /** Quando uma versão nova foi aprovada depois; senão, nulo. */
         updatedAt: string | null;
     };
+    /** Só para a administradora: despublicar e excluir de vez (D87). */
+    moderation?: { articleId: number; policyItems: PolicyItem[] } | null;
 };
 
 /**
@@ -21,7 +25,7 @@ type Props = {
  * compartilhar (RF-163) e o fim da leitura. Curtir, favoritar, denunciar e
  * comentar entram com as fatias deles (17, 18 e 20).
  */
-export default function Show({ article }: Props) {
+export default function Show({ article, moderation }: Props) {
     const { t, locale } = useTranslation();
 
     return (
@@ -47,12 +51,20 @@ export default function Show({ article }: Props) {
                     </>
                 }
                 actions={
-                    <ShareButton
-                        label={t('share.action')}
-                        title={t('share.article_title')}
-                        linkLabel={t('share.article_link')}
-                        text={article.title ?? ''}
-                    />
+                    <>
+                        <ShareButton
+                            label={t('share.action')}
+                            title={t('share.article_title')}
+                            linkLabel={t('share.article_link')}
+                            text={article.title ?? ''}
+                        />
+                        {moderation && (
+                            <ModerationMenu
+                                articleId={moderation.articleId}
+                                policyItems={moderation.policyItems}
+                            />
+                        )}
+                    </>
                 }
                 after={<ReadingEnd category={article.category} />}
             />

@@ -8,6 +8,8 @@ export type MyArticle = {
     submittedAt?: string | null;
     decidedAt?: string | null;
     reason?: string | null;
+    /** Item da Política de conteúdo citado na rejeição (RF-107). */
+    policyItem?: string | null;
     hasDraft: boolean;
     pendingSubmittedAt: string | null;
     /** Endereço público do publicado (D83). */

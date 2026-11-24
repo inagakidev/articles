@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Domain\Moderation\Queries\ApprovalQueue;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -44,6 +45,10 @@ class HandleInertiaRequests extends Middleware
                 // O painel mostra "2FA ativo" só com o 2FA ligado (D84)
                 'adminTwoFactor' => (bool) config('auth.admin_two_factor'),
             ],
+            // A contagem da fila na lateral do painel, só para a administradora
+            'adminCounts' => fn () => $request->user()?->is_admin
+                ? ['queue' => app(ApprovalQueue::class)->count()]
+                : null,
         ];
     }
 }

@@ -20,7 +20,7 @@ class AuthorArticles
     public const SECTIONS = ['drafts', 'review', 'rejected', 'published'];
 
     /** Colunas lidas das versões; o documento inteiro não é necessário aqui. */
-    private const COLUMNS = ['id', 'article_id', 'status', 'title', 'content_text', 'submitted_at', 'decided_at', 'decision_reason', 'created_at', 'updated_at'];
+    private const COLUMNS = ['id', 'article_id', 'status', 'title', 'content_text', 'submitted_at', 'decided_at', 'decision_reason', 'decision_policy_item', 'created_at', 'updated_at'];
 
     /** @return array<string, list<array<string, mixed>>> */
     public function sections(User $author): array
@@ -91,6 +91,8 @@ class AuthorArticles
             'submittedAt' => $version->submitted_at?->toIso8601String(),
             'decidedAt' => $version->decided_at?->toIso8601String(),
             'reason' => $version->status === VersionStatus::Rejected ? $version->decision_reason : null,
+            // Item da Política de conteúdo citado na rejeição (RF-107)
+            'policyItem' => $version->status === VersionStatus::Rejected ? $version->decision_policy_item : null,
         ];
     }
 }

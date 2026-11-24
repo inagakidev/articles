@@ -133,6 +133,8 @@ Uma cópia completa do conteúdo, com o próprio estado (REQUIREMENTS §5.2, D79
 | `decision_reason`                             | text, nulo                  | Justificativa da rejeição ou despublicação                                 |
 | `draft_slot`, `pending_slot`, `approved_slot` | gerada, única               | `article_id` quando o status bate; garante RF-351 no banco                 |
 
+A coluna `decision_policy_item` (string(10), nula) guarda o item da Política de conteúdo citado na rejeição ou despublicação (RF-107, D87).
+
 Índice FULLTEXT `article_versions_search` em `title` e `content_text`, consultado só pelo `ArticleSearch` (D54, D85).
 
 ### `article_version_tag`
@@ -160,3 +162,18 @@ Imagens enviadas para um artigo (RF-079 a RF-091, D52, D81). Os arquivos ficam n
 Imagens citadas por cada versão, no texto ou na capa (chave composta). Decide quem pode ver a imagem (RF-090) e o que a limpeza preserva. Recalculada a cada salvamento do rascunho.
 
 A versão ganhou `cover_image_id` (`article_images.id`, nulo, `nullOnDelete`), `cover_alt` (string(250), nulo) e `cover_decorative` (boolean, `false`).
+
+### `audit_logs`
+
+Registro das ações administrativas (RF-291 a RF-293, D87). Só inclusões: o modelo `AuditLog` recusa alterar e apagar.
+
+| Coluna                       | Tipo                  | Observação                                                                             |
+| ---------------------------- | --------------------- | -------------------------------------------------------------------------------------- |
+| `actor_id`                   | `users.id`, nulo      | Quem fez; nulo nas rotinas automáticas (lixeira vencida)                               |
+| `action`                     | string(40)            | `AuditAction`                                                                          |
+| `subject_type`, `subject_id` | string(40), id, nulos | O alvo, enquanto existir                                                               |
+| `subject_label`              | string(255)           | O alvo em texto (“Título” de @username), legível depois que o alvo some                |
+| `policy_item`                | string(10), nulo      | Item da Política de conteúdo citado                                                    |
+| `reason`                     | text, nulo            | Justificativa                                                                          |
+| `details`                    | JSON, nulo            | Contexto da ação (edição ou artigo novo, nome anterior da categoria); nunca o conteúdo |
+| `created_at`                 | timestamp             | Sem `updated_at`: registro não muda                                                    |

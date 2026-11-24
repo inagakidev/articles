@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Articles;
 
+use App\Domain\Articles\Actions\TrashArticle;
 use App\Domain\Articles\Queries\WorkingVersion;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
@@ -37,11 +38,11 @@ class TrashController extends Controller
         ]);
     }
 
-    public function store(Article $article): RedirectResponse
+    public function store(Article $article, TrashArticle $trash): RedirectResponse
     {
         Gate::authorize('delete', $article);
 
-        $article->delete();
+        $trash->handle($article);
 
         return back();
     }

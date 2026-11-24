@@ -12,8 +12,9 @@ import AdminLayout from '@/layouts/admin-layout';
 import Dashboard from '@/pages/admin/dashboard';
 
 const props = {
-    metrics: { users: 412 },
+    metrics: { users: 412, published: 68, pending: 5 },
     attention: [],
+    lateHours: 6,
     updatedAt: '2026-11-21T09:40:00Z',
 };
 
@@ -113,5 +114,36 @@ describe('painel da administração', () => {
         );
 
         expect(screen.getByText('2FA ativo')).toBeInTheDocument();
+    });
+
+    it('mostra a fila e avisa das versões atrasadas', () => {
+        render(
+            <Dashboard
+                {...props}
+                attention={[
+                    {
+                        type: 'late_version',
+                        id: 7,
+                        title: 'Filas no Laravel',
+                        author: 'lia-martins',
+                        hours: 8,
+                    },
+                ]}
+            />,
+        );
+
+        expect(screen.getByText('Aguardando aprovação')).toBeInTheDocument();
+        expect(
+            screen.getByText('Versão passou do prazo de 6 h'),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                '“Filas no Laravel”, de @lia-martins · há 8 h na fila',
+            ),
+        ).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Revisar' })).toHaveAttribute(
+            'href',
+            '/admin/versions/7',
+        );
     });
 });

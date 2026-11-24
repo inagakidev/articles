@@ -16,6 +16,7 @@ import { create, edit, preview } from '@/routes/articles';
 import { trash as trashPage } from '@/routes/articles';
 import * as submission from '@/routes/articles/submission';
 import * as trashRoutes from '@/routes/articles/trash';
+import { content } from '@/routes/policies';
 
 type Props = {
     sections: MySections;
@@ -293,6 +294,18 @@ export default function MyArticles({
                                     <p className="text-[0.9375rem] leading-6">
                                         “{article.reason}”
                                     </p>
+                                )}
+                                {article.policyItem && (
+                                    <Link
+                                        href={content({
+                                            query: { item: article.policyItem },
+                                        })}
+                                        className="self-start text-meta font-bold text-primary-text hover:underline"
+                                    >
+                                        {t('my_articles.policy_item', {
+                                            item: article.policyItem,
+                                        })}
+                                    </Link>
                                 )}
                                 <p className="text-meta text-text-secondary">
                                     <strong className="text-text-primary">

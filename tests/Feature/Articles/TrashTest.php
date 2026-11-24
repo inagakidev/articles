@@ -1,8 +1,10 @@
 <?php
 
 use App\Domain\Articles\Enums\ArticleState;
+use App\Domain\Articles\Enums\VersionStatus;
 use App\Models\Article;
 use App\Models\ArticleImage;
+use App\Models\ArticleVersion;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -76,4 +78,28 @@ test('na lixeira há mais de sete dias, sai de vez com os arquivos (RF-119)', fu
     expect(Article::withTrashed()->find($old->id))->toBeNull()
         ->and(Storage::disk('media')->exists($image->path()))->toBeFalse()
         ->and(Article::withTrashed()->find($recent->id))->not->toBeNull();
+});
+
+test('mandar para a lixeira tira a versão da fila e a devolve a rascunho (RF-123)', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->for($user, 'author')->create();
+    $pending = ArticleVersion::factory()->for($article)->create(['status' => VersionStatus::Pending, 'submitted_at' => now()]);
+
+    $this->actingAs($user)->post(route('articles.trash.store', $article));
+
+    expect($pending->fresh())
+        ->status->toBe(VersionStatus::Draft)
+        ->submitted_at->toBeNull();
+});
+
+test('com um rascunho mais novo, fica o rascunho e a versão da fila sai (D87)', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->for($user, 'author')->create();
+    $pending = ArticleVersion::factory()->for($article)->create(['status' => VersionStatus::Pending, 'submitted_at' => now()]);
+    $draft = ArticleVersion::factory()->for($article)->create(['status' => VersionStatus::Draft]);
+
+    $this->actingAs($user)->post(route('articles.trash.store', $article));
+
+    expect(ArticleVersion::query()->find($pending->id))->toBeNull()
+        ->and($draft->fresh()->status)->toBe(VersionStatus::Draft);
 });
