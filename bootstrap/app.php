@@ -3,6 +3,7 @@
 use App\Http\Controllers\NotFoundController;
 use App\Http\Middleware\EnsurePoliciesAccepted;
 use App\Http\Middleware\EnsureUsernameIsAcceptable;
+use App\Http\Middleware\EnsureAccountNotPenalized;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetLocale;
@@ -45,6 +46,7 @@ return Application::configure(basePath: dirname(__DIR__))
             EnsurePoliciesAccepted::class,
             // Username considerado inadequado: troca antes de continuar (D91).
             EnsureUsernameIsAcceptable::class,
+            EnsureAccountNotPenalized::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

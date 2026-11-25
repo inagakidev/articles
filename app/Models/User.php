@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -34,6 +34,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $email_suppressed_at
  * @property Carbon|null $username_change_required_at
  * @property string|null $username_change_policy_item
+ * @property Carbon|null $banned_at
+ * @property Carbon|null $suspended_until
  * @property Carbon|null $pending_email_expires_at
  * @property Carbon|null $email_verified_at
  * @property string $password
@@ -64,6 +66,27 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
 
     /** Prazo para confirmar o e-mail; no dia seguinte a conta é excluída (RF-023). */
     public const VERIFICATION_DAYS = 7;
+
+    public function isSuspended(): bool
+    {
+        return $this->suspended_until !== null && $this->suspended_until->isFuture();
+    }
+
+    public function isBanned(): bool
+    {
+        return $this->banned_at !== null;
+    }
+
+    public function canContestPenalty(): bool
+    {
+        return $this->isSuspended() || $this->isBanned();
+    }
+
+    /** @return HasMany<Penalty, $this> */
+    public function penalties(): HasMany
+    {
+        return $this->hasMany(Penalty::class);
+    }
 
     /** Idioma dos e-mails enviados sem uma requisição por perto (D62). */
     public function preferredLocale(): string
@@ -114,8 +137,20 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     public function prunable(): Builder
     {
         return static::query()
-            ->whereNull('email_verified_at')
-            ->where('created_at', '<', now()->subDays(self::VERIFICATION_DAYS));
+            ->where(function (Builder $query) {
+                $query
+                    ->where(fn (Builder $unverified) => $unverified
+                        ->whereNull('email_verified_at')
+                        ->where('created_at', '<', now()->subDays(self::VERIFICATION_DAYS)))
+                    ->orWhere(fn (Builder $ban) => $ban
+                        ->whereNotNull('banned_at')
+                        ->whereHas('penalties', fn (Builder $penalty) => $penalty
+                            ->where('type', 'ban')
+                            ->whereNotNull('appeal_deadline_at')
+                            ->where('appeal_deadline_at', '<=', now())
+                            ->doesntHave('appeal')
+                            ->orWhereHas('appeal', fn (Builder $appeal) => $appeal->where('status', 'rejected'))));
+            });
     }
 
     /**
@@ -166,6 +201,8 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             'pending_email_expires_at' => 'datetime',
             'email_suppressed_at' => 'datetime',
             'username_change_required_at' => 'datetime',
+            'banned_at' => 'datetime',
+            'suspended_until' => 'datetime',
         ];
     }
 }

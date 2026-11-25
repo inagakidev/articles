@@ -79,6 +79,11 @@ class ArticleComments
     {
         return Comment::query()
             ->where('article_id', $article->id)
+            ->whereHas('author', fn (Builder $author) => $author
+                ->whereNull('banned_at')
+                ->where(fn (Builder $active) => $active
+                    ->whereNull('suspended_until')
+                    ->orWhere('suspended_until', '<=', now())))
             ->with('author:id,name,username,avatar_path')
             ->withCount('likes')
             ->when($viewer, fn (Builder $query, User $viewer) => $query->withExists([

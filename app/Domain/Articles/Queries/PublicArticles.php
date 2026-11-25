@@ -26,7 +26,12 @@ class PublicArticles
         return Article::query()
             ->where('state', ArticleState::Published)
             ->whereNotNull('current_version_id')
-            ->whereNotNull('slug');
+            ->whereNotNull('slug')
+            ->whereHas('author', fn (Builder $author) => $author
+                ->whereNull('banned_at')
+                ->where(fn (Builder $active) => $active
+                    ->whereNull('suspended_until')
+                    ->orWhere('suspended_until', '<=', now())));
     }
 
     /** @return Collection<int, Article> */

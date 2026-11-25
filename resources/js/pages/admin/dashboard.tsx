@@ -30,6 +30,7 @@ type Props = {
         published: number;
         pending: number;
         reports: number;
+        appeals: number;
     };
     /** Avisos para a administradora; denúncias e contestações chegam com as fatias 20 e 21. */
     attention: LateVersion[];

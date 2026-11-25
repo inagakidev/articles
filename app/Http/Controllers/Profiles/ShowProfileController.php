@@ -26,6 +26,10 @@ class ShowProfileController extends Controller
         $user = User::query()
             ->where('username', mb_strtolower($username))
             ->whereNotNull('email_verified_at')
+            ->whereNull('banned_at')
+            ->where(fn ($query) => $query
+                ->whereNull('suspended_until')
+                ->orWhere('suspended_until', '<=', now()))
             ->firstOrFail();
         $oldestFirst = $request->query('ordem') === 'antigos';
         $page = $articles->byAuthor($user, $oldestFirst);

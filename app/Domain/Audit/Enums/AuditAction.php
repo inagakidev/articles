@@ -24,6 +24,12 @@ enum AuditAction: string
     case TagUnblocked = 'tag_unblocked';
     case TagMerged = 'tag_merged';
     case TagDeleted = 'tag_deleted';
+    case UserSuspended = 'user_suspended';
+    case UserBanned = 'user_banned';
+    case UserReactivated = 'user_reactivated';
+    case AppealAccepted = 'appeal_accepted';
+    case AppealRejected = 'appeal_rejected';
+    case AppealReopened = 'appeal_reopened';
 
     /** Chave de tradução do nome da ação. */
     public function label(): string
