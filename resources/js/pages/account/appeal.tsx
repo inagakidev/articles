@@ -10,22 +10,36 @@ type Props = {
     submitUrl: string;
 };
 
-export default function Appeal({ policyItem, deadline, alreadyAppealed, submitUrl }: Props) {
+export default function Appeal({
+    policyItem,
+    deadline,
+    alreadyAppealed,
+    submitUrl,
+}: Props) {
     const { t } = useTranslation();
 
     return (
         <>
             <Head title={t('account.appeal.title')} />
             <main className="mx-auto max-w-xl px-6 py-16">
-                <h1 className="font-display text-3xl font-extrabold">{t('account.appeal.title')}</h1>
+                <h1 className="font-display text-3xl font-extrabold">
+                    {t('account.appeal.title')}
+                </h1>
                 <p className="mt-3 text-text-secondary">{policyItem}</p>
                 {alreadyAppealed ? (
                     <p className="mt-6 rounded-card border border-border bg-surface p-5">
                         {t('account.appeal.already')}
                     </p>
                 ) : (
-                    <Form action={submitUrl} method="post" className="mt-6 space-y-4">
-                        <label className="block text-label font-bold" htmlFor="justification">
+                    <Form
+                        action={submitUrl}
+                        method="post"
+                        className="mt-6 space-y-4"
+                    >
+                        <label
+                            className="block text-label font-bold"
+                            htmlFor="justification"
+                        >
                             {t('moderation.appeals.justification')}
                         </label>
                         <textarea
