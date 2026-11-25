@@ -36,7 +36,6 @@ class PenaltyController extends Controller
     public function appeal(Request $request, Penalty $penalty): Response
     {
         abort_unless($request->hasValidSignature(), 403);
-        abort_unless($penalty->user_id !== null, 404);
 
         return Inertia::render('account/appeal', [
             'penaltyId' => $penalty->id,

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Domain\Articles\Queries\PublicArticles;
+use App\Domain\Moderation\Enums\AppealStatus;
 use App\Domain\Moderation\Queries\ApprovalQueue;
 use App\Domain\Reports\Queries\ReportQueue;
-use App\Domain\Moderation\Enums\AppealStatus;
-use App\Models\Appeal;
 use App\Http\Controllers\Controller;
+use App\Models\Appeal;
 use App\Models\ArticleVersion;
 use App\Models\User;
 use Inertia\Inertia;

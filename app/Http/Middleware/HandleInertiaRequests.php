@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Domain\Moderation\Enums\AppealStatus;
 use App\Domain\Moderation\Queries\ApprovalQueue;
 use App\Domain\Notifications\Queries\UserNotifications;
 use App\Domain\Reports\Queries\ReportQueue;
-use App\Domain\Moderation\Enums\AppealStatus;
-use App\Models\Appeal;
 use App\Http\Resources\Notifications\NotificationItem;
+use App\Models\Appeal;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 

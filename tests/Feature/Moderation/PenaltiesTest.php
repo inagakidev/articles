@@ -1,5 +1,7 @@
 <?php
 
+use App\Domain\Moderation\Actions\BanUser;
+use App\Domain\Moderation\Actions\DecideAppeal;
 use App\Domain\Moderation\Actions\EndExpiredSuspensions;
 use App\Domain\Moderation\Actions\SuspendUser;
 use App\Domain\Moderation\Enums\AppealStatus;
@@ -9,8 +11,8 @@ use App\Models\Article;
 use App\Models\Comment;
 use App\Models\Penalty;
 use App\Models\User;
-use Inertia\Testing\AssertableInertia as Assert;
 use Illuminate\Support\Facades\URL;
+use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
     $this->admin = User::factory()->admin()->create();
@@ -63,7 +65,7 @@ test('o link assinado cria uma unica contestacao e aceita reativa suspensao', fu
 
     expect($appeal->status)->toBe(AppealStatus::Open);
 
-    app(\App\Domain\Moderation\Actions\DecideAppeal::class)->handle(
+    app(DecideAppeal::class)->handle(
         $appeal,
         $this->admin,
         true,
@@ -78,7 +80,7 @@ test('banimento exclui artigos comentarios curtidas e favoritos mas retém a con
     $article = Article::factory()->for($this->user, 'author')->published()->create();
     $comment = Comment::factory()->for($article)->create(['user_id' => $this->user->id]);
 
-    app(\App\Domain\Moderation\Actions\BanUser::class)->handle(
+    app(BanUser::class)->handle(
         $this->user,
         $this->admin,
         '3.2',

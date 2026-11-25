@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Schedule;
 use App\Domain\Moderation\Actions\EndExpiredSuspensions;
+use Illuminate\Support\Facades\Schedule;
 
 // Links de recuperação de senha vencidos.
 Schedule::command('auth:clear-resets')->daily();

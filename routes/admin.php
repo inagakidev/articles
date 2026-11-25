@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AppealController;
 use App\Http\Controllers\Admin\ApprovalQueueController;
 use App\Http\Controllers\Admin\ArticleModerationController;
 use App\Http\Controllers\Admin\AuditController;
@@ -11,7 +12,6 @@ use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TaxonomyController;
 use App\Http\Controllers\Admin\TwoFactorSetupController;
 use App\Http\Controllers\Admin\UserPenaltyController;
-use App\Http\Controllers\Admin\AppealController;
 use App\Http\Middleware\EnsureTwoFactorConfirmed;
 use Illuminate\Support\Facades\Route;
 

@@ -8,7 +8,6 @@ use App\Domain\Moderation\Actions\SuspendUser;
 use App\Domain\Moderation\Exceptions\PenaltyRefused;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PenaltyRequest;
-use App\Models\Penalty;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

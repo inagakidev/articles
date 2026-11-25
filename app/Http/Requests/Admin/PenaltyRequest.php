@@ -2,9 +2,6 @@
 
 namespace App\Http\Requests\Admin;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-
 class PenaltyRequest extends ModerationRequest
 {
     public function rules(): array

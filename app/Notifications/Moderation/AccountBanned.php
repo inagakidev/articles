@@ -14,6 +14,8 @@ class AccountBanned extends Notification implements ShouldQueue
     use Queueable;
 
     public int $tries = 3;
+
+    /** @var list<int> */
     public array $backoff = [60, 300];
 
     public function __construct(public readonly Penalty $penalty)

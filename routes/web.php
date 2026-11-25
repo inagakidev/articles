@@ -9,10 +9,10 @@ use App\Http\Controllers\Articles\SearchController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\Moderation\PenaltyController;
 use App\Http\Controllers\NotFoundController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\Profiles\ShowProfileController;
-use App\Http\Controllers\Moderation\PenaltyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
