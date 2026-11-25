@@ -17,6 +17,12 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useTranslation } from '@/lib/i18n';
 import { destroy, unpublish } from '@/routes/admin/articles';
 
@@ -44,12 +50,28 @@ export default function ModerationMenu({
     return (
         <>
             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button type="button" variant="ghost" size="md">
-                        <ShieldAlert aria-hidden="true" />
-                        {t('moderation.menu')}
-                    </Button>
-                </DropdownMenuTrigger>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    aria-label={t('moderation.menu')}
+                                    className="size-10 gap-0 rounded-full p-0 text-text-secondary transition-colors hover:bg-surface-hover hover:text-text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:bg-surface-selected has-[>svg]:px-0 [&_svg]:size-5"
+                                >
+                                    <ShieldAlert
+                                        aria-hidden="true"
+                                        className="size-5"
+                                    />
+                                </Button>
+                            </DropdownMenuTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent side="left">
+                            {t('moderation.menu')}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
                 <DropdownMenuContent align="start">
                     <DropdownMenuItem onSelect={() => setAction('unpublish')}>
                         <EyeOff aria-hidden="true" />

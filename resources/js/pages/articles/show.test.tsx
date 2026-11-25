@@ -73,6 +73,10 @@ describe('leitura do artigo', () => {
         render(<Show article={article} {...social} />);
 
         expect(
+            screen.getByRole('complementary', { name: 'Ações do artigo' }),
+        ).toBeInTheDocument();
+
+        expect(
             screen.getByRole('heading', { level: 1, name: 'Filas no Laravel' }),
         ).toBeInTheDocument();
         expect(screen.getByText('Publicado em')).toHaveTextContent(
@@ -169,11 +173,11 @@ describe('leitura do artigo', () => {
         ).toBeInTheDocument();
     });
 
-    it('visitante vê as curtidas e os comentários, sem formulário (RF-141)', () => {
+    it('visitante pode abrir o acesso ao curtir e vê os comentários sem formulário (RF-141)', () => {
         render(
             <Show
                 article={article}
-                likes={social.likes}
+                likes={{ ...social.likes, canLike: true }}
                 favorites={social.favorites}
                 report={social.report}
                 comments={{
@@ -185,7 +189,21 @@ describe('leitura do artigo', () => {
         );
 
         expect(screen.getAllByText('48 curtidas')).toHaveLength(2);
-        expect(screen.queryByRole('button', { name: /Curtir,/ })).toBeNull();
+        fireEvent.click(
+            screen.getAllByRole('button', {
+                name: 'Curtir, 48 curtidas',
+            })[0],
+        );
+        expect(
+            screen.getByRole('dialog', { name: 'Entre para curtir' }),
+        ).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Entrar' })).toHaveAttribute(
+            'href',
+            '/login',
+        );
+        expect(
+            screen.getByRole('link', { name: 'Criar conta' }),
+        ).toHaveAttribute('href', '/register');
         expect(screen.getByText('Comentário 1')).toBeInTheDocument();
         expect(screen.queryByLabelText('Escreva um comentário')).toBeNull();
         expect(screen.queryByRole('button', { name: 'Responder' })).toBeNull();
@@ -226,9 +244,23 @@ describe('leitura do artigo', () => {
             />,
         );
 
+        const likeButton = screen.getAllByRole('button', {
+            name: 'Curtir, 48 curtidas',
+        })[0];
+        expect(likeButton).toHaveAttribute('aria-pressed', 'false');
+        expect(likeButton).toHaveClass('size-10', 'flex-col', 'gap-0.5');
         expect(
-            screen.getAllByRole('button', { name: 'Curtir, 48 curtidas' })[0],
-        ).toHaveAttribute('aria-pressed', 'false');
+            screen.getByRole('complementary', { name: 'Ações do artigo' })
+                .firstElementChild,
+        ).toHaveClass('gap-0.5', 'p-1.5', 'rounded-2xl');
+        expect(
+            screen.getByRole('complementary', { name: 'Ações do artigo' })
+                .parentElement,
+        ).toHaveClass('xl:gap-4');
+        expect(likeButton.querySelector('svg')).toHaveClass('size-5');
+        expect(
+            screen.getAllByRole('link', { name: 'Ver os comentários (3)' })[0],
+        ).toHaveClass('size-10', 'flex-col', 'gap-0.5');
         expect(
             screen.getByLabelText('Escreva um comentário'),
         ).toBeInTheDocument();
@@ -385,7 +417,7 @@ describe('leitura do artigo', () => {
         );
     });
 
-    it('favoritar mostra o marcador com a contagem pública', () => {
+    it('favoritar mostra só o marcador, sem contador visível', () => {
         render(
             <Show
                 article={article}
@@ -394,14 +426,14 @@ describe('leitura do artigo', () => {
             />,
         );
 
-        expect(
-            screen.getAllByRole('button', {
-                name: 'Favoritar, 5 favoritos',
-            })[0],
-        ).toHaveAttribute('aria-pressed', 'true');
+        const button = screen.getAllByRole('button', {
+            name: 'Favoritar',
+        })[0];
+        expect(button).toHaveAttribute('aria-pressed', 'true');
+        expect(within(button).queryByText(/\d/)).toBeNull();
     });
 
-    it('a contagem usa o singular quando é 1', () => {
+    it('favoritar não expõe o contador na ação', () => {
         render(
             <Show
                 article={article}
@@ -413,7 +445,46 @@ describe('leitura do artigo', () => {
 
         expect(screen.getAllByText('1 curtida')[0]).toBeInTheDocument();
         expect(
-            screen.getAllByRole('button', { name: 'Favoritar, 1 favorito' })[0],
+            screen.getAllByRole('button', { name: 'Favoritar' })[0],
+        ).toBeInTheDocument();
+    });
+
+    it('mantém os controles em 40px e os ícones em 20px', () => {
+        render(
+            <Show
+                article={article}
+                likes={{ ...social.likes, canLike: true }}
+                favorites={{ ...social.favorites, canFavorite: true }}
+                report={{ ...social.report, canReport: true }}
+                comments={social.comments}
+                moderation={{
+                    articleId: 3,
+                    policyItems: [{ id: '4.2', title: 'Fontes e atribuição' }],
+                }}
+            />,
+        );
+
+        const controls = [
+            screen.getAllByRole('button', {
+                name: 'Curtir, 48 curtidas',
+            })[0],
+            screen.getAllByRole('link', {
+                name: 'Ver os comentários (0)',
+            })[0],
+            screen.getAllByRole('button', { name: 'Favoritar' })[0],
+            screen.getAllByRole('button', { name: 'Compartilhar' })[0],
+            screen.getAllByRole('button', { name: 'Denunciar artigo' })[0],
+            screen.getAllByRole('button', { name: 'Moderação' })[0],
+        ];
+
+        for (const control of controls) {
+            expect(control).toHaveClass('size-10');
+            expect(control.querySelector('svg')).toHaveClass('size-5');
+        }
+
+        fireEvent.pointerDown(controls[5], { button: 0, ctrlKey: false });
+        expect(
+            screen.getByRole('menuitem', { name: 'Despublicar' }),
         ).toBeInTheDocument();
     });
 });

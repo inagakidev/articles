@@ -5,6 +5,12 @@ import type { ReportTarget } from '@/components/reports/report-dialog';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 /**
  * Denunciar um artigo ou perfil (RF-164). Já denunciado e em análise, o
@@ -42,23 +48,40 @@ export default function ReportButton({
 
     return (
         <>
-            <Button
-                type="button"
-                variant={iconOnly ? 'ghost' : 'outline'}
-                size={iconOnly ? undefined : 'sm'}
-                aria-label={iconOnly ? label : undefined}
-                title={label}
-                disabled={reported}
-                onClick={() => setOpen(true)}
-                className={cn(
-                    iconOnly &&
-                        'size-10 rounded-full px-0 text-text-secondary hover:text-text-primary [&_svg]:size-5',
-                    className,
-                )}
-            >
-                <Flag aria-hidden="true" />
-                {!iconOnly && label}
-            </Button>
+            {iconOnly ? (
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                aria-label={label}
+                                disabled={reported}
+                                onClick={() => setOpen(true)}
+                                className={cn(
+                                    'size-10 gap-0 rounded-full p-0 text-text-secondary transition-colors outline-none hover:bg-surface-hover hover:text-text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:bg-surface-selected has-[>svg]:px-0 [&_svg]:size-5',
+                                    className,
+                                )}
+                            >
+                                <Flag aria-hidden="true" className="size-5" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="left">{label}</TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            ) : (
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={reported}
+                    onClick={() => setOpen(true)}
+                    className={className}
+                >
+                    <Flag aria-hidden="true" />
+                    {label}
+                </Button>
+            )}
             <ReportDialog
                 open={open}
                 onClose={() => setOpen(false)}
