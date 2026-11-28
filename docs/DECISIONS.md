@@ -879,3 +879,14 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Tabelas do painel no celular:** os textos só para leitores de tela das tabelas (posição absoluta) escapavam da área com rolagem e esticavam a página, e o navegador do celular diminuía o zoom. As tabelas com rolagem própria usam `TableRegion` (`components/ui`), que prende esses textos; um teste confere que as páginas do painel cabem na tela do celular.
 - **Fora desta fatia:** os desfechos com penalidade (suspensão e banimento) e a prioridade de quem tem penalidade ativa entram com a fatia 21.
 - **Alternativas descartadas:** copiar o conteúdo na denúncia (contraria o RF-174); uma decisão por denúncia (a mesma coisa julgada várias vezes, com resultados que podem divergir); esconder o conteúdo denunciado até a análise (contraria o RF-165); guardar o "em análise" como status próprio (os requisitos só têm aberta, procedente e improcedente).
+
+### D93 — Cabeçalhos de segurança e dependências
+
+- **Status:** Aprovada (28/11/2026).
+- **Contexto:** a revisão de boas práticas encontrou duas falhas conhecidas nas dependências (`symfony/http-kernel`, CVE-2026-133743, e `symfony/mailer`, CVE-2026-133751) e nenhum cabeçalho de segurança nas respostas.
+- **Decisão:**
+    - **Dependências:** os pacotes `symfony/*` sobem para a 8.2, dentro das versões aceitas pelo Laravel. O `composer audit` e o `npm audit` entram na conferência antes de cada versão.
+    - **Cabeçalhos (`AddSecurityHeaders`):** `X-Frame-Options: DENY` e `frame-ancestors 'none'` (o site, inclusive o painel, não pode ser embutido em outro), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` e `Permissions-Policy` sem câmera, microfone, localização e pagamento. Em produção com HTTPS, `Strict-Transport-Security` de um ano.
+    - **CSP em modo só de relatório:** scripts só da própria origem e com o nonce da página (o script do tema e os do Vite); estilos inline liberados, porque o React e o Tailwind os usam; imagens de qualquer HTTPS, por causa do armazenamento (R2). Os bloqueios aparecem no console sem quebrar nada; vira obrigatória depois de conferida em todas as telas em produção. Fica fora do desenvolvimento local, onde o Vite serve os scripts de outra porta.
+    - **Cookie de sessão:** em produção, `SESSION_SECURE_COOKIE=true`, para o cookie só trafegar por HTTPS (anotado no `.env.example`).
+- **Alternativas descartadas:** pacote de terceiros para os cabeçalhos (um middleware pequeno resolve, sem dependência nova); CSP obrigatória de saída (risco de quebrar o editor e telas sem conferência).
