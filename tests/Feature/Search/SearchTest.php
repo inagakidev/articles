@@ -53,7 +53,7 @@ test('sem termo, lista os visíveis, do mais novo para o mais antigo', function 
 test('filtra por categoria, idioma, autor, tags e período', function () {
     $category = Category::factory()->create();
     $match = inVersion(Article::factory()->published()->create([
-        'user_id' => User::factory()->create(['name' => 'Rafa Moreira', 'username' => 'rafa'])->id,
+        'user_id' => User::factory()->create(['name' => 'Xandrielle Moreira', 'username' => 'xandrielle'])->id,
     ]), ['category_id' => $category->id, 'language' => 'en']);
     tagged(tagged($match, 'laravel'), 'php');
     // Categoria fixa: a factory sorteia, e poderia cair na mesma do teste
@@ -65,8 +65,8 @@ test('filtra por categoria, idioma, autor, tags e período', function () {
 
     expect(searchUrls(['categoria' => $category->slug]))->toEqualCanonicalizing([$url, '/artigos/'.$old->slug])
         ->and(searchUrls(['idioma' => 'en']))->toBe([$url])
-        ->and(searchUrls(['autor' => 'rafa mor']))->toBe([$url])
-        ->and(searchUrls(['autor' => '@rafa']))->toBe([$url])
+        ->and(searchUrls(['autor' => 'xandrielle mor']))->toBe([$url])
+        ->and(searchUrls(['autor' => '@xandrielle']))->toBe([$url])
         ->and(searchUrls(['tags' => ['laravel', 'PHP']]))->toBe([$url])
         ->and(searchUrls(['categoria' => $category->slug, 'periodo' => 'mes']))->toBe([$url]);
 });
