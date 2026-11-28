@@ -1,7 +1,8 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { MessageCircle } from 'lucide-react';
 import ArticleView from '@/components/articles/article-view';
 import CommentSection from '@/components/interactions/comment-section';
+import ActionTip from '@/components/interactions/action-tip';
 import FavoriteButton from '@/components/interactions/favorite-button';
 import type { CommentsData } from '@/components/interactions/comment-section';
 import LikeButton from '@/components/interactions/like-button';
@@ -53,6 +54,7 @@ export default function Show({
     moderation,
 }: Props) {
     const { t, locale } = useTranslation();
+    const { auth } = usePage().props;
 
     return (
         <>
@@ -90,26 +92,31 @@ export default function Show({
                                     ? t('likes.own_article')
                                     : undefined
                             }
+                            guest={!auth.user}
                         />
-                        <a
-                            href="#comentarios"
-                            aria-label={t('comments.go_to', {
-                                count: comments.total,
-                            })}
-                            title={t('comments.title')}
-                            className="inline-flex h-10 items-center gap-1.5 rounded-full px-2.5 text-meta font-bold text-text-secondary transition-colors hover:bg-surface-hover hover:text-text-primary"
-                        >
-                            <MessageCircle
-                                aria-hidden="true"
-                                className="size-5"
-                            />
-                            <span aria-hidden="true">{comments.total}</span>
-                        </a>
+                        <ActionTip label={t('comments.title')}>
+                            <a
+                                href="#comentarios"
+                                aria-label={t('comments.go_to', {
+                                    count: comments.total,
+                                })}
+                                className="inline-flex size-10 flex-col items-center justify-center gap-0.5 rounded-full text-xs leading-3 font-bold text-text-secondary transition-colors outline-none hover:bg-surface-hover hover:text-text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:bg-surface-selected"
+                            >
+                                <MessageCircle
+                                    aria-hidden="true"
+                                    className="size-5"
+                                />
+                                <span aria-hidden="true" className="leading-3">
+                                    {comments.total}
+                                </span>
+                            </a>
+                        </ActionTip>
                         <FavoriteButton
                             articleId={likes.articleId}
                             count={favorites.count}
                             favorited={favorites.favorited}
                             canFavorite={favorites.canFavorite}
+                            guest={!auth.user}
                         />
                         <ShareButton
                             label={t('share.action')}
@@ -118,17 +125,27 @@ export default function Show({
                             text={article.title ?? ''}
                             iconOnly
                         />
-                        <ReportButton
-                            target="article"
-                            id={likes.articleId}
-                            subject={t('reports.subject.article', {
-                                title: article.title ?? '',
-                                author: article.author.username ?? '',
-                            })}
-                            canReport={report.canReport}
-                            reported={report.reported}
-                            iconOnly
-                        />
+                        {(report.canReport || !auth.user) && (
+                            <div className="relative flex size-10 items-center justify-center">
+                                <span
+                                    aria-hidden="true"
+                                    className="absolute inset-x-2 top-0 border-t border-border"
+                                />
+                                <ReportButton
+                                    target="article"
+                                    id={likes.articleId}
+                                    subject={t('reports.subject.article', {
+                                        title: article.title ?? '',
+                                        author: article.author.username ?? '',
+                                    })}
+                                    canReport={report.canReport}
+                                    guest={!auth.user}
+                                    reported={report.reported}
+                                    iconOnly
+                                    className="relative"
+                                />
+                            </div>
+                        )}
                         {moderation && (
                             <ModerationMenu
                                 articleId={moderation.articleId}

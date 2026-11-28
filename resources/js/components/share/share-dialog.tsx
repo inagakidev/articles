@@ -163,7 +163,7 @@ function ShareBody({
                         });
                     }}
                 >
-                    <Share2 aria-hidden="true" />
+                    <Share2 aria-hidden="true" className="size-6" />
                     {t('share.more')}
                 </Button>
             )}

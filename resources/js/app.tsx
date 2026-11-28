@@ -31,7 +31,7 @@ void createInertiaApp({
                 return AdminLayout;
             case name.startsWith('articles/'):
                 return EditorLayout;
-            case name.startsWith('auth/'):
+            case name.startsWith('auth/') || name.startsWith('account/'):
                 return AuthLayout;
             case name.startsWith('settings/'):
                 return [PublicLayout, SettingsLayout];

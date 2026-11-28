@@ -37,6 +37,8 @@ A conta (D72). Além das colunas do Laravel e do Fortify (`name`, `email`, `emai
 | `email_suppressed_reason`     | string(20), nulo   | `bounce` ou `complaint`                                                            |
 | `username_change_required_at` | timestamp, nulo    | Username considerado inadequado: troca obrigatória no próximo acesso (RF-178, D91) |
 | `username_change_policy_item` | string(10), nulo   | Item da Política citado na tela da troca                                           |
+| `suspended_until`             | timestamp, nulo    | Suspensa até; oculta enquanto estiver no futuro (D92)                              |
+| `banned_at`                   | timestamp, nulo    | Banida; conta retida e oculta até acabar a chance de contestar (D92)               |
 
 **Retenção:** conta que não confirma o e-mail em 7 dias é apagada no 8º dia (`User::prunable()`, RF-023), e username e e-mail ficam livres na hora. Nenhuma data de nascimento é guardada (RF-012).
 
@@ -229,3 +231,21 @@ Denúncias de artigos, comentários e perfis (RF-164 a RF-178, D91). Não guarda
 | `decided_by_id`, `decided_at` | `users.id`, timestamp, nulos | Quem decidiu e quando                                                                                                                                 |
 
 Índice em (`status`, `target`, `target_id`) para a lista do painel, agrupada por item.
+
+### `penalties`
+
+Suspensões e banimentos (RF-206 a RF-243, D92). O histórico não se reescreve: o estado sai das datas e da contestação (ativa sem `ended_at`; anulada com contestação aceita).
+
+| Coluna                  | Tipo             | Observação                                                                     |
+| ----------------------- | ---------------- | ------------------------------------------------------------------------------ |
+| `user_id`               | `users.id`       | Quem foi penalizada (`cascadeOnDelete`)                                        |
+| `decided_by_id`         | `users.id`, nulo | Quem aplicou (`nullOnDelete`)                                                  |
+| `type`                  | string(20)       | `suspension` ou `ban`                                                          |
+| `policy_item`, `reason` | string(10), text | Item da Política e justificativa, que vão no e-mail                            |
+| `starts_at`, `ends_at`  | timestamps       | Início e, na suspensão, o fim (7, 15 ou 30 dias)                               |
+| `appeal_deadline_at`    | timestamp, nulo  | Até quando dá para contestar (7 dias; reaberto por mais 7 no banimento retido) |
+| `ended_at`              | timestamp, nulo  | Fim no prazo, pela reativação ou pela contestação aceita                       |
+
+### `appeals`
+
+Contestações (RF-228 a RF-242). Uma por penalidade (índice único em `penalty_id`); `justification` é o texto da pessoa, `status` é `open`, `accepted` ou `rejected`, e a decisão guarda `decided_by_id`, `decision_reason` e `decided_at`.

@@ -15,9 +15,9 @@ it('favorita na leitura, remove na lista e desfaz', function () {
 
     visit('/artigos/'.$article->slug)
         ->withLocale('pt-BR')
-        ->click('article .border-y button[aria-label^="Favoritar"]')
+        ->click('button[aria-label^="Favoritar"]:visible')
         ->wait(0.5)
-        ->assertAttribute('article .border-y button[aria-label^="Favoritar"]', 'aria-pressed', 'true');
+        ->assertAttribute('button[aria-label^="Favoritar"]:visible', 'aria-pressed', 'true');
 
     expect(Favorite::query()->where('user_id', $user->id)->count())->toBe(1);
 

@@ -2,10 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Domain\Moderation\Enums\AppealStatus;
 use App\Domain\Moderation\Queries\ApprovalQueue;
 use App\Domain\Notifications\Queries\UserNotifications;
 use App\Domain\Reports\Queries\ReportQueue;
 use App\Http\Resources\Notifications\NotificationItem;
+use App\Models\Appeal;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -55,7 +57,11 @@ class HandleInertiaRequests extends Middleware
             ],
             // A contagem da fila na lateral do painel, só para a administradora
             'adminCounts' => fn () => $request->user()?->is_admin
-                ? ['queue' => app(ApprovalQueue::class)->count(), 'reports' => app(ReportQueue::class)->openCount()]
+                ? [
+                    'queue' => app(ApprovalQueue::class)->count(),
+                    'reports' => app(ReportQueue::class)->openCount(),
+                    'appeals' => Appeal::query()->where('status', AppealStatus::Open)->count(),
+                ]
                 : null,
         ];
     }

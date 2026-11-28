@@ -6,6 +6,7 @@ use App\Domain\Reports\Enums\ReportStatus;
 use App\Models\Article;
 use App\Models\AuditLog;
 use App\Models\Comment;
+use App\Models\Penalty;
 use App\Models\Report;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -206,4 +207,38 @@ test('decidir de novo um item já decidido é recusado', function () {
     $decide()->assertRedirect(route('admin.reports'));
 
     expect(AuditLog::query()->where('action', AuditAction::ReportDismissed)->count())->toBe(1);
+});
+
+test('procedente com penalidade: exclui e suspende quem escreveu, com a mesma justificativa (D92)', function () {
+    $comment = Comment::factory()->for($this->article)->create(['user_id' => $this->reader->id]);
+    reportAs(User::factory()->create(), 'comment', $comment->id, 'offensive');
+
+    $this->actingAs($this->admin)
+        ->post(route('admin.reports.decide', ['comment', $comment->id]), [
+            'outcome' => 'delete_comment', 'policy_item' => '2.1', 'reason' => 'Ataque pessoal à autora.', 'penalty_days' => 7,
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect(Comment::query()->find($comment->id))->toBeNull()
+        ->and($this->reader->fresh()->isSuspended())->toBeTrue()
+        ->and(Penalty::query()->sole()->reason)->toBe('Ataque pessoal à autora.');
+});
+
+test('improcedente não aplica penalidade; denúncia contra quem está suspensa vem primeiro (RF-216)', function () {
+    reportAs($this->reader, 'article', $this->article->id);
+    $this->actingAs($this->admin)
+        ->post(route('admin.reports.decide', ['article', $this->article->id]), ['outcome' => 'dismiss', 'reason' => 'O link é a fonte citada.', 'penalty_days' => 7])
+        ->assertSessionHasErrors('penalty_days');
+
+    $suspended = User::factory()->create();
+    $other = Article::factory()->published()->create();
+    reportAs($this->reader, 'article', $other->id);
+    reportAs(User::factory()->create(), 'article', $other->id);
+    reportAs($this->reader, 'profile', $suspended->id);
+    $suspended->forceFill(['suspended_until' => now()->addDays(7)])->save();
+
+    $this->actingAs($this->admin)->get(route('admin.reports'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('groups.data.0.target', 'profile')
+            ->where('groups.data.0.priority', true));
 });

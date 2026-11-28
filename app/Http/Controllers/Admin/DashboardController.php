@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Domain\Articles\Queries\PublicArticles;
+use App\Domain\Moderation\Enums\AppealStatus;
 use App\Domain\Moderation\Queries\ApprovalQueue;
 use App\Domain\Reports\Queries\ReportQueue;
 use App\Http\Controllers\Controller;
+use App\Models\Appeal;
 use App\Models\ArticleVersion;
 use App\Models\User;
 use Inertia\Inertia;
@@ -30,6 +32,7 @@ class DashboardController extends Controller
                 'pending' => $queue->count(),
                 // Itens com denúncia aberta (RF-262)
                 'reports' => $reports->openCount(),
+                'appeals' => Appeal::query()->where('status', AppealStatus::Open)->count(),
             ],
             'attention' => $queue->late(self::ATTENTION)->map(fn (ArticleVersion $version) => [
                 'type' => 'late_version',

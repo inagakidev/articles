@@ -1,5 +1,23 @@
 # Serviços só para desenvolvimento local.
 services:
+    mariadb:
+        image: mariadb:11.4
+        environment:
+            MARIADB_DATABASE: articles
+            MARIADB_USER: articles
+            MARIADB_PASSWORD: articles
+            MARIADB_ROOT_PASSWORD: articles_root
+        ports:
+            - '127.0.0.1:3306:3306'
+        volumes:
+            - mariadb_data:/var/lib/mysql
+        healthcheck:
+            test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+            interval: 5s
+            timeout: 5s
+            retries: 20
+        restart: unless-stopped
+
     # Caixa de entrada de teste: recebe todo e-mail enviado pela aplicação
     # (SMTP na porta 1025) e mostra em http://localhost:8025. Nada sai para fora.
     mailpit:
@@ -8,3 +26,6 @@ services:
             - '127.0.0.1:1025:1025'
             - '127.0.0.1:8025:8025'
         restart: unless-stopped
+
+volumes:
+    mariadb_data:

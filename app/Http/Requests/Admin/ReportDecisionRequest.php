@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Domain\Moderation\Rules\PenaltyRules;
 use App\Domain\Reports\Enums\ReportOutcome;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -25,6 +26,8 @@ class ReportDecisionRequest extends ModerationRequest
             'photo' => ['boolean'],
             'bio' => ['boolean'],
             'username' => ['boolean'],
+            // Procedente com penalidade: suspende quem escreveu (D92)
+            'penalty_days' => ['nullable', 'integer', Rule::in(PenaltyRules::SUSPENSION_DAYS), Rule::prohibitedIf($this->dismissing())],
         ];
     }
 
@@ -42,7 +45,7 @@ class ReportDecisionRequest extends ModerationRequest
     /** @return array<string, string> */
     public function attributes(): array
     {
-        return [...parent::attributes(), 'reason' => __('reports.admin.justification')];
+        return [...parent::attributes(), 'reason' => __('reports.admin.justification'), 'penalty_days' => __('penalties.fields.days')];
     }
 
     private function dismissing(): bool

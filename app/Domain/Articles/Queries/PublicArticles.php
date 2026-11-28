@@ -23,10 +23,10 @@ class PublicArticles
     public function query(): Builder
     {
         // A lixeira já fica de fora pelo escopo do SoftDeletes.
-        return Article::query()
+        return User::excludePenalized(Article::query()
             ->where('state', ArticleState::Published)
             ->whereNotNull('current_version_id')
-            ->whereNotNull('slug');
+            ->whereNotNull('slug'), 'articles.user_id');
     }
 
     /** @return Collection<int, Article> */

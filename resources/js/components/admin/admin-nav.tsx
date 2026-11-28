@@ -4,7 +4,15 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-import { audit, dashboard, queue, reports, taxonomy } from '@/routes/admin';
+import {
+    appeals,
+    audit,
+    dashboard,
+    queue,
+    reports,
+    taxonomy,
+    users,
+} from '@/routes/admin';
 
 type Item = {
     label: TranslationKey;
@@ -19,7 +27,11 @@ type Item = {
  */
 function useItems(): Item[] {
     const { adminCounts } = usePage<{
-        adminCounts?: { queue: number; reports: number } | null;
+        adminCounts?: {
+            queue: number;
+            reports: number;
+            appeals: number;
+        } | null;
     }>().props;
 
     return [
@@ -29,6 +41,12 @@ function useItems(): Item[] {
             label: 'admin.nav.reports',
             href: reports(),
             count: adminCounts?.reports,
+        },
+        { label: 'admin.nav.users', href: users() },
+        {
+            label: 'admin.nav.appeals',
+            href: appeals(),
+            count: adminCounts?.appeals,
         },
         { label: 'admin.nav.taxonomy', href: taxonomy() },
         { label: 'admin.nav.audit', href: audit() },

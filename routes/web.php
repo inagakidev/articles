@@ -9,6 +9,7 @@ use App\Http\Controllers\Articles\SearchController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\Moderation\PenaltyController;
 use App\Http\Controllers\NotFoundController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\Profiles\ShowProfileController;
@@ -34,6 +35,17 @@ Route::get('media/{path}', MediaController::class)->where('path', '.*')->name('m
 Route::get('@{username}', ShowProfileController::class)
     ->where('username', '[a-z][a-z0-9_-]{2,29}')
     ->name('profiles.show');
+
+// Conta penalizada e contestação pelo link assinado do e-mail.
+Route::get('conta/suspensa', [PenaltyController::class, 'suspended'])
+    ->middleware('auth')
+    ->name('penalty.suspended');
+Route::get('contestar/{penalty}', [PenaltyController::class, 'appeal'])
+    ->middleware('signed')
+    ->name('penalty.appeal');
+Route::post('contestar/{penalty}', [PenaltyController::class, 'submit'])
+    ->middleware('signed')
+    ->name('penalty.appeal.submit');
 
 // Termos de uso, Política de privacidade e Política de conteúdo (D73)
 Route::get('terms', PolicyController::class)->defaults('type', 'terms')->name('policies.terms');

@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from 'react';
 import type { FormEvent, KeyboardEvent } from 'react';
 import LikeButton from '@/components/interactions/like-button';
+import SignInPrompt from '@/components/interactions/sign-in-prompt';
 import ReportDialog from '@/components/reports/report-dialog';
 import DecisionFields from '@/components/moderation/decision-fields';
 import type { PolicyItem } from '@/components/moderation/decision-fields';
@@ -119,7 +120,9 @@ export default function CommentSection({
     const [reporting, setReporting] = useState<CommentNode | null>(null);
     const [fresh, setFresh] = useState<number | null>(null);
     const [, tick] = useState(0);
-    const { url } = usePage();
+    const { url, props } = usePage();
+    const guest = !props.auth.user;
+    const [prompt, setPrompt] = useState(false);
     const path = url.split(/[?#]/)[0];
 
     // As datas relativas ("há 5 minutos") andam sozinhas
@@ -179,6 +182,24 @@ export default function CommentSection({
                     compact
                     onPosted={setFresh}
                 />
+            )}
+
+            {guest && (
+                <>
+                    <button
+                        type="button"
+                        aria-haspopup="dialog"
+                        onClick={() => setPrompt(true)}
+                        className="flex h-12 w-full items-center rounded-2xl border border-border-strong bg-surface px-4 text-left text-body text-text-secondary transition-colors hover:bg-surface-hover"
+                    >
+                        {t('comments.guest_cta')}
+                    </button>
+                    <SignInPrompt
+                        action="comment"
+                        open={prompt}
+                        onClose={() => setPrompt(false)}
+                    />
+                </>
             )}
 
             {data.total === 0 && data.canComment ? (

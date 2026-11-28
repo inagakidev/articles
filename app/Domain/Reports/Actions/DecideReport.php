@@ -7,7 +7,9 @@ use App\Domain\Audit\Enums\AuditAction;
 use App\Domain\Moderation\Actions\DeleteArticle;
 use App\Domain\Moderation\Actions\ModerateProfile;
 use App\Domain\Moderation\Actions\RemoveComment;
+use App\Domain\Moderation\Actions\SuspendUser;
 use App\Domain\Moderation\Actions\UnpublishArticle;
+use App\Domain\Moderation\Exceptions\PenaltyRefused;
 use App\Domain\Moderation\Rules\AuditLabel;
 use App\Domain\Reports\Enums\ReportOutcome;
 use App\Domain\Reports\Enums\ReportStatus;
@@ -39,20 +41,23 @@ class DecideReport
         private readonly DeleteArticle $deleteArticle,
         private readonly RemoveComment $removeComment,
         private readonly ModerateProfile $moderateProfile,
+        private readonly SuspendUser $suspend,
     ) {}
 
     /**
      * @param  array{photo?: bool, bio?: bool, username?: bool}  $profile  O que redefinir no perfil
+     * @param  int|null  $penaltyDays  Procedente com penalidade: suspende quem escreveu por estes dias
      *
      * @throws ReportRefused
+     * @throws PenaltyRefused
      */
-    public function handle(ReportTarget $target, int $id, User $admin, ReportOutcome $outcome, ?string $policyItem, string $justification, array $profile = []): int
+    public function handle(ReportTarget $target, int $id, User $admin, ReportOutcome $outcome, ?string $policyItem, string $justification, array $profile = [], ?int $penaltyDays = null): int
     {
         if (! in_array($outcome, ReportOutcome::for($target), true)) {
             throw new InvalidArgumentException("Desfecho {$outcome->value} não vale para {$target->value}.");
         }
 
-        $reporters = DB::transaction(function () use ($target, $id, $admin, $outcome, $policyItem, $justification, $profile) {
+        $reporters = DB::transaction(function () use ($target, $id, $admin, $outcome, $policyItem, $justification, $profile, $penaltyDays) {
             $open = Report::query()
                 ->where('status', ReportStatus::Open)
                 ->where('target', $target)
@@ -76,7 +81,13 @@ class DecideReport
                 'decided_at' => now(),
             ]);
 
+            // Quem escreveu, antes de o desfecho apagar o item
+            $owner = User::query()->find($this->targets->ownerId($item));
             $this->apply($outcome, $item, $admin, (string) $policyItem, $justification, $profile);
+
+            if ($penaltyDays !== null && ! $dismiss && $owner !== null) {
+                $this->suspend->handle($owner, $admin, $penaltyDays, (string) $policyItem, $justification);
+            }
 
             return $open->pluck('reporter_id')->filter()->unique()->all();
         });

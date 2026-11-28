@@ -93,7 +93,17 @@ export default function ArticleView({
                 />
             )}
 
-            <div className="flex gap-16">
+            <div className="flex gap-6 xl:gap-4">
+                {actions && (
+                    <aside
+                        aria-label={t('article.actions')}
+                        className="hidden w-14 shrink-0 xl:block"
+                    >
+                        <div className="sticky top-24 flex flex-col items-center gap-0.5 rounded-2xl border border-border bg-surface p-1.5 shadow-sm">
+                            {actions}
+                        </div>
+                    </aside>
+                )}
                 <div className="w-full max-w-reading min-w-0">
                     {article.html ? (
                         <ArticleBody
@@ -127,7 +137,7 @@ export default function ArticleView({
                     )}
 
                     {actions && (
-                        <div className="mt-8 flex flex-wrap items-center gap-1 border-y border-border py-2">
+                        <div className="mt-8 flex flex-wrap items-center gap-1 border-y border-border px-1.5 py-1 xl:hidden">
                             {actions}
                         </div>
                     )}
@@ -173,11 +183,6 @@ export default function ArticleView({
                 <aside className="hidden w-60 shrink-0 xl:block">
                     <div className="sticky top-24 flex flex-col gap-6">
                         <ArticleToc items={article.toc} />
-                        {actions && (
-                            <div className="flex flex-wrap items-center gap-1 border-t border-border pt-4">
-                                {actions}
-                            </div>
-                        )}
                     </div>
                 </aside>
             </div>

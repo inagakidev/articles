@@ -25,7 +25,8 @@ class ReportTargets
                 ->whereIn('article_id', $this->articles->query()->select('id'))
                 ->find($id),
             // Só perfil público: conta com e-mail confirmado
-            ReportTarget::Profile => User::query()->whereNotNull('email_verified_at')->find($id),
+            // Só perfil público: e-mail confirmado e sem penalidade ativa
+            ReportTarget::Profile => User::query()->whereNotNull('email_verified_at')->notPenalized()->find($id),
         };
     }
 

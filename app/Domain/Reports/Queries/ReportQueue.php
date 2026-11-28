@@ -100,12 +100,21 @@ class ReportQueue
         return Report::query()
             ->select('target', 'target_id')
             ->selectRaw('count(*) as reports_count, min(created_at) as first_at, max(decided_at) as last_decided_at')
+            // Quem escreveu está penalizada: as denúncias contra ela vêm primeiro (RF-216)
+            ->selectRaw(<<<'SQL'
+                max(case
+                    when target = 'profile' then exists(select 1 from users u where u.id = reports.target_id and (u.banned_at is not null or u.suspended_until > ?))
+                    when target = 'article' then exists(select 1 from articles a join users u on u.id = a.user_id where a.id = reports.target_id and (u.banned_at is not null or u.suspended_until > ?))
+                    when target = 'comment' then exists(select 1 from comments c join users u on u.id = c.user_id where c.id = reports.target_id and (u.banned_at is not null or u.suspended_until > ?))
+                    else 0
+                end) as priority
+                SQL, [now(), now(), now()])
             ->where('status', $status)
             ->when($target, fn (Builder $query, ReportTarget $target) => $query->where('target', $target))
             ->groupBy('target', 'target_id')
             ->when(
                 $status === ReportStatus::Open,
-                fn (Builder $query) => $query->orderByDesc('reports_count')->orderBy('first_at'),
+                fn (Builder $query) => $query->orderByDesc('priority')->orderByDesc('reports_count')->orderBy('first_at'),
                 fn (Builder $query) => $query->orderByDesc('last_decided_at'),
             )
             ->orderBy('target')

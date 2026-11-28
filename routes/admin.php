@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AppealController;
 use App\Http\Controllers\Admin\ApprovalQueueController;
 use App\Http\Controllers\Admin\ArticleModerationController;
 use App\Http\Controllers\Admin\AuditController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TaxonomyController;
 use App\Http\Controllers\Admin\TwoFactorSetupController;
+use App\Http\Controllers\Admin\UserPenaltyController;
 use App\Http\Middleware\EnsureTwoFactorConfirmed;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +47,18 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])
                 ->whereIn('target', ['article', 'comment', 'profile'])
                 ->whereNumber('id')
                 ->name('reports.decide');
+
+            // Usuários penalizados e contestações (RF-254 a RF-260, fatia 21)
+            Route::get('users', [UserPenaltyController::class, 'index'])->name('users');
+            Route::get('users/{user}', [UserPenaltyController::class, 'show'])->name('users.show');
+            Route::post('users/{user}/suspend', [UserPenaltyController::class, 'suspend'])->name('users.suspend');
+            Route::post('users/{user}/ban', [UserPenaltyController::class, 'ban'])->name('users.ban');
+            Route::post('users/{user}/reactivate', [UserPenaltyController::class, 'reactivate'])->name('users.reactivate');
+            // Reabrir o prazo de contestar um banimento retido (RF-234)
+            Route::post('penalties/{penalty}/reopen', [UserPenaltyController::class, 'reopen'])->name('penalties.reopen');
+
+            Route::get('appeals', [AppealController::class, 'index'])->name('appeals');
+            Route::post('appeals/{appeal}/decision', [AppealController::class, 'decide'])->name('appeals.decide');
 
             // Auditoria: só consulta e exportação (RF-259, RF-291)
             Route::get('audit', [AuditController::class, 'index'])->name('audit');

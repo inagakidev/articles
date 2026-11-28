@@ -14,6 +14,7 @@ const base = {
                 target: 'comment' as const,
                 id: 12,
                 count: 2,
+                priority: true,
                 since: '2026-11-17T10:00:00Z',
                 reasons: ['offensive'],
                 item: {
@@ -28,6 +29,7 @@ const base = {
                 target: 'profile' as const,
                 id: 7,
                 count: 1,
+                priority: false,
                 since: '2026-11-15T10:00:00Z',
                 reasons: ['other'],
                 item: {
@@ -135,7 +137,12 @@ describe('denúncias no painel', () => {
             }),
         );
 
-        expect(screen.getAllByRole('checkbox')).toHaveLength(3);
+        expect(
+            screen.getByRole('checkbox', { name: 'Foto (volta às iniciais)' }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('checkbox', { name: 'Bio (fica vazia)' }),
+        ).toBeInTheDocument();
         expect(
             screen.getByLabelText(
                 'Username (troca obrigatória no próximo acesso)',

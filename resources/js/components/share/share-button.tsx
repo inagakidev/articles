@@ -5,6 +5,12 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { VariantProps } from 'class-variance-authority';
 import type { buttonVariants } from '@/components/ui/button';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 /**
  * Botão "Compartilhar" que abre o diálogo com o endereço desta página. O
@@ -45,19 +51,25 @@ export default function ShareButton({
     return (
         <>
             {iconOnly ? (
-                <Button
-                    type="button"
-                    variant="ghost"
-                    aria-label={label}
-                    title={label}
-                    onClick={share}
-                    className={cn(
-                        'size-10 rounded-full text-text-secondary hover:text-text-primary [&_svg]:size-5',
-                        className,
-                    )}
-                >
-                    <Share2 aria-hidden="true" />
-                </Button>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                aria-label={label}
+                                onClick={share}
+                                className={cn(
+                                    'size-10 gap-0 rounded-full p-0 text-text-secondary transition-colors outline-none hover:bg-surface-hover hover:text-text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:bg-surface-selected has-[>svg]:px-0 [&_svg]:size-5',
+                                    className,
+                                )}
+                            >
+                                <Share2 aria-hidden="true" className="size-5" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="left">{label}</TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             ) : (
                 <Button
                     type="button"
@@ -66,7 +78,7 @@ export default function ShareButton({
                     onClick={share}
                     className={className}
                 >
-                    <Share2 aria-hidden="true" />
+                    <Share2 aria-hidden="true" className="size-6" />
                     {label}
                 </Button>
             )}
