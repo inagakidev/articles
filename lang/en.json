@@ -1240,5 +1240,8 @@
     "mail.appeal.accepted.intro": "Your appeal was accepted.",
     "mail.appeal.rejected.subject": "Your appeal was rejected",
     "mail.appeal.rejected.intro": "Your appeal was rejected.",
-    "mail.appeal.reason": "Reason: :reason"
+    "mail.appeal.reason": "Reason: :reason",
+    "moderation.penalties.not_penalizable": "This account can’t be penalized: it belongs to an administrator or to you.",
+    "moderation.appeals.not_reopenable": "The deadline can only be reopened for a retained ban, with no appeal and an expired deadline.",
+    "moderation.penalties.days": "Duration"
 }

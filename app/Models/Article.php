@@ -62,7 +62,11 @@ class Article extends Model
      */
     public function prunable(): Builder
     {
-        return static::query()->onlyTrashed()->where('deleted_at', '<', now()->subDays(self::TRASH_DAYS));
+        // Da lixeira de quem está penalizada, o prazo fica parado (RF-214, A24)
+        return User::excludePenalized(
+            static::query()->onlyTrashed()->where('deleted_at', '<', now()->subDays(self::TRASH_DAYS)),
+            'articles.user_id',
+        );
     }
 
     /**

@@ -11,6 +11,8 @@ class EnsureAccountNotPenalized
     private const ALLOWED = [
         'penalty.suspended',
         'penalty.appeal',
+        // Quem está logada e penalizada também envia a contestação
+        'penalty.appeal.submit',
         'logout',
         'locale.update',
         'policies.*',

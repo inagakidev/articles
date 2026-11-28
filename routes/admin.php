@@ -53,10 +53,11 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])
             Route::post('users/{user}/suspend', [UserPenaltyController::class, 'suspend'])->name('users.suspend');
             Route::post('users/{user}/ban', [UserPenaltyController::class, 'ban'])->name('users.ban');
             Route::post('users/{user}/reactivate', [UserPenaltyController::class, 'reactivate'])->name('users.reactivate');
+            // Reabrir o prazo de contestar um banimento retido (RF-234)
+            Route::post('penalties/{penalty}/reopen', [UserPenaltyController::class, 'reopen'])->name('penalties.reopen');
 
             Route::get('appeals', [AppealController::class, 'index'])->name('appeals');
             Route::post('appeals/{appeal}/decision', [AppealController::class, 'decide'])->name('appeals.decide');
-            Route::post('appeals/{appeal}/reopen', [AppealController::class, 'reopen'])->name('appeals.reopen');
 
             // Auditoria: só consulta e exportação (RF-259, RF-291)
             Route::get('audit', [AuditController::class, 'index'])->name('audit');

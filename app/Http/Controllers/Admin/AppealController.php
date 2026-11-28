@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Domain\Moderation\Actions\DecideAppeal;
-use App\Domain\Moderation\Actions\ReopenAppeal;
 use App\Domain\Moderation\Enums\AppealStatus;
 use App\Domain\Moderation\Exceptions\PenaltyRefused;
 use App\Http\Controllers\Controller;
@@ -62,20 +61,11 @@ class AppealController extends Controller
             return back()->withErrors(['appeal' => __($error->getMessage())]);
         }
 
-        return redirect()->route('admin.appeals')->with('toast', [
+        Inertia::flash('toast', [
             'type' => 'success',
             'message' => __('moderation.appeals.decided'),
         ]);
-    }
 
-    public function reopen(Request $request, Appeal $appeal, ReopenAppeal $reopen): RedirectResponse
-    {
-        try {
-            $reopen->handle($appeal, $request->user(), $request->string('reason')->toString() ?: null);
-        } catch (PenaltyRefused $error) {
-            return back()->withErrors(['appeal' => __($error->getMessage())]);
-        }
-
-        return back()->with('toast', ['type' => 'success', 'message' => __('moderation.appeals.reopened')]);
+        return redirect()->route('admin.appeals');
     }
 }

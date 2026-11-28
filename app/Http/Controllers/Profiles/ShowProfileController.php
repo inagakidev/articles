@@ -26,10 +26,8 @@ class ShowProfileController extends Controller
         $user = User::query()
             ->where('username', mb_strtolower($username))
             ->whereNotNull('email_verified_at')
-            ->whereNull('banned_at')
-            ->where(fn ($query) => $query
-                ->whereNull('suspended_until')
-                ->orWhere('suspended_until', '<=', now()))
+            // Perfil de conta suspensa ou banida fica oculto (RF-207, RF-225)
+            ->notPenalized()
             ->firstOrFail();
         $oldestFirst = $request->query('ordem') === 'antigos';
         $page = $articles->byAuthor($user, $oldestFirst);

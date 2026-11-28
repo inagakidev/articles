@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Domain\Moderation\Actions\BanUser;
 use App\Domain\Moderation\Actions\ReactivateUser;
+use App\Domain\Moderation\Actions\ReopenAppealDeadline;
 use App\Domain\Moderation\Actions\SuspendUser;
 use App\Domain\Moderation\Exceptions\PenaltyRefused;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PenaltyRequest;
+use App\Models\Penalty;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -67,7 +69,9 @@ class UserPenaltyController extends Controller
             return back()->withErrors(['penalty' => __($error->getMessage())]);
         }
 
-        return back()->with('toast', ['type' => 'success', 'message' => __('moderation.penalties.suspended')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('moderation.penalties.suspended')]);
+
+        return back();
     }
 
     public function ban(PenaltyRequest $request, User $user, BanUser $ban): RedirectResponse
@@ -83,13 +87,32 @@ class UserPenaltyController extends Controller
             return back()->withErrors(['penalty' => __($error->getMessage())]);
         }
 
-        return back()->with('toast', ['type' => 'success', 'message' => __('moderation.penalties.banned')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('moderation.penalties.banned')]);
+
+        return back();
     }
 
     public function reactivate(Request $request, User $user, ReactivateUser $reactivate): RedirectResponse
     {
         $reactivate->handle($user, $request->user());
 
-        return back()->with('toast', ['type' => 'success', 'message' => __('moderation.penalties.reactivated')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('moderation.penalties.reactivated')]);
+
+        return back();
+    }
+
+    public function reopen(Request $request, Penalty $penalty, ReopenAppealDeadline $reopen): RedirectResponse
+    {
+        try {
+            $reopen->handle($penalty, $request->user(), $request->string('reason')->toString() ?: null);
+        } catch (PenaltyRefused $error) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __($error->getMessage())]);
+
+            return back();
+        }
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('moderation.appeals.reopened')]);
+
+        return back();
     }
 }

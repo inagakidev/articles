@@ -59,6 +59,8 @@ class PenaltyController extends Controller
             return back()->withErrors(['justification' => __($error->getMessage())]);
         }
 
-        return back()->with('toast', ['type' => 'success', 'message' => __('moderation.appeals.submitted')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('moderation.appeals.submitted')]);
+
+        return back();
     }
 }

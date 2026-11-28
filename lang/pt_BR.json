@@ -1240,5 +1240,8 @@
     "mail.appeal.accepted.intro": "Sua contestação foi aceita.",
     "mail.appeal.rejected.subject": "Sua contestação foi rejeitada",
     "mail.appeal.rejected.intro": "Sua contestação foi rejeitada.",
-    "mail.appeal.reason": "Justificativa: :reason"
+    "mail.appeal.reason": "Justificativa: :reason",
+    "moderation.penalties.not_penalizable": "Não é possível penalizar esta conta: ela é de uma administradora ou é a sua.",
+    "moderation.appeals.not_reopenable": "O prazo só pode ser reaberto para banimento retido, sem contestação e com o prazo vencido.",
+    "moderation.penalties.days": "Duração"
 }

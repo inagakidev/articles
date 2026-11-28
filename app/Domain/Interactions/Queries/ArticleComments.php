@@ -28,7 +28,7 @@ class ArticleComments
      */
     public function for(Article $article, ?User $viewer, int $page = 1): array
     {
-        $roots = Comment::query()->where('article_id', $article->id)->whereNull('parent_id')->count();
+        $roots = $this->visible($article->id)->whereNull('parent_id')->count();
         $lastPage = max(1, (int) ceil($roots / self::PER_PAGE));
         // Página que não existe (inclusive depois de apagar) mostra a mais próxima
         $page = max(1, min($page, $lastPage));
@@ -49,7 +49,7 @@ class ArticleComments
 
         return [
             'comments' => $comments,
-            'total' => Comment::query()->where('article_id', $article->id)->count(),
+            'total' => $this->visible($article->id)->count(),
             'page' => $page,
             'lastPage' => $lastPage,
         ];
@@ -63,8 +63,7 @@ class ArticleComments
             $root = Comment::query()->findOrFail($root->parent_id);
         }
 
-        $before = Comment::query()
-            ->where('article_id', $root->article_id)
+        $before = $this->visible($root->article_id)
             ->whereNull('parent_id')
             ->where(fn (Builder $query) => $query
                 ->where('created_at', '<', $root->created_at)
@@ -77,13 +76,7 @@ class ArticleComments
     /** @return Builder<Comment> */
     private function query(Article $article, ?User $viewer): Builder
     {
-        return Comment::query()
-            ->where('article_id', $article->id)
-            ->whereHas('author', fn (Builder $author) => $author
-                ->whereNull('banned_at')
-                ->where(fn (Builder $active) => $active
-                    ->whereNull('suspended_until')
-                    ->orWhere('suspended_until', '<=', now())))
+        return $this->visible($article->id)
             ->with('author:id,name,username,avatar_path')
             ->withCount('likes')
             ->when($viewer, fn (Builder $query, User $viewer) => $query->withExists([
@@ -91,5 +84,16 @@ class ArticleComments
             ]))
             ->orderBy('created_at')
             ->orderBy('id');
+    }
+
+    /**
+     * Os comentários à vista: os de conta suspensa ou banida ficam fora,
+     * com as respostas a eles, na contagem e nas páginas (RF-211, D92).
+     *
+     * @return Builder<Comment>
+     */
+    private function visible(int $articleId): Builder
+    {
+        return User::excludePenalized(Comment::query()->where('article_id', $articleId), 'comments.user_id');
     }
 }

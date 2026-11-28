@@ -8,6 +8,7 @@ use App\Domain\Audit\Enums\AuditAction;
 use App\Domain\Moderation\Enums\PenaltyType;
 use App\Domain\Moderation\Exceptions\PenaltyRefused;
 use App\Domain\Moderation\Rules\PenaltyLabel;
+use App\Domain\Moderation\Rules\PenaltyRules;
 use App\Models\Article;
 use App\Models\Penalty;
 use App\Models\User;
@@ -23,6 +24,10 @@ class SuspendUser
 
     public function handle(User $user, User $admin, int $days, string $policyItem, string $reason): Penalty
     {
+        if ($user->is_admin || $user->id === $admin->id) {
+            throw PenaltyRefused::notPenalizable();
+        }
+
         if ($user->isBanned() || $user->isSuspended()) {
             throw PenaltyRefused::active();
         }
@@ -30,7 +35,7 @@ class SuspendUser
         return DB::transaction(function () use ($user, $admin, $days, $policyItem, $reason) {
             $start = now();
             $end = $start->copy()->addDays($days);
-            $deadline = $start->copy()->addDays(7);
+            $deadline = $start->copy()->addDays(PenaltyRules::APPEAL_DAYS);
 
             $penalty = Penalty::query()->create([
                 'user_id' => $user->id,

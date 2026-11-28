@@ -26,6 +26,10 @@ class Notification extends DatabaseNotification
      */
     public function prunable(): Builder
     {
-        return static::query()->where('updated_at', '<', now()->subDays(self::RETENTION_DAYS));
+        // De quem está penalizada, o prazo fica parado (RF-215, A24)
+        return User::excludePenalized(
+            static::query()->where('updated_at', '<', now()->subDays(self::RETENTION_DAYS)),
+            'notifications.notifiable_id',
+        );
     }
 }

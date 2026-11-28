@@ -7,6 +7,7 @@ use App\Domain\Audit\Enums\AuditAction;
 use App\Domain\Moderation\Enums\PenaltyType;
 use App\Domain\Moderation\Rules\PenaltyLabel;
 use App\Models\Article;
+use App\Models\Notification;
 use App\Models\Penalty;
 use App\Models\User;
 use App\Notifications\Moderation\AccountReactivated;
@@ -35,6 +36,10 @@ class ReactivateUser
                     ->each(function (Article $article) use ($pause) {
                         $article->forceFill(['deleted_at' => $article->deleted_at?->copy()->addSeconds($pause)])->saveQuietly();
                     });
+                // As notificações também recomeçam de onde pararam (RF-215, RF-223)
+                $user->notifications()->get(['id', 'updated_at'])
+                    ->each(fn (Notification $notice) => Notification::query()->whereKey($notice->id)
+                        ->update(['updated_at' => $notice->updated_at?->copy()->addSeconds($pause)]));
 
                 $user->forceFill(['suspended_until' => null])->save();
             } else {

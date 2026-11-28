@@ -7,6 +7,7 @@ use App\Domain\Audit\Enums\AuditAction;
 use App\Domain\Moderation\Enums\PenaltyType;
 use App\Domain\Moderation\Exceptions\PenaltyRefused;
 use App\Domain\Moderation\Rules\PenaltyLabel;
+use App\Domain\Moderation\Rules\PenaltyRules;
 use App\Models\Article;
 use App\Models\Comment;
 use App\Models\Penalty;
@@ -20,6 +21,10 @@ class BanUser
 
     public function handle(User $user, User $admin, string $policyItem, string $reason): Penalty
     {
+        if ($user->is_admin || $user->id === $admin->id) {
+            throw PenaltyRefused::notPenalizable();
+        }
+
         if ($user->isBanned()) {
             throw PenaltyRefused::active();
         }
@@ -34,7 +39,7 @@ class BanUser
                 'policy_item' => $policyItem,
                 'reason' => $reason,
                 'starts_at' => $start,
-                'appeal_deadline_at' => $start->copy()->addDays(7),
+                'appeal_deadline_at' => $start->copy()->addDays(PenaltyRules::APPEAL_DAYS),
             ]);
 
             $user->forceFill([
