@@ -1,0 +1,20 @@
+/* Decoração atrás do mascote. */
+@layer components {
+    /* Grade de pontos que some nas bordas, atrás do mascote */
+    .dot-grid {
+        --dot-grid-color: var(--color-pastel-lavender);
+        background-image: radial-gradient(
+            var(--dot-grid-color) 1.3px,
+            transparent 1.3px
+        );
+        background-size: 22px 22px;
+        mask-image: radial-gradient(
+            ellipse 60% 70% at 70% 45%,
+            #000 25%,
+            transparent 75%
+        );
+    }
+    .dark .dot-grid {
+        --dot-grid-color: var(--color-border);
+    }
+}

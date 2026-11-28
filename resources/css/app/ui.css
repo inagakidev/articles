@@ -1,0 +1,298 @@
+/* Componentes de interface: entradas em sequência, órbita, confete, políticas e links do texto. */
+@layer components {
+    /* Filhos que entram um depois do outro (telas de entrar e criar conta) */
+    .stagger > * {
+        animation: var(--animate-rise);
+    }
+    .stagger > :nth-child(2) {
+        animation-delay: 70ms;
+    }
+    .stagger > :nth-child(3) {
+        animation-delay: 140ms;
+    }
+    .stagger > :nth-child(4) {
+        animation-delay: 210ms;
+    }
+    .stagger > :nth-child(5) {
+        animation-delay: 280ms;
+    }
+    .stagger > :nth-child(n + 6) {
+        animation-delay: 350ms;
+    }
+
+    /*
+     * Item que gira em torno do centro do pai, sem parar. --orbit-radius e
+     * --orbit-angle definem a posição inicial.
+     */
+    .orbit-item {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -24px 0 0 -24px;
+        transform: rotate(var(--orbit-angle)) translateX(var(--orbit-radius))
+            rotate(calc(-1 * var(--orbit-angle)));
+        animation: orbit 48s linear infinite;
+    }
+    .orbit-item-reverse {
+        animation-direction: reverse;
+    }
+
+    /* "Pausar animações" (RF-383): para o movimento contínuo onde estiver */
+    .motion-paused .orbit-item,
+    .motion-paused .animate-float,
+    .motion-paused .shiny-text,
+    .motion-paused .shimmer::after,
+    .motion-paused .border-beam::before,
+    .motion-paused .marquee-track,
+    .motion-paused .ripple,
+    .motion-paused .caret,
+    .motion-paused .skeleton-sweep::after,
+    .motion-paused .lang-swap::before,
+    .motion-paused .swatch-wave > *,
+    .motion-paused .mascot-shadow-float {
+        animation-play-state: paused;
+    }
+
+    @keyframes orbit {
+        from {
+            transform: rotate(var(--orbit-angle))
+                translateX(var(--orbit-radius))
+                rotate(calc(-1 * var(--orbit-angle)));
+        }
+        to {
+            transform: rotate(calc(var(--orbit-angle) + 360deg))
+                translateX(var(--orbit-radius))
+                rotate(calc(-1 * var(--orbit-angle) - 360deg));
+        }
+    }
+
+    /*
+     * Confete que estoura uma vez atrás do mascote ("E-mail confirmado").
+     * --confetti-x e --confetti-y definem até onde cada pedaço voa.
+     */
+    .confetti-piece {
+        position: absolute;
+        top: 60%;
+        left: 50%;
+        width: 8px;
+        height: 12px;
+        border-radius: 2px;
+        opacity: 0;
+        animation: confetti 1.4s cubic-bezier(0.1, 0.7, 0.3, 1) 0.3s;
+    }
+
+    @keyframes confetti {
+        from {
+            opacity: 1;
+            transform: translate(0, 0) rotate(0);
+        }
+        to {
+            opacity: 0;
+            transform: translate(var(--confetti-x), var(--confetti-y))
+                rotate(320deg);
+        }
+    }
+
+    /* Páginas das políticas (D73): texto, seções, tabelas e itens */
+    .policy-doc {
+        font-size: 1rem;
+        line-height: 1.625rem;
+    }
+    .policy-doc p {
+        margin: 0 0 0.875rem;
+    }
+    .policy-doc ul {
+        margin: 0 0 0.875rem;
+        padding-left: 1.375rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        list-style: disc;
+    }
+    .policy-doc ul li::marker {
+        color: var(--color-primary);
+    }
+    /* Links do texto; botões em forma de link (data-slot) mantêm o próprio estilo */
+    .policy-doc a:not([data-slot]) {
+        color: var(--color-primary-text);
+        font-weight: 700;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+    .policy-section {
+        scroll-margin-top: 6rem;
+        padding-top: 1.75rem;
+        margin-top: 1.75rem;
+        border-top: 1px solid var(--color-border);
+    }
+    .policy-section h2 {
+        margin: 0 0 1rem;
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        font-family: var(--font-display);
+        font-size: 1.375rem;
+        line-height: 1.8125rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+    .policy-section h2 .number {
+        min-width: 1.75rem;
+        font-size: 0.9375rem;
+        color: var(--color-text-muted);
+    }
+    .policy-note {
+        display: flex;
+        gap: 0.625rem;
+        margin: 0 0 0.875rem;
+        border-radius: var(--radius-card);
+        background: var(--color-surface-muted);
+        padding: 0.875rem 1rem;
+        font-size: 0.9375rem;
+        line-height: 1.4375rem;
+    }
+    .policy-table {
+        margin: 0 0 1rem;
+        overflow-x: auto;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-card);
+        background: var(--color-surface);
+    }
+    .policy-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .policy-table tr {
+        display: block;
+        padding: 0.75rem 1rem;
+        border-top: 1px solid var(--color-border);
+    }
+    .policy-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+    }
+    .policy-table tbody tr:first-child {
+        border-top: 0;
+    }
+    .policy-table th,
+    .policy-table td {
+        display: block;
+        text-align: left;
+    }
+    .policy-table tbody th {
+        margin-bottom: 0.25rem;
+        font-weight: 700;
+    }
+    .policy-table td {
+        font-size: 0.875rem;
+        line-height: 1.3125rem;
+        color: var(--color-text-secondary);
+    }
+    .policy-table td::before {
+        content: attr(data-label) ': ';
+        font-weight: 700;
+        color: var(--color-text-primary);
+    }
+    .policy-item {
+        scroll-margin-top: 6rem;
+        margin: 0 0 0.875rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-card);
+        background: var(--color-surface);
+        padding: 1.125rem 1.25rem;
+    }
+    .policy-item-highlighted {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px var(--color-focus);
+    }
+    .policy-tab {
+        display: inline-flex;
+        align-items: center;
+        height: 2.75rem;
+        padding: 0 1rem;
+        border-radius: 999px;
+        box-shadow: inset 0 0 0 1px var(--color-border);
+        font-size: 0.9375rem;
+        font-weight: 700;
+        white-space: nowrap;
+        color: var(--color-text-primary);
+    }
+    .policy-tab:hover {
+        background: var(--color-surface-hover);
+    }
+    .policy-tab[aria-current='page'] {
+        background: var(--color-surface-selected);
+        color: var(--color-text-on-selected);
+        box-shadow: inset 0 0 0 2px var(--color-primary);
+    }
+    .policy-toc-link {
+        display: flex;
+        gap: 0.625rem;
+        padding: 0.4375rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 600;
+        color: var(--color-text-secondary);
+    }
+    .policy-toc-link:hover {
+        background: var(--color-surface-hover);
+        color: var(--color-text-primary);
+    }
+    .policy-toc-link[aria-current] {
+        background: var(--color-surface-selected);
+        color: var(--color-text-on-selected);
+        font-weight: 800;
+    }
+
+    @media (min-width: 40rem) {
+        .policy-doc {
+            font-size: 1.0625rem;
+            line-height: 1.75rem;
+        }
+        .policy-section {
+            padding-top: 2.5rem;
+            margin-top: 2.5rem;
+        }
+        .policy-section h2 {
+            font-size: 1.625rem;
+            line-height: 2.125rem;
+        }
+        .policy-tab {
+            height: 2.5rem;
+        }
+        .policy-table tr {
+            display: table-row;
+            padding: 0;
+        }
+        .policy-table thead {
+            position: static;
+            width: auto;
+            height: auto;
+            clip: auto;
+        }
+        .policy-table th,
+        .policy-table td {
+            display: table-cell;
+            vertical-align: top;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid var(--color-border);
+            font-size: 0.9375rem;
+            line-height: 1.375rem;
+            color: var(--color-text-primary);
+        }
+        .policy-table thead th {
+            border-top: 0;
+            background: var(--color-surface-muted);
+            font-size: 0.8125rem;
+            font-weight: 800;
+            color: var(--color-text-secondary);
+        }
+        .policy-table td::before {
+            content: none;
+        }
+    }
+}

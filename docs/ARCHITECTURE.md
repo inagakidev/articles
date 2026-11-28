@@ -107,7 +107,7 @@ resources/js/
 ├── layouts/              Moldura de cada tipo de página (público, leitura, apresentação, conta, editor, admin)
 │   └── parts/            Peças que só os layouts usam: cabeçalhos, rodapé, menu da conta e logo
 ├── components/
-│   ├── ui/               Primitivos e design system: botão, campos, pill, mascote, paginação, campo de busca
+│   ├── ui/               Primitivos e design system: botão, campos, pill, mascote (e o palco com ondas), paginação, abas, tabela com rolagem
 │   ├── articles/         Cartão, leitura, sumário e selo de status do artigo
 │   ├── editor/           Editor, imagens e detalhes do artigo
 │   ├── my-articles/      Linhas e avisos de Meus artigos
@@ -115,6 +115,11 @@ resources/js/
 │   ├── landing/          Seções da página de apresentação
 │   ├── account/          Configurações, segurança e 2FA
 │   ├── admin/            Navegação e peças do painel
+│   ├── interactions/     Curtir, favoritar, convite para entrar e comentários (`comments/`, uma parte por arquivo)
+│   ├── reports/          Denunciar e a análise das denúncias
+│   ├── notifications/    Sino e itens das notificações
+│   ├── moderation/       Campos de decisão e o menu de moderação da leitura
+│   ├── share/            Compartilhar (botão, diálogo e ícones das redes)
 │   ├── policies/         Termos e políticas
 │   └── preferences/      Tema e idioma (cabeçalhos, rodapé e Configurações)
 ├── hooks/                Hooks reutilizáveis
@@ -127,7 +132,8 @@ resources/js/
 - **Onde fica cada componente:** um componente genérico, sem regra de negócio nem rota, usado em mais de um lugar, fica em `components/ui` (botão, campo, aviso, mascote), com as variações como props ou variantes (`size="xl"`), em vez de classes repetidas em cada página. O que pertence a uma área fica na pasta do módulo, mesmo que outra área o use (o cartão de artigo é de `articles`). A estrutura das páginas fica em `layouts/`.
 - **Arquivos** em kebab-case (`article-card.tsx`); componentes em PascalCase (`ArticleCard`).
 - **Componentes de bibliotecas** entram só como código-fonte do componente usado, quando a tela que o usa é implementada, nunca como dependência (D63).
-- **Estilo:** só os tokens do `DESIGN.md`, por classes do Tailwind. Sem hex nem paleta padrão do Tailwind; a paleta padrão foi removida (D60).
+- **Estilo:** só os tokens do `DESIGN.md`, por classes do Tailwind. Sem hex nem paleta padrão do Tailwind; a paleta padrão foi removida (D60). O `resources/css/app.css` só importa as áreas de `resources/css/app/` (tokens, base, interface, efeitos, interações, pausa das animações, texto do artigo e transições), na ordem da cascata.
+- **Tamanho:** quando uma página ou componente passa de algumas centenas de linhas com partes independentes (diálogos, formulários, análises), cada parte vai para um arquivo do módulo; regra de interface repetida em mais de um lugar vira componente de `ui` ou hook.
 - **Texto:** sempre `t('chave')`. As chaves são agrupadas por área (`site.nav.login`, `account.login.headline`).
 - **Rotas:** sempre pelas funções geradas pelo Wayfinder (`login()`, `update()`), nunca URL escrita à mão.
 - **Regras de negócio** vivem no backend. O frontend pode antecipar uma validação para dar retorno rápido, mas a decisão é sempre do servidor.

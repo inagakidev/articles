@@ -1,0 +1,45 @@
+/* "Pausar animações" (RF-383) e "reduzir movimento": cada efeito no estado final legível. */
+@layer components {
+    /* Pausado ou sem movimento: cada efeito no estado final legível */
+    /* Pausar animações também tira as entradas presas à rolagem (D91) */
+    .motion-paused .reveal,
+    .motion-paused .stack-pop {
+        animation: none;
+    }
+    .motion-paused .flip-words > span {
+        animation: none;
+    }
+    .motion-paused .flip-words > span:first-child {
+        opacity: 1;
+    }
+    .motion-paused .ripple {
+        animation: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .flip-words > span {
+            animation: none;
+        }
+        .flip-words > span:first-child {
+            opacity: 1;
+        }
+        .highlight-mark {
+            background-size: 100% 88%;
+        }
+        .ripple {
+            display: none;
+        }
+        .marquee-track {
+            flex-wrap: wrap;
+            justify-content: center;
+            width: auto;
+            animation: none;
+        }
+        .marquee-track > [aria-hidden='true'] {
+            display: none;
+        }
+        .reveal,
+        .stack-pop {
+            animation: none;
+        }
+    }
+}

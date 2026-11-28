@@ -194,7 +194,7 @@ paleta (§2.1--§2.5) existem só para alimentar os semânticos. Os dois
 temas têm conjuntos independentes: o mesmo token pode ter valores e
 até lógicas diferentes em cada tema.
 
-**Implementação:** os tokens ficam em `resources/css/app.css`, no
+**Implementação:** os tokens ficam em `resources/css/app/tokens.css` (importado por `resources/css/app.css`), no
 `@theme` do Tailwind (tema claro) e no bloco `.dark` (tema escuro).
 Cada token vira uma classe com o mesmo nome: `bg-surface`,
 `text-text-secondary`, `border-border-strong`, `bg-danger-bg`. A paleta
@@ -484,7 +484,7 @@ sempre com `--color-tag-text: #292638`.
 ### 2.9 Auditoria de contraste --- todos os pares testados
 
 **Verificação automatizada:** `resources/js/test/design-tokens.test.ts`
-lê os valores reais de `resources/css/app.css` e confere, nos dois
+lê os valores reais de `resources/css/app/tokens.css` e confere, nos dois
 temas, cada par de uso permitido em §2.7, §2.8 e §2.11 (texto ≥ 4,5:1;
 bordas de controles, foco e primário como componente ≥ 3:1), incluindo
 as 36 combinações de texto colorido com destaque do editor. O mesmo
