@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\NotFoundController;
+use App\Http\Middleware\AddSecurityHeaders;
 use App\Http\Middleware\EnsureAccountNotPenalized;
 use App\Http\Middleware\EnsurePoliciesAccepted;
 use App\Http\Middleware\EnsureUsernameIsAcceptable;
@@ -36,6 +37,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectUsersTo(fn () => route('home'));
 
         $middleware->web(append: [
+            // Cabeçalhos de segurança e o nonce da CSP, antes de montar a página (D93).
+            AddSecurityHeaders::class,
             HandleAppearance::class,
             SetLocale::class,
             HandleInertiaRequests::class,
