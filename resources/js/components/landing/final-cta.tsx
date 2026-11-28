@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { PenLine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Mascot from '@/components/ui/mascot';
+import MascotStage from '@/components/ui/mascot-stage';
 import { useWriteHref } from '@/hooks/use-write-href';
 import { useTranslation } from '@/lib/i18n';
 import { index as articles } from '@/routes/articles';
@@ -59,19 +60,11 @@ export default function FinalCta() {
                         </Button>
                     </div>
                 </div>
-                <div className="relative flex min-h-80 flex-[1_1_280px] items-center justify-center">
-                    {ripples.map((size, index) => (
-                        <span
-                            key={size}
-                            aria-hidden="true"
-                            className="ripple"
-                            style={{
-                                width: size,
-                                height: size,
-                                animationDelay: `${index * 0.6}s`,
-                            }}
-                        />
-                    ))}
+                <MascotStage
+                    ripples={ripples}
+                    step={0.6}
+                    className="min-h-80 flex-[1_1_280px]"
+                >
                     <Mascot
                         art="comemorando"
                         size={220}
@@ -79,7 +72,7 @@ export default function FinalCta() {
                         grounded
                         className="relative"
                     />
-                </div>
+                </MascotStage>
             </div>
         </section>
     );

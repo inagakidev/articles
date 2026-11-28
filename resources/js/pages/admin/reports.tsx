@@ -1,6 +1,6 @@
 import { Form, Head, Link, router } from '@inertiajs/react';
 import { ExternalLink, Flag } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import DecisionFields from '@/components/moderation/decision-fields';
 import type { PolicyItem } from '@/components/moderation/decision-fields';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,8 @@ import { shortDate } from '@/lib/dates';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { reports } from '@/routes/admin';
+import SegmentedNav from '@/components/ui/segmented-nav';
+import { useQueueKeys } from '@/hooks/use-queue-keys';
 import * as reportRoutes from '@/routes/admin/reports';
 
 type Target = 'article' | 'comment' | 'profile';
@@ -100,34 +102,6 @@ function listUrl(filters: Props['filters'], page = 1): string {
     return reports({ query }).url;
 }
 
-/** J e K andam pelas denúncias abertas, menos quando a pessoa está escrevendo. */
-function useQueueKeys(previous: Key, next: Key) {
-    useEffect(() => {
-        function onKey(event: KeyboardEvent) {
-            const target = event.target as HTMLElement | null;
-            const typing =
-                target?.closest(
-                    'input, textarea, select, [contenteditable]',
-                ) !== null;
-
-            if (typing || event.metaKey || event.ctrlKey || event.altKey) {
-                return;
-            }
-
-            const key =
-                event.key === 'j' ? next : event.key === 'k' ? previous : null;
-
-            if (key) {
-                router.visit(reportRoutes.show(key).url);
-            }
-        }
-
-        window.addEventListener('keydown', onKey);
-
-        return () => window.removeEventListener('keydown', onKey);
-    }, [previous, next]);
-}
-
 /**
  * Denúncias (prancha "Admin · Denúncias", RF-252): uma linha por item, com
  * quantas denúncias e os motivos; abrir mostra o conteúdo como está agora
@@ -143,7 +117,12 @@ export default function Reports({
     neighbours,
 }: Props) {
     const { t, locale } = useTranslation();
-    useQueueKeys(neighbours?.previous ?? null, neighbours?.next ?? null);
+    useQueueKeys(
+        neighbours?.previous
+            ? reportRoutes.show(neighbours.previous).url
+            : null,
+        neighbours?.next ? reportRoutes.show(neighbours.next).url : null,
+    );
 
     return (
         <>
@@ -159,32 +138,20 @@ export default function Reports({
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3">
-                <nav
-                    aria-label={t('reports.admin.status_label')}
-                    className="inline-flex flex-wrap gap-1 rounded-full bg-surface-muted p-1"
-                >
-                    {STATUSES.map((status) => (
-                        <Link
-                            key={status}
-                            href={listUrl({ ...filters, status })}
-                            aria-current={
-                                filters.status === status ? 'page' : undefined
-                            }
-                            className={cn(
-                                'inline-flex h-9 items-center rounded-full px-4 text-meta font-bold',
-                                filters.status === status
-                                    ? 'bg-surface shadow-sm'
-                                    : 'text-text-secondary hover:text-text-primary',
-                            )}
-                        >
-                            {status === 'abertas'
+                <SegmentedNav
+                    label={t('reports.admin.status_label')}
+                    current={filters.status}
+                    items={STATUSES.map((status) => ({
+                        key: status,
+                        href: listUrl({ ...filters, status }),
+                        label:
+                            status === 'abertas'
                                 ? t('reports.admin.status.abertas', {
                                       count: openCount,
                                   })
-                                : t(`reports.admin.status.${status}`)}
-                        </Link>
-                    ))}
-                </nav>
+                                : t(`reports.admin.status.${status}`),
+                    }))}
+                />
                 <select
                     aria-label={t('reports.admin.type_label')}
                     value={filters.tipo ?? ''}

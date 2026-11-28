@@ -13,6 +13,7 @@ import type {
 import SearchForm from '@/components/search/search-form';
 import { Button } from '@/components/ui/button';
 import Mascot from '@/components/ui/mascot';
+import MascotStage from '@/components/ui/mascot-stage';
 import Pagination from '@/components/ui/pagination';
 import { useTranslation } from '@/lib/i18n';
 import { index as articles } from '@/routes/articles';
@@ -209,26 +210,18 @@ function NoResults({
     return (
         <>
             <section className="flex flex-wrap items-center justify-center gap-x-14 gap-y-6 py-6">
-                <div className="relative flex items-center justify-center p-6">
-                    {ripples.map((size, index) => (
-                        <span
-                            key={size}
-                            aria-hidden="true"
-                            className="ripple max-sm:hidden"
-                            style={{
-                                width: size,
-                                height: size,
-                                animationDelay: `${index * 0.7}s`,
-                            }}
-                        />
-                    ))}
+                <MascotStage
+                    ripples={ripples}
+                    hideRipplesOnMobile
+                    className="p-6"
+                >
                     <Mascot
                         art="pensativo"
                         size={200}
                         float
                         className="relative max-w-[50vw]"
                     />
-                </div>
+                </MascotStage>
                 <div className="flex flex-[0_1_520px] flex-col items-start gap-4">
                     <h1 className="font-display text-[2rem]/10 font-extrabold tracking-[-0.02em]">
                         {query.q

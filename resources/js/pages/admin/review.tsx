@@ -1,4 +1,4 @@
-import { Form, Head, Link, router } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
 import {
     ArrowLeft,
     Check,
@@ -8,7 +8,7 @@ import {
     Link2,
     Snowflake,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ArticleBody from '@/components/articles/article-body';
 import DecisionFields from '@/components/moderation/decision-fields';
 import { waiting } from '@/components/moderation/waiting';
@@ -22,6 +22,7 @@ import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { queue, review } from '@/routes/admin';
 import { decide } from '@/routes/admin/review';
+import { useQueueKeys } from '@/hooks/use-queue-keys';
 import type { ReadableArticle } from '@/types';
 
 type Props = {
@@ -43,34 +44,6 @@ type Props = {
     lateHours: number;
 };
 
-/** J e K andam pela fila, menos quando a pessoa está escrevendo. */
-function useQueueKeys(previous: number | null, next: number | null) {
-    useEffect(() => {
-        function onKey(event: KeyboardEvent) {
-            const target = event.target as HTMLElement | null;
-            const typing =
-                target?.closest(
-                    'input, textarea, select, [contenteditable]',
-                ) !== null;
-
-            if (typing || event.metaKey || event.ctrlKey || event.altKey) {
-                return;
-            }
-
-            const id =
-                event.key === 'j' ? next : event.key === 'k' ? previous : null;
-
-            if (id !== null) {
-                router.visit(review(id).url);
-            }
-        }
-
-        window.addEventListener('keydown', onKey);
-
-        return () => window.removeEventListener('keydown', onKey);
-    }, [previous, next]);
-}
-
 /**
  * Revisar uma versão (pranchas "Revisar versão" e "Rejeitar"): o retrato
  * congelado, com a mesma renderização da leitura, o resumo e a decisão
@@ -86,7 +59,10 @@ export default function Review({
     const { t, locale } = useTranslation();
     const [decision, setDecision] = useState<'approve' | 'reject' | null>(null);
     const author = article.author;
-    useQueueKeys(position.previous, position.next);
+    useQueueKeys(
+        position.previous === null ? null : review(position.previous).url,
+        position.next === null ? null : review(position.next).url,
+    );
 
     const sent = version.submittedAt
         ? isToday(version.submittedAt)
