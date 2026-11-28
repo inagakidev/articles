@@ -173,7 +173,7 @@ describe('leitura do artigo', () => {
         ).toBeInTheDocument();
     });
 
-    it('visitante pode abrir o acesso ao curtir e vê os comentários sem formulário (RF-141)', () => {
+    it('visitante é convidada a entrar ao curtir e a comentar, e volta para a página (D94)', () => {
         render(
             <Show
                 article={article}
@@ -188,7 +188,16 @@ describe('leitura do artigo', () => {
             />,
         );
 
-        expect(screen.getAllByText('48 curtidas')).toHaveLength(2);
+        // Antes de abrir o diálogo, que esconde o resto da página
+        expect(screen.getByText('Comentário 1')).toBeInTheDocument();
+        expect(screen.queryByLabelText('Escreva um comentário')).toBeNull();
+        expect(
+            screen.getByRole('button', {
+                name: 'Entre para participar da conversa',
+            }),
+        ).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Responder' })).toBeNull();
+
         fireEvent.click(
             screen.getAllByRole('button', {
                 name: 'Curtir, 48 curtidas',
@@ -197,16 +206,14 @@ describe('leitura do artigo', () => {
         expect(
             screen.getByRole('dialog', { name: 'Entre para curtir' }),
         ).toBeInTheDocument();
+        // Depois de entrar, volta para a mesma página (D94)
         expect(screen.getByRole('link', { name: 'Entrar' })).toHaveAttribute(
             'href',
-            '/login',
+            '/login?redirect=%2F',
         );
         expect(
             screen.getByRole('link', { name: 'Criar conta' }),
-        ).toHaveAttribute('href', '/register');
-        expect(screen.getByText('Comentário 1')).toBeInTheDocument();
-        expect(screen.queryByLabelText('Escreva um comentário')).toBeNull();
-        expect(screen.queryByRole('button', { name: 'Responder' })).toBeNull();
+        ).toHaveAttribute('href', '/register?redirect=%2F');
     });
 
     it('quem participa curte, comenta e responde em até 3 níveis', () => {
@@ -417,7 +424,10 @@ describe('leitura do artigo', () => {
         );
     });
 
-    it('favoritar mostra só o marcador, sem contador visível', () => {
+    it('favoritar mostra o marcador com a contagem pública (RF-161)', () => {
+        Object.assign(testPage.props, {
+            auth: { user: { name: 'Lia Martins', email: 'lia@exemplo.dev' } },
+        });
         render(
             <Show
                 article={article}
@@ -427,13 +437,13 @@ describe('leitura do artigo', () => {
         );
 
         const button = screen.getAllByRole('button', {
-            name: 'Favoritar',
+            name: 'Favoritar, 5 favoritos',
         })[0];
         expect(button).toHaveAttribute('aria-pressed', 'true');
-        expect(within(button).queryByText(/\d/)).toBeNull();
+        expect(button).toHaveTextContent('5');
     });
 
-    it('favoritar não expõe o contador na ação', () => {
+    it('a contagem de favoritos usa o singular quando é 1', () => {
         render(
             <Show
                 article={article}
@@ -443,9 +453,8 @@ describe('leitura do artigo', () => {
             />,
         );
 
-        expect(screen.getAllByText('1 curtida')[0]).toBeInTheDocument();
         expect(
-            screen.getAllByRole('button', { name: 'Favoritar' })[0],
+            screen.getAllByRole('button', { name: 'Favoritar, 1 favorito' })[0],
         ).toBeInTheDocument();
     });
 
@@ -471,7 +480,7 @@ describe('leitura do artigo', () => {
             screen.getAllByRole('link', {
                 name: 'Ver os comentários (0)',
             })[0],
-            screen.getAllByRole('button', { name: 'Favoritar' })[0],
+            screen.getAllByRole('button', { name: /^Favoritar, / })[0],
             screen.getAllByRole('button', { name: 'Compartilhar' })[0],
             screen.getAllByRole('button', { name: 'Denunciar artigo' })[0],
             screen.getAllByRole('button', { name: 'Moderação' })[0],

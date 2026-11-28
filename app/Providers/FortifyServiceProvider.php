@@ -90,12 +90,16 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureViews(): void
     {
-        Fortify::loginView(fn (Request $request) => Inertia::render('auth/login', [
-            'canResetPassword' => Features::enabled(Features::resetPasswords()),
-            'status' => $request->session()->get('status'),
-            // Segundos até o login voltar, depois de tentativas seguidas.
-            'retryAfter' => $request->session()->get('retryAfter'),
-        ]));
+        Fortify::loginView(function (Request $request) {
+            $this->rememberReturn($request);
+
+            return Inertia::render('auth/login', [
+                'canResetPassword' => Features::enabled(Features::resetPasswords()),
+                'status' => $request->session()->get('status'),
+                // Segundos até o login voltar, depois de tentativas seguidas.
+                'retryAfter' => $request->session()->get('retryAfter'),
+            ]);
+        });
 
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render('auth/reset-password', [
             'email' => $request->email,
@@ -115,9 +119,13 @@ class FortifyServiceProvider extends ServiceProvider
             'resendAfter' => $request->session()->get('resendAfter'),
         ]));
 
-        Fortify::registerView(fn () => Inertia::render('auth/register', [
-            'passwordRules' => Password::defaults()->toPasswordRulesString(),
-        ]));
+        Fortify::registerView(function (Request $request) {
+            $this->rememberReturn($request);
+
+            return Inertia::render('auth/register', [
+                'passwordRules' => Password::defaults()->toPasswordRulesString(),
+            ]);
+        });
 
         Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/two-factor-challenge'));
 
@@ -134,5 +142,19 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
+    }
+
+    /**
+     * "Entre para curtir" volta para a página de onde a pessoa veio (D94):
+     * guarda o `redirect` como destino depois de entrar. Só caminhos do
+     * próprio site, para o parâmetro não virar um redirecionamento aberto.
+     */
+    private function rememberReturn(Request $request): void
+    {
+        $path = $request->query('redirect');
+
+        if (is_string($path) && preg_match('#^/(?![/\\\\])#', $path) === 1) {
+            redirect()->setIntendedUrl(url($path));
+        }
     }
 }

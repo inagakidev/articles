@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Domain\Moderation\Exceptions\PenaltyRefused;
 use App\Domain\Moderation\Queries\ContentPolicyItems;
+use App\Domain\Moderation\Rules\PenaltyRules;
 use App\Domain\Reports\Actions\DecideReport;
 use App\Domain\Reports\Enums\ReportOutcome;
 use App\Domain\Reports\Enums\ReportStatus;
@@ -81,6 +83,7 @@ class ReportController extends Controller
                 ],
             ],
             'policyItems' => $policy->all(),
+            'durations' => PenaltyRules::SUSPENSION_DAYS,
             'neighbours' => $open ? $this->queue->neighbours($target, $id) : ['previous' => null, 'next' => null],
         ]);
     }
@@ -98,8 +101,9 @@ class ReportController extends Controller
                 $request->validated('policy_item'),
                 $request->validated('reason'),
                 ['photo' => $request->boolean('photo'), 'bio' => $request->boolean('bio'), 'username' => $request->boolean('username')],
+                $request->filled('penalty_days') ? $request->integer('penalty_days') : null,
             );
-        } catch (ReportRefused $refused) {
+        } catch (ReportRefused|PenaltyRefused $refused) {
             Inertia::flash('toast', ['type' => 'error', 'message' => __($refused->getMessage())]);
 
             return to_route('admin.reports');
@@ -128,6 +132,8 @@ class ReportController extends Controller
                     'target' => $group->target->value,
                     'id' => $group->target_id,
                     'count' => (int) $group->getAttribute('reports_count'),
+                    // Quem escreveu tem penalidade ativa: analisar primeiro (RF-216)
+                    'priority' => (bool) $group->getAttribute('priority'),
                     'since' => $group->getAttribute('first_at'),
                     'reasons' => Report::query()
                         ->where('target', $group->target)

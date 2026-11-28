@@ -1,6 +1,11 @@
 import { Head, Link } from '@inertiajs/react';
+import { BookOpen, LogOut, Scale } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { AuthCardHeader } from '@/layouts/auth-layout';
+import { shortDate, time } from '@/lib/dates';
 import { useTranslation } from '@/lib/i18n';
 import { logout } from '@/routes';
+import { content } from '@/routes/policies';
 
 type Props = {
     penalty: {
@@ -9,13 +14,25 @@ type Props = {
         policyItem: string;
         endsAt: string | null;
         appealDeadline: string | null;
+        /** Link assinado da contestação; nulo se o prazo passou ou já foi enviada. */
         appealUrl: string | null;
+        appealed: boolean;
+        notifiedAt: string;
     } | null;
 };
 
+/**
+ * Conta penalizada (prancha "Conta suspensa", RF-206, RF-225): até quando,
+ * o motivo, o que acontece com o conteúdo e o caminho para contestar
+ * (RF-229). No banimento, avisa que a conta é excluída se não houver
+ * contestação aceita.
+ */
 export default function Suspended({ penalty }: Props) {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const banned = penalty?.type === 'ban';
+    const until = penalty?.endsAt
+        ? `${shortDate(penalty.endsAt, locale)}, ${time(penalty.endsAt, locale)}`
+        : '';
 
     return (
         <>
@@ -26,52 +43,81 @@ export default function Suspended({ penalty }: Props) {
                         : 'account.penalty.suspended.title',
                 )}
             />
-            <main className="mx-auto max-w-xl px-6 py-16">
-                <h1 className="font-display text-3xl font-extrabold">
-                    {t(
-                        banned
-                            ? 'account.penalty.banned.title'
-                            : 'account.penalty.suspended.title',
-                    )}
-                </h1>
-                <p className="mt-3 text-text-secondary">
-                    {banned
-                        ? t('account.penalty.banned.body')
-                        : t('account.penalty.suspended.body', {
-                              date: penalty?.endsAt
-                                  ? new Date(penalty.endsAt).toLocaleString()
-                                  : '—',
-                          })}
-                </p>
-                {penalty && (
-                    <div className="mt-6 rounded-card border border-border bg-surface p-5">
-                        <p className="text-label font-bold">
-                            {penalty.policyItem}
-                        </p>
-                        <p className="mt-2 text-text-secondary">
-                            {penalty.reason}
-                        </p>
-                    </div>
-                )}
-                <div className="mt-6 flex gap-3">
-                    {penalty?.appealUrl && (
-                        <Link
-                            href={penalty.appealUrl}
-                            className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-label font-bold text-text-on-primary"
-                        >
-                            {t('account.penalty.contest')}
-                        </Link>
-                    )}
-                    <Link
-                        href={logout()}
-                        method="post"
-                        as="button"
-                        className="h-10 rounded-full border border-border px-5 text-label font-bold"
-                    >
-                        {t('account.verify.logout')}
-                    </Link>
+            <AuthCardHeader
+                title={
+                    banned
+                        ? t('account.penalty.banned.title')
+                        : t('account.penalty.suspended.until', { date: until })
+                }
+                description={
+                    penalty
+                        ? t(
+                              banned
+                                  ? 'account.penalty.banned.text'
+                                  : 'account.penalty.suspended.text',
+                              {
+                                  item: penalty.policyItem,
+                              },
+                          )
+                        : undefined
+                }
+            />
+
+            {penalty && (
+                <div className="flex flex-col gap-1.5 rounded-2xl bg-surface-muted px-4 py-3.5 text-meta">
+                    <span className="font-bold">
+                        {t('account.penalty.reason_label')}
+                    </span>
+                    <q className="text-text-secondary">{penalty.reason}</q>
                 </div>
-            </main>
+            )}
+
+            <div className="flex flex-col gap-3">
+                {penalty?.appealUrl ? (
+                    <Button asChild size="xl" className="w-full">
+                        <a href={penalty.appealUrl}>
+                            <Scale aria-hidden="true" />
+                            {t(
+                                banned
+                                    ? 'account.penalty.contest_ban'
+                                    : 'account.penalty.contest',
+                            )}
+                        </a>
+                    </Button>
+                ) : (
+                    penalty && (
+                        <p className="rounded-xl bg-surface-muted px-4 py-3 text-center text-meta text-text-secondary">
+                            {penalty.appealed
+                                ? t('account.penalty.appealed')
+                                : t('account.penalty.appeal_closed')}
+                        </p>
+                    )
+                )}
+                <Button asChild variant="outline" size="xl" className="w-full">
+                    <Link
+                        href={content({
+                            query: penalty ? { item: penalty.policyItem } : {},
+                        })}
+                    >
+                        <BookOpen aria-hidden="true" />
+                        {t('account.penalty.policy')}
+                    </Link>
+                </Button>
+                <Button asChild variant="subtle" size="xl" className="w-full">
+                    <Link href={logout()} method="post" as="button">
+                        <LogOut aria-hidden="true" />
+                        {t('site.account.logout')}
+                    </Link>
+                </Button>
+            </div>
+
+            {penalty && (
+                <p className="text-center text-meta text-text-secondary">
+                    {t('account.penalty.email', {
+                        date: shortDate(penalty.notifiedAt, locale),
+                    })}
+                </p>
+            )}
         </>
     );
 }

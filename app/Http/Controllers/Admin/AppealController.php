@@ -20,7 +20,7 @@ class AppealController extends Controller
         $status = AppealStatus::tryFrom((string) $request->query('status', 'open')) ?? AppealStatus::Open;
 
         $appeals = Appeal::query()
-            ->with(['penalty', 'user'])
+            ->with(['penalty.decidedBy:id,name', 'user:id,name,username,avatar_path', 'decidedBy:id,name'])
             ->where('status', $status)
             ->latest('created_at')
             ->paginate(20)
@@ -31,14 +31,25 @@ class AppealController extends Controller
             'appeals' => [
                 'data' => $appeals->getCollection()->map(fn (Appeal $appeal) => [
                     'id' => $appeal->id,
+                    'status' => $appeal->status->value,
+                    'body' => $appeal->justification,
+                    'sentAt' => $appeal->created_at->toIso8601String(),
+                    'decisionReason' => $appeal->decision_reason,
+                    'decidedBy' => $appeal->decidedBy?->name,
+                    'decidedAt' => $appeal->decided_at?->toIso8601String(),
                     'user' => [
                         'name' => $appeal->user->name,
                         'username' => $appeal->user->username,
+                        'avatar' => $appeal->user->avatar,
                     ],
-                    'penalty' => $appeal->penalty->type->value,
-                    'policyItem' => $appeal->penalty->policy_item,
-                    'justification' => $appeal->justification,
-                    'createdAt' => $appeal->created_at->toIso8601String(),
+                    'penalty' => [
+                        'type' => $appeal->penalty->type->value,
+                        'until' => $appeal->penalty->ends_at?->toIso8601String(),
+                        'policyItem' => $appeal->penalty->policy_item,
+                        'reason' => $appeal->penalty->reason,
+                        'appliedBy' => $appeal->penalty->decidedBy?->name,
+                        'startsAt' => $appeal->penalty->starts_at->toIso8601String(),
+                    ],
                 ]),
                 'currentPage' => $appeals->currentPage(),
                 'lastPage' => $appeals->lastPage(),

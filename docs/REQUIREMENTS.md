@@ -291,7 +291,7 @@ A quantidade de visualizações é exclusiva do painel administrativo.
 - **RF-138** Comentários permitem respostas aninhadas **até 3 níveis**. **[P08]**
 - **RF-139** Limites: até 2.000 caracteres por comentário e no máximo um comentário a cada 30 segundos por usuário. **[P08]**
 - **RF-140** **Todos podem ler os comentários**, inclusive visitantes. Somente usuários autenticados e com e-mail verificado comentam, respondem e curtem. **[A13]**
-- **RF-141** Para quem não pode participar, não é exibido formulário nem convite. **[A13]**
+- **RF-141** _Alterado pela D94:_ quem visita é convidado a entrar ao tentar participar e volta para a mesma página; quem tem conta e não pode participar não vê formulário nem convite. **[A13] [D94]**
 - **RF-142** Comentários são públicos e indexáveis; a Política de privacidade deve informar isso. **[A13]**
 - **RF-143** O autor do comentário pode editar e excluir o próprio comentário.
 - **RF-144** O autor do artigo pode excluir comentários em seu artigo.

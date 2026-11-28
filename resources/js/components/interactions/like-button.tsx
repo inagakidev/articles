@@ -1,24 +1,11 @@
-import { Link, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { Heart } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import ActionTip from '@/components/interactions/action-tip';
+import SignInPrompt from '@/components/interactions/sign-in-prompt';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-import { login, register } from '@/routes';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 /**
  * Corações de cada rajada ao curtir: deslocamento lateral, altura, atraso e
@@ -40,26 +27,28 @@ const HEARTS = [
 const BURST_MS = 1300;
 
 /**
- * Curtir (RF-148 a RF-156): só o coração e a contagem pública. Muda na hora
- * e confirma com o servidor; se falhar, volta. Quem não pode curtir
- * (visita, conta sem confirmar, o próprio conteúdo) vê só a contagem, sem
- * convite (RF-141).
+ * Curtir (RF-148 a RF-156): o coração e a contagem pública. Muda na hora e
+ * confirma com o servidor; se falhar, volta. Quem visita é convidada a
+ * entrar (D94); quem tem conta e não pode curtir (sem confirmar, o próprio
+ * conteúdo) vê só a contagem, que não é um botão.
  */
 export default function LikeButton({
     count,
     liked,
     canLike,
+    guest = false,
     url,
     reload,
     label,
     ownHint,
-    requiresAuthentication = false,
     size = 'md',
     className,
 }: {
     count: number;
     liked: boolean;
     canLike: boolean;
+    /** Sem conta: o clique abre o convite para entrar. */
+    guest?: boolean;
     /** Endereço da curtida (POST curte, DELETE descurte). */
     url: string;
     /** As props que a página recarrega depois (`likes`, `comments`). */
@@ -68,15 +57,13 @@ export default function LikeButton({
     label: string;
     /** Dica para quem vê a contagem do próprio conteúdo. */
     ownHint?: string;
-    /** Abre as opções de acesso para visitantes que tentam curtir. */
-    requiresAuthentication?: boolean;
     size?: 'sm' | 'md';
     className?: string;
 }) {
     const { t } = useTranslation();
     const [state, setState] = useState({ count, liked });
     const [bursts, setBursts] = useState<number[]>([]);
-    const [authDialogOpen, setAuthDialogOpen] = useState(false);
+    const [prompt, setPrompt] = useState(false);
     const next = useRef(0);
 
     useEffect(() => setState({ count, liked }), [count, liked]);
@@ -84,111 +71,68 @@ export default function LikeButton({
     const sizes =
         size === 'sm'
             ? 'h-8 gap-1 rounded-full px-2 text-caption [&_svg]:size-4'
-            : 'size-10 flex-col gap-0.5 rounded-full [&_svg]:size-5';
+            : 'size-10 flex-col gap-0.5 rounded-full text-xs leading-3 [&_svg]:size-5';
+    const interactive =
+        'inline-flex items-center justify-center font-bold transition-colors outline-none hover:bg-surface-hover focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:bg-surface-selected';
+    const buttonLabel = t(
+        state.count === 1 ? 'likes.button_one' : 'likes.button',
+        { label, count: state.count },
+    );
+    const countText = <span aria-hidden="true">{state.count}</span>;
 
-    if (!canLike || requiresAuthentication) {
-        const content = (
+    if (guest) {
+        return (
             <>
+                <ActionTip label={label}>
+                    <button
+                        type="button"
+                        aria-label={buttonLabel}
+                        aria-haspopup="dialog"
+                        onClick={() => setPrompt(true)}
+                        className={cn(
+                            interactive,
+                            sizes,
+                            'text-text-secondary hover:text-text-primary',
+                            className,
+                        )}
+                    >
+                        <Heart
+                            aria-hidden="true"
+                            className={size === 'sm' ? 'size-4' : 'size-5'}
+                        />
+                        {countText}
+                    </button>
+                </ActionTip>
+                <SignInPrompt
+                    action="like"
+                    open={prompt}
+                    onClose={() => setPrompt(false)}
+                />
+            </>
+        );
+    }
+
+    if (!canLike) {
+        return (
+            <span
+                title={ownHint}
+                className={cn(
+                    'inline-flex items-center justify-center font-bold text-text-secondary',
+                    sizes,
+                    className,
+                )}
+            >
                 <Heart
                     aria-hidden="true"
                     className={size === 'sm' ? 'size-4' : 'size-5'}
                 />
-                <span
-                    aria-hidden="true"
-                    className={
-                        size === 'sm'
-                            ? 'text-caption leading-3'
-                            : 'text-xs leading-3'
-                    }
-                >
-                    {state.count}
-                </span>
+                {countText}
                 <span className="sr-only">
                     {t(state.count === 1 ? 'likes.count_one' : 'likes.count', {
                         count: state.count,
                     })}
                 </span>
-            </>
-        );
-        const actionClass = cn(
-            'inline-flex items-center justify-center gap-0.5 font-bold text-text-secondary outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-            sizes,
-            className,
-        );
-
-        return (
-            <>
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            {requiresAuthentication ? (
-                                <button
-                                    type="button"
-                                    aria-label={t(
-                                        state.count === 1
-                                            ? 'likes.button_one'
-                                            : 'likes.button',
-                                        { label, count: state.count },
-                                    )}
-                                    onClick={() => setAuthDialogOpen(true)}
-                                    className={actionClass}
-                                >
-                                    {content}
-                                </button>
-                            ) : (
-                                <span
-                                    tabIndex={0}
-                                    title={ownHint}
-                                    className={actionClass}
-                                >
-                                    {content}
-                                </span>
-                            )}
-                        </TooltipTrigger>
-                        <TooltipContent side="left">
-                            {ownHint ?? label}
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-                {requiresAuthentication && (
-                    <Dialog
-                        open={authDialogOpen}
-                        onOpenChange={setAuthDialogOpen}
-                    >
-                        <DialogContent className="sm:max-w-md">
-                            <DialogHeader>
-                                <DialogTitle className="font-display text-h3 font-extrabold">
-                                    {t('likes.auth.title')}
-                                </DialogTitle>
-                                <DialogDescription>
-                                    {t('likes.auth.description')}
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-                                <Button
-                                    asChild
-                                    variant="outline"
-                                    size="md"
-                                    className="w-full sm:w-auto"
-                                >
-                                    <Link href={register()}>
-                                        {t('account.login.create_account')}
-                                    </Link>
-                                </Button>
-                                <Button
-                                    asChild
-                                    size="md"
-                                    className="w-full sm:w-auto"
-                                >
-                                    <Link href={login()}>
-                                        {t('account.login.submit')}
-                                    </Link>
-                                </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                )}
-            </>
+            </span>
         );
     }
 
@@ -224,78 +168,55 @@ export default function LikeButton({
     }
 
     return (
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <button
-                        type="button"
-                        aria-pressed={state.liked}
-                        aria-label={t(
-                            state.count === 1
-                                ? 'likes.button_one'
-                                : 'likes.button',
-                            {
-                                label,
-                                count: state.count,
-                            },
-                        )}
-                        onClick={toggle}
-                        className={cn(
-                            'inline-flex items-center justify-center font-bold transition-colors outline-none hover:bg-surface-hover focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:bg-surface-selected',
-                            sizes,
-                            state.liked
-                                ? 'bg-primary/10 text-primary-text'
-                                : 'text-text-secondary hover:text-text-primary',
-                            className,
-                        )}
-                    >
-                        <span className="relative inline-flex">
-                            {bursts.map((id) => (
-                                <span
-                                    key={id}
-                                    aria-hidden="true"
-                                    className="like-hearts"
-                                >
-                                    {HEARTS.map((heart, index) => (
-                                        <i
-                                            key={index}
-                                            style={
-                                                {
-                                                    '--heart-x': `${heart.x}px`,
-                                                    '--heart-y': `${heart.y}px`,
-                                                    '--heart-scale':
-                                                        heart.scale,
-                                                    animationDelay: `${heart.delay}ms`,
-                                                } as CSSProperties
-                                            }
-                                        >
-                                            <Heart className="fill-current" />
-                                        </i>
-                                    ))}
-                                </span>
-                            ))}
-                            <Heart
-                                aria-hidden="true"
-                                className={cn(
-                                    size === 'sm' ? 'size-4' : 'size-5',
-                                    state.liked && 'like-pop fill-current',
-                                )}
-                            />
-                        </span>
+        <ActionTip label={label}>
+            <button
+                type="button"
+                aria-pressed={state.liked}
+                aria-label={buttonLabel}
+                onClick={toggle}
+                className={cn(
+                    interactive,
+                    sizes,
+                    state.liked
+                        ? 'bg-primary/10 text-primary-text'
+                        : 'text-text-secondary hover:text-text-primary',
+                    className,
+                )}
+            >
+                <span className="relative inline-flex">
+                    {bursts.map((id) => (
                         <span
+                            key={id}
                             aria-hidden="true"
-                            className={
-                                size === 'sm'
-                                    ? 'text-caption leading-3'
-                                    : 'text-xs leading-3'
-                            }
+                            className="like-hearts"
                         >
-                            {state.count}
+                            {HEARTS.map((heart, index) => (
+                                <i
+                                    key={index}
+                                    style={
+                                        {
+                                            '--heart-x': `${heart.x}px`,
+                                            '--heart-y': `${heart.y}px`,
+                                            '--heart-scale': heart.scale,
+                                            animationDelay: `${heart.delay}ms`,
+                                        } as CSSProperties
+                                    }
+                                >
+                                    <Heart className="fill-current" />
+                                </i>
+                            ))}
                         </span>
-                    </button>
-                </TooltipTrigger>
-                <TooltipContent side="left">{label}</TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
+                    ))}
+                    <Heart
+                        aria-hidden="true"
+                        className={cn(
+                            size === 'sm' ? 'size-4' : 'size-5',
+                            state.liked && 'like-pop fill-current',
+                        )}
+                    />
+                </span>
+                {countText}
+            </button>
+        </ActionTip>
     );
 }

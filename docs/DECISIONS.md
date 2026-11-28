@@ -879,3 +879,29 @@ As convenções de modelagem (chaves estrangeiras, estados, índices e anonimiza
     - **Tabelas do painel no celular:** os textos só para leitores de tela das tabelas (posição absoluta) escapavam da área com rolagem e esticavam a página, e o navegador do celular diminuía o zoom. As tabelas com rolagem própria usam `TableRegion` (`components/ui`), que prende esses textos; um teste confere que as páginas do painel cabem na tela do celular.
 - **Fora desta fatia:** os desfechos com penalidade (suspensão e banimento) e a prioridade de quem tem penalidade ativa entram com a fatia 21.
 - **Alternativas descartadas:** copiar o conteúdo na denúncia (contraria o RF-174); uma decisão por denúncia (a mesma coisa julgada várias vezes, com resultados que podem divergir); esconder o conteúdo denunciado até a análise (contraria o RF-165); guardar o "em análise" como status próprio (os requisitos só têm aberta, procedente e improcedente).
+
+### D92 — Penalidades e contestação
+
+- **Status:** Aprovada (28/11/2026).
+- **Contexto:** a fatia 21 entrega suspensão (p6-10), banimento (p6-11) e contestação (p6-12), nas pranchas "Admin · Usuário e penalidade", "Contestações", "Conta suspensa" e "Contestar suspensão". A primeira versão (PR #42) foi revista antes do merge.
+- **Decisão:**
+    - **Quem penaliza:** a administradora, nunca a si mesma nem outra administradora. Uma penalidade ativa por conta. Item da Política e justificativa sempre, pelo diálogo da página da conta, que mostra o efeito antes de confirmar; nada de valores fixos.
+    - **Suspensão (RF-206 a RF-223):** 7, 15 ou 30 dias, como na prancha. Nada é apagado: perfil, artigos e comentários saem de vista pela regra única (`User::excludePenalized`, `notPenalized`), que mantém o conteúdo de contas excluídas (RF-051). Versões na fila voltam a rascunho; com rascunho, fica o mais novo (D87). A limpeza da lixeira e das notificações pula a conta, e a reativação empurra esses prazos pelo tempo da suspensão (A24). Termina sozinha por rotina, com e-mail.
+    - **Banimento (RF-224 a RF-227):** apaga na hora artigos (com as imagens), comentários, curtidas e favoritos; conta e perfil ficam retidos e ocultos. O diálogo exige confirmar que o conteúdo é apagado. A conta é excluída quando acaba a chance de contestar: prazo vencido sem pedido ou pedido rejeitado.
+    - **Acesso:** quem está penalizada e entra vê a tela da conta penalizada (até quando, o motivo e o caminho para contestar) e pode sair, ler as políticas e enviar a contestação; o resto leva para lá.
+    - **Contestação (RF-228 a RF-243):** pelo link assinado do e-mail, sem login, uma por penalidade, em 7 dias. Os erros aparecem no campo. Aceita: a penalidade é anulada (o estado sai da contestação, o histórico não se reescreve) e a conta volta na hora; no banimento, só conta e perfil. Rejeitada: e-mail e aviso no site. Sem segunda revisão.
+    - **Reabrir (RF-234):** só o prazo de um banimento retido que venceu sem pedido, por mais 7 dias, com novo e-mail. Não reabre contestação decidida.
+    - **Denúncia procedente com penalidade:** no mesmo formulário da decisão, "aplicar também uma suspensão", com o mesmo item e justificativa. Denúncias contra quem tem penalidade ativa vêm primeiro (RF-216).
+    - **Painel:** "Usuários" com busca (o texto digitado não vira curinga) e a página da conta com os números, o histórico, reativar e reabrir o prazo; "Contestações" com abertas, aceitas e rejeitadas.
+- **Alternativas descartadas:** número livre de dias (casos parecidos com durações diferentes); reabrir a contestação rejeitada (seria uma segunda revisão, contra o RF-233); `whereHas` para esconder o conteúdo (some com os artigos de contas excluídas).
+
+### D94 — Convite para visitantes participarem
+
+- **Status:** Aprovada (28/11/2026). Altera o RF-141.
+- **Contexto:** o RF-141 mandava não mostrar convite a quem não pode participar, e o visitante via só contagens. Na revisão de UX, o coração e o marcador "mortos" pareciam quebrados, e a primeira versão do convite (PR #42) valia só para curtir e levava à página inicial depois do login.
+- **Decisão:**
+    - Para quem visita, curtir, favoritar, denunciar e comentar abrem o mesmo convite (`SignInPrompt`): "Entre para curtir" (ou favoritar, comentar, denunciar), com "Entrar" e "Criar conta".
+    - Depois de entrar ou criar a conta, a pessoa volta para a página onde estava: o link leva `redirect` com o caminho, e o servidor só aceita caminhos do próprio site, para não virar redirecionamento aberto.
+    - Quem tem conta e não pode participar (e-mail sem confirmar, o próprio conteúdo) continua vendo só a contagem, que não é um botão nem para no teclado.
+    - As contagens públicas de curtidas e favoritos continuam visíveis para todos (RF-152, RF-161).
+- **Alternativas descartadas:** manter só contagens (parecia defeito); convidar só no curtir (cada ação com uma regra); levar ao login sem voltar (a pessoa perdia o artigo).

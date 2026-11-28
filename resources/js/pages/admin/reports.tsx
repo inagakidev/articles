@@ -41,6 +41,8 @@ type Group = {
     target: Target;
     id: number;
     count: number;
+    /** Quem escreveu tem penalidade ativa: analisar primeiro (RF-216). */
+    priority: boolean;
     since: string;
     reasons: string[];
     item: Item;
@@ -76,6 +78,8 @@ type Props = {
     };
     selected?: Selected;
     policyItems?: PolicyItem[];
+    /** Durações da suspensão para "procedente com penalidade" (D92). */
+    durations?: number[];
     neighbours?: { previous: Key; next: Key };
 };
 
@@ -135,6 +139,7 @@ export default function Reports({
     groups,
     selected,
     policyItems = [],
+    durations = [],
     neighbours,
 }: Props) {
     const { t, locale } = useTranslation();
@@ -266,6 +271,13 @@ export default function Reports({
                                                         `reports.admin.target.${group.target}`,
                                                     )}
                                                 </span>
+                                                {group.priority && (
+                                                    <span className="ml-2 rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-bold text-warning-on-bg">
+                                                        {t(
+                                                            'reports.admin.priority',
+                                                        )}
+                                                    </span>
+                                                )}
                                                 <span className="mt-0.5 block font-bold">
                                                     {itemLine(group, t)}
                                                 </span>
@@ -363,6 +375,7 @@ export default function Reports({
                     key={`${selected.target}-${selected.id}`}
                     selected={selected}
                     policyItems={policyItems}
+                    durations={durations}
                     backHref={listUrl(filters)}
                 />
             )}
@@ -411,14 +424,17 @@ function PersonLine({ person }: { person: Person }) {
 function Analysis({
     selected,
     policyItems,
+    durations,
     backHref,
 }: {
     selected: Selected;
     policyItems: PolicyItem[];
+    durations: number[];
     backHref: string;
 }) {
     const { t, locale } = useTranslation();
     const [outcome, setOutcome] = useState<Outcome | null>(null);
+    const [penalize, setPenalize] = useState(false);
     const item = selected.item;
     const open = selected.status === 'open';
 
@@ -589,6 +605,56 @@ function Analysis({
                                     withItem={outcome !== 'dismiss'}
                                     reasonHint={t('reports.admin.reason_hint')}
                                 />
+                            )}
+
+                            {outcome && outcome !== 'dismiss' && (
+                                <div className="flex flex-col gap-2 rounded-xl border border-border-strong p-3.5">
+                                    <label className="flex items-center gap-2.5 text-label font-bold">
+                                        <input
+                                            type="checkbox"
+                                            checked={penalize}
+                                            onChange={(event) =>
+                                                setPenalize(
+                                                    event.target.checked,
+                                                )
+                                            }
+                                            className="size-4 accent-primary"
+                                        />
+                                        {t('reports.admin.penalize')}
+                                    </label>
+                                    {penalize && (
+                                        <div className="flex flex-col gap-1.5 pl-6.5">
+                                            <label
+                                                htmlFor={`denuncia-penalidade-${selected.id}`}
+                                                className="text-meta font-bold"
+                                            >
+                                                {t('penalties.fields.days')}
+                                            </label>
+                                            <select
+                                                id={`denuncia-penalidade-${selected.id}`}
+                                                name="penalty_days"
+                                                defaultValue={durations[0]}
+                                                className="h-11 w-full rounded-xl border border-border-strong bg-surface px-3 text-[0.9375rem] sm:w-60"
+                                            >
+                                                {durations.map((days) => (
+                                                    <option
+                                                        key={days}
+                                                        value={days}
+                                                    >
+                                                        {t('penalties.days', {
+                                                            days,
+                                                        })}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <span className="text-caption text-text-secondary">
+                                                {t(
+                                                    'reports.admin.penalize_hint',
+                                                )}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
                             )}
 
                             {outcome === 'delete_comment' &&

@@ -3,6 +3,7 @@
 use App\Domain\Articles\Enums\VersionStatus;
 use App\Domain\Audit\Actions\RecordAudit;
 use App\Domain\Audit\Enums\AuditAction;
+use App\Models\Appeal;
 use App\Models\Article;
 use App\Models\ArticleImage;
 use App\Models\ArticleVersion;
@@ -10,11 +11,13 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\CommentLike;
 use App\Models\Favorite;
+use App\Models\Penalty;
 use App\Models\Report;
 use App\Models\Tag;
 use App\Models\User;
 use App\Notifications\Articles\VersionRejected;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 /*
  * Cada tela pública passa pelo axe nos dois temas, nos dois idiomas e no
@@ -310,7 +313,7 @@ it('não tem problemas de acessibilidade no compartilhar', function () {
 
     visit('/artigos/'.$article->slug)
         ->withLocale('pt-BR')
-        ->click('article .border-y button[aria-label="Compartilhar"]')
+        ->click('button[aria-label="Compartilhar"]:visible')
         ->wait(ENTRANCE_SECONDS)
         ->assertSee('Compartilhar artigo')
         ->assertNoAccessibilityIssues();
@@ -372,7 +375,7 @@ it('não tem problemas de acessibilidade na moderação pela leitura', function 
 
     visit('/artigos/'.$article->slug)
         ->withLocale('pt-BR')
-        ->press('Moderação')
+        ->click('button[aria-label="Moderação"]:visible')
         ->click('Despublicar')
         ->wait(ENTRANCE_SECONDS)
         ->assertSee('Despublicar o artigo')
@@ -482,7 +485,7 @@ it('não tem problemas de acessibilidade nas denúncias', function (string $mode
     // página para no meio delas. Pausar as animações as mostra inteiras.
     $reading->wait(ENTRANCE_SECONDS)
         ->script("document.documentElement.classList.add('motion-paused')");
-    $reading->click('article .border-y button[aria-label="Denunciar artigo"]')
+    $reading->click('button[aria-label="Denunciar artigo"]:visible')
         ->wait(0.5)
         ->click('Outro')
         // O botão de enviar troca de cor ao ficar ativo; espera a transição
@@ -520,5 +523,52 @@ it('não tem problemas de acessibilidade na troca obrigatória de username', fun
     $page->wait(ENTRANCE_SECONDS)
         ->assertSee('Escolha um novo username')
         ->type('#username', 'pedro')
+        ->assertNoAccessibilityIssues();
+})->with(['claro', 'escuro', 'celular']);
+
+it('não tem problemas de acessibilidade nas penalidades', function (string $mode) {
+    $adminUser = User::factory()->admin()->create();
+    $user = User::factory()->create(['username' => 'caio-lima']);
+    $this->actingAs($adminUser)->post(route('admin.users.suspend', $user), [
+        'days' => 7, 'policy_item' => '1.2', 'reason' => 'Três artigos com links de afiliado sem aviso.',
+    ]);
+    $penalty = Penalty::query()->sole();
+    Appeal::query()->create([
+        'penalty_id' => $penalty->id, 'user_id' => $user->id, 'justification' => 'Os links eram da documentação oficial.',
+    ]);
+    $other = User::factory()->create();
+
+    $apply = fn ($page) => match ($mode) {
+        'escuro' => $page->inDarkMode(),
+        'celular' => $page->on()->mobile(),
+        default => $page,
+    };
+
+    // O painel: usuários, a conta com o diálogo da penalidade e as contestações
+    foreach (['/admin/users', '/admin/users/'.$user->id, '/admin/appeals'] as $url) {
+        $page = $apply(visit($url)->withLocale('pt-BR'))->wait(ENTRANCE_SECONDS);
+        $page->assertNoAccessibilityIssues();
+
+        if ($mode === 'celular') {
+            expect($page->script('window.innerWidth <= screen.width'))->toBeTrue("{$url} passa da largura da tela");
+        }
+    }
+    $apply(visit('/admin/users/'.$other->id)->withLocale('pt-BR'))
+        ->wait(ENTRANCE_SECONDS)
+        ->click('button.bg-danger-bg')
+        ->wait(0.5)
+        ->assertSee('Nada é apagado')
+        ->assertNoAccessibilityIssues();
+
+    // Quem foi penalizada: o aviso da conta e a contestação pelo link
+    $this->actingAs($user->fresh());
+    $apply(visit('/conta/suspensa')->withLocale('pt-BR'))
+        ->wait(ENTRANCE_SECONDS)
+        ->assertSee('Sua conta está suspensa')
+        ->assertNoAccessibilityIssues();
+    $link = URL::temporarySignedRoute('penalty.appeal', $penalty->appeal_deadline_at, ['penalty' => $penalty->id]);
+    $apply(visit($link)->withLocale('pt-BR'))
+        ->wait(ENTRANCE_SECONDS)
+        ->assertSee('Esta penalidade já foi contestada')
         ->assertNoAccessibilityIssues();
 })->with(['claro', 'escuro', 'celular']);

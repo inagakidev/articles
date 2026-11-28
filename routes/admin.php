@@ -50,6 +50,7 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])
 
             // Usuários penalizados e contestações (RF-254 a RF-260, fatia 21)
             Route::get('users', [UserPenaltyController::class, 'index'])->name('users');
+            Route::get('users/{user}', [UserPenaltyController::class, 'show'])->name('users.show');
             Route::post('users/{user}/suspend', [UserPenaltyController::class, 'suspend'])->name('users.suspend');
             Route::post('users/{user}/ban', [UserPenaltyController::class, 'ban'])->name('users.ban');
             Route::post('users/{user}/reactivate', [UserPenaltyController::class, 'reactivate'])->name('users.reactivate');

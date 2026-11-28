@@ -26,9 +26,11 @@ class PenaltyController extends Controller
                 'policyItem' => $penalty->policy_item,
                 'endsAt' => $penalty->ends_at?->toIso8601String(),
                 'appealDeadline' => $penalty->appeal_deadline_at?->toIso8601String(),
-                'appealUrl' => $penalty->appeal_deadline_at?->isFuture()
+                'appealUrl' => $penalty->appealable() && $penalty->appeal_deadline_at !== null
                     ? URL::temporarySignedRoute('penalty.appeal', $penalty->appeal_deadline_at, ['penalty' => $penalty->id])
                     : null,
+                'appealed' => $penalty->appeal()->exists(),
+                'notifiedAt' => $penalty->starts_at->toIso8601String(),
             ] : null,
         ]);
     }
@@ -41,8 +43,11 @@ class PenaltyController extends Controller
             'penaltyId' => $penalty->id,
             'type' => $penalty->type->value,
             'policyItem' => $penalty->policy_item,
+            'reason' => $penalty->reason,
+            'endsAt' => $penalty->ends_at?->toIso8601String(),
             'deadline' => $penalty->appeal_deadline_at?->toIso8601String(),
             'alreadyAppealed' => $penalty->appeal()->exists(),
+            'open' => $penalty->appealable(),
             'submitUrl' => URL::temporarySignedRoute('penalty.appeal.submit', $penalty->appeal_deadline_at ?? now()->addDays(7), ['penalty' => $penalty->id]),
         ]);
     }
