@@ -11,7 +11,7 @@ import {
     solidOver,
 } from './design-tokens';
 
-const css = readProjectFile('resources/css/app.css');
+const css = readProjectFile('resources/css/app/tokens.css');
 const design = readProjectFile('docs/DESIGN.md');
 const tokens = readThemeTokens(css);
 const themes: Theme[] = ['claro', 'escuro'];

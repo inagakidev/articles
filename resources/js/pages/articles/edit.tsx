@@ -1,9 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { EditorContent, useEditor } from '@tiptap/react';
-import type { Editor } from '@tiptap/react';
 import { ArrowLeft, Eye, Send, SlidersHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import CoverField from '@/components/editor/cover-field';
 import type { Cover } from '@/components/editor/cover-field';
 import DetailsPanel from '@/components/editor/details-panel';
@@ -20,12 +19,14 @@ import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import StatusBadge from '@/components/articles/status-badge';
 import { needsAlt } from '@/components/editor/image-alt-field';
 import { useAutosave } from '@/hooks/use-autosave';
-import type { DraftFields, SaveStatus } from '@/hooks/use-autosave';
+import type { DraftFields } from '@/hooks/use-autosave';
 import { IMAGE_ACCEPT, useImageUpload } from '@/hooks/use-image-upload';
 import { useTranslation } from '@/lib/i18n';
 import { mine, preview } from '@/routes/articles';
 import * as submission from '@/routes/articles/submission';
-
+import SaveIndicator from '@/components/editor/save-indicator';
+import TitleField from '@/components/editor/title-field';
+import { useEditorCounts } from '@/hooks/use-editor-counts';
 type Props = {
     articleId: number | null;
     published: boolean;
@@ -439,176 +440,4 @@ export default function Edit(props: Props) {
             </Sheet>
         </>
     );
-}
-
-function SaveIndicator({
-    status,
-    savedAt,
-}: {
-    status: SaveStatus;
-    savedAt: string | null;
-}) {
-    const { t, locale } = useTranslation();
-    const time = savedAt
-        ? new Intl.DateTimeFormat(locale.replace('_', '-'), {
-              hour: '2-digit',
-              minute: '2-digit',
-          }).format(new Date(savedAt))
-        : '';
-    const text =
-        status === 'saving'
-            ? t('editor.status.saving')
-            : status === 'error'
-              ? t('editor.status.error')
-              : status === 'invalid'
-                ? t('editor.status.invalid')
-                : savedAt
-                  ? t('editor.status.saved', { time })
-                  : t('editor.status.unsaved');
-
-    return (
-        <span
-            role="status"
-            className={
-                status === 'error' || status === 'invalid'
-                    ? 'truncate text-caption font-semibold text-danger-fg'
-                    : 'truncate text-caption text-text-secondary'
-            }
-        >
-            {text}
-        </span>
-    );
-}
-
-function TitleField({
-    value,
-    max,
-    error,
-    onChange,
-    onEnter,
-}: {
-    value: string;
-    max: number;
-    error?: string;
-    onChange: (value: string) => void;
-    onEnter: () => void;
-}) {
-    const { t } = useTranslation();
-    const input = useRef<HTMLTextAreaElement>(null);
-
-    // O título cresce com o texto, sem barra de rolagem.
-    useEffect(() => {
-        const element = input.current;
-
-        if (element) {
-            element.style.height = 'auto';
-            element.style.height = `${element.scrollHeight}px`;
-        }
-    }, [value]);
-
-    return (
-        <div className="mb-6 flex flex-col gap-1">
-            <label htmlFor="title" className="sr-only">
-                {t('editor.title')}
-            </label>
-            <textarea
-                ref={input}
-                id="title"
-                rows={1}
-                value={value}
-                maxLength={max}
-                placeholder={t('editor.title_placeholder')}
-                aria-describedby="title-count"
-                aria-invalid={error ? true : undefined}
-                onChange={(event) =>
-                    onChange(event.target.value.replace(/\n/g, ' '))
-                }
-                onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        onEnter();
-                    }
-                }}
-                className="w-full resize-none overflow-hidden bg-transparent font-display text-[2.25rem]/11 font-extrabold tracking-[-0.02em] text-text-primary outline-none placeholder:text-text-muted"
-            />
-            <span
-                id="title-count"
-                className="self-end text-caption text-text-secondary"
-            >
-                {t('editor.title_count', { count: value.length, max })}
-            </span>
-            {error && <span className="text-meta text-danger-fg">{error}</span>}
-        </div>
-    );
-}
-
-type Counts = {
-    words: number;
-    characters: number;
-    empty: boolean;
-    images: number;
-    missingAlt: number;
-};
-
-function countsOf(editor: Editor): Counts {
-    return {
-        words: editor.storage.characterCount.words() as number,
-        characters: editor.storage.characterCount.characters() as number,
-        empty: editor.isEmpty,
-        ...imageCounts(editor),
-    };
-}
-
-/**
- * Contagens do texto, refeitas a cada mudança. Lê o editor atual, e não um
- * retrato guardado: no StrictMode o Tiptap cria o editor duas vezes, e o
- * `useEditorState` ficava preso ao primeiro (zerado) até a primeira edição.
- */
-function useEditorCounts(editor: Editor | null): Counts {
-    const [counts, setCounts] = useState<Counts>({
-        words: 0,
-        characters: 0,
-        empty: true,
-        images: 0,
-        missingAlt: 0,
-    });
-
-    useEffect(() => {
-        if (!editor) {
-            return;
-        }
-
-        const update = () => setCounts(countsOf(editor));
-        update();
-        editor.on('update', update);
-
-        return () => {
-            editor.off('update', update);
-        };
-    }, [editor]);
-
-    return counts;
-}
-
-/** Quantas imagens o texto tem e quantas ainda sem texto alternativo. */
-function imageCounts(editor: Editor | null) {
-    let images = 0;
-    let missingAlt = 0;
-
-    editor?.state.doc.descendants((node) => {
-        if (node.type.name === 'image') {
-            images += 1;
-
-            if (
-                needsAlt(
-                    node.attrs.alt as string | null,
-                    node.attrs.decorative === true,
-                )
-            ) {
-                missingAlt += 1;
-            }
-        }
-    });
-
-    return { images, missingAlt };
 }

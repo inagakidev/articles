@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * Faixa que rola sem fim (efeito em app.css). O conteúdo aparece duas vezes
+ * Faixa que rola sem fim (efeito em css/app/effects.css). O conteúdo aparece duas vezes
  * para emendar o fim no começo; a cópia fica oculta para leitores de tela.
  * Pausa ao passar o mouse, com foco dentro ou com "Pausar animações".
  */

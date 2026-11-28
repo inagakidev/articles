@@ -5,7 +5,7 @@ import { useTranslation } from '@/lib/i18n';
 const ANIMATED_MAX = 999;
 
 /**
- * Número que conta de 0 até o valor ao aparecer (efeito em app.css). O
+ * Número que conta de 0 até o valor ao aparecer (efeito em css/app/effects.css). O
  * leitor de tela lê só o valor final, já formatado no idioma da página.
  */
 export default function CountUp({ value }: { value: number }) {

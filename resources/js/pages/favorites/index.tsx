@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import ArticleCard from '@/components/articles/article-card';
 import { Button } from '@/components/ui/button';
 import Mascot from '@/components/ui/mascot';
+import MascotStage from '@/components/ui/mascot-stage';
 import Pagination from '@/components/ui/pagination';
 import { useTranslation } from '@/lib/i18n';
 import { index as articlesIndex } from '@/routes/articles';
@@ -230,21 +231,9 @@ function Empty() {
 
     return (
         <section className="flex flex-col items-center gap-3.5 px-2 py-8 text-center">
-            <div className="relative flex items-center justify-center p-6">
-                {ripples.map((size, index) => (
-                    <span
-                        key={size}
-                        aria-hidden="true"
-                        className="ripple"
-                        style={{
-                            width: size,
-                            height: size,
-                            animationDelay: `${index * 0.7}s`,
-                        }}
-                    />
-                ))}
+            <MascotStage ripples={ripples} className="p-6">
                 <Mascot art="lendo" size={180} float className="relative" />
-            </div>
+            </MascotStage>
             <strong className="font-display text-[1.375rem] font-extrabold">
                 {t('favorites.empty.title')}
             </strong>

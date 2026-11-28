@@ -3,6 +3,7 @@ import { House } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SearchForm from '@/components/search/search-form';
 import Mascot from '@/components/ui/mascot';
+import MascotStage from '@/components/ui/mascot-stage';
 import { useTranslation } from '@/lib/i18n';
 import { home } from '@/routes';
 import { index as articles } from '@/routes/articles';
@@ -20,26 +21,18 @@ export default function NotFound() {
         <>
             <Head title={t('not_found.title')} />
             <section className="mx-auto flex w-full max-w-250 flex-wrap items-center justify-center gap-x-14 gap-y-6 overflow-hidden px-4 pt-12 pb-24 sm:px-8">
-                <div className="relative flex items-center justify-center p-6">
-                    {ripples.map((size, index) => (
-                        <span
-                            key={size}
-                            aria-hidden="true"
-                            className="ripple max-sm:hidden"
-                            style={{
-                                width: size,
-                                height: size,
-                                animationDelay: `${index * 0.7}s`,
-                            }}
-                        />
-                    ))}
+                <MascotStage
+                    ripples={ripples}
+                    hideRipplesOnMobile
+                    className="p-6"
+                >
                     <Mascot
                         art="procurando"
                         size={280}
                         float
                         className="relative max-w-[60vw]"
                     />
-                </div>
+                </MascotStage>
                 <div className="flex flex-[0_1_460px] flex-col items-start gap-4.5">
                     <h1 className="font-display text-[2.25rem]/11 font-extrabold tracking-[-0.02em]">
                         {t('not_found.title')}

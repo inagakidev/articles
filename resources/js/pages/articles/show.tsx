@@ -11,6 +11,7 @@ import type { PolicyItem } from '@/components/moderation/decision-fields';
 import ReportButton from '@/components/reports/report-button';
 import ShareButton from '@/components/share/share-button';
 import Mascot from '@/components/ui/mascot';
+import MascotStage from '@/components/ui/mascot-stage';
 import { formatShortDate } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
 import { index as articles } from '@/routes/articles';
@@ -177,21 +178,9 @@ function ReadingEnd({ category }: { category: ReadableArticle['category'] }) {
 
     return (
         <div className="reveal mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-section bg-surface-muted px-7 py-6">
-            <div className="relative flex items-center justify-center p-6">
-                {ripples.map((size, index) => (
-                    <span
-                        key={size}
-                        aria-hidden="true"
-                        className="ripple"
-                        style={{
-                            width: size,
-                            height: size,
-                            animationDelay: `${index * 0.7}s`,
-                        }}
-                    />
-                ))}
+            <MascotStage ripples={ripples} className="p-6">
                 <Mascot art="lendo" size={112} float className="relative" />
-            </div>
+            </MascotStage>
             <div className="flex min-w-0 flex-[1_1_240px] flex-col gap-1.5">
                 <strong className="font-display text-h3 font-extrabold">
                     {t('reading.end.title')}

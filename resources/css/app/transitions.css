@@ -1,0 +1,41 @@
+/* Troca de tema e de idioma com a View Transitions API (D74). */
+/*
+ * Troca de tema e de idioma com a View Transitions API (D74). A classe no
+ * <html> diz qual efeito usar; sem ela, vale o esmaecer padrão do navegador.
+ */
+html.vt-theme::view-transition-old(root),
+html.vt-theme::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+html.vt-theme::view-transition-new(root) {
+    animation: vt-theme-reveal 0.6s var(--ease-emphasized);
+}
+@keyframes vt-theme-reveal {
+    from {
+        clip-path: circle(0 at var(--vt-x) var(--vt-y));
+    }
+    to {
+        clip-path: circle(var(--vt-radius) at var(--vt-x) var(--vt-y));
+    }
+}
+
+html.vt-locale::view-transition-old(root) {
+    animation: vt-locale-out 0.22s ease-in both;
+}
+html.vt-locale::view-transition-new(root) {
+    animation: vt-locale-in 0.38s var(--ease-emphasized) both;
+}
+@keyframes vt-locale-out {
+    to {
+        opacity: 0;
+        filter: blur(6px);
+    }
+}
+@keyframes vt-locale-in {
+    from {
+        opacity: 0;
+        filter: blur(6px);
+        transform: translateY(6px);
+    }
+}

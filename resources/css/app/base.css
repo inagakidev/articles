@@ -1,0 +1,38 @@
+/* Regras de base: corpo, ícones e o anel de foco. */
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-bg font-sans text-text-primary;
+    }
+
+    h1,
+    h2,
+    h3 {
+        @apply font-display;
+    }
+
+    /* Ícones dentro de flex não encolhem nem ficam achatados */
+    svg.lucide {
+        flex-shrink: 0;
+    }
+
+    /* Anel de foco do DESIGN §2.8: sólido, 2px, deslocado da borda */
+    :focus-visible {
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+}

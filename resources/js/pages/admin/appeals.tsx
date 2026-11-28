@@ -1,4 +1,4 @@
-import { Form, Head, Link } from '@inertiajs/react';
+import { Form, Head } from '@inertiajs/react';
 import { Scale } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { shortDate } from '@/lib/dates';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { appeals as appealsRoute } from '@/routes/admin';
+import SegmentedNav from '@/components/ui/segmented-nav';
 import { decide } from '@/routes/admin/appeals';
 
 type Status = 'open' | 'accepted' | 'rejected';
@@ -78,30 +79,22 @@ export default function Appeals({ filters, openCount, appeals }: Props) {
                 </p>
             </div>
 
-            <nav
-                aria-label={t('appeals.admin.status_label')}
-                className="inline-flex gap-1 self-start rounded-full bg-surface-muted p-1"
-            >
-                {STATUSES.map((status) => (
-                    <Link
-                        key={status}
-                        href={listUrl(status)}
-                        aria-current={
-                            filters.status === status ? 'page' : undefined
-                        }
-                        className={cn(
-                            'inline-flex h-9 items-center rounded-full px-4 text-meta font-bold',
-                            filters.status === status
-                                ? 'bg-surface shadow-sm'
-                                : 'text-text-secondary hover:text-text-primary',
-                        )}
-                    >
-                        {status === 'open'
+            <SegmentedNav
+                label={t('appeals.admin.status_label')}
+
+                current={filters.status}
+
+                items={STATUSES.map((status) => ({
+                    key: status,
+
+                    href: listUrl(status),
+
+                    label:
+                        status === 'open'
                             ? t('appeals.admin.open', { count: openCount })
-                            : t(`appeals.admin.tabs.${status}`)}
-                    </Link>
-                ))}
-            </nav>
+                            : t(`appeals.admin.tabs.${status}`),
+                }))}
+            />
 
             {appeals.total === 0 ? (
                 <EmptyState

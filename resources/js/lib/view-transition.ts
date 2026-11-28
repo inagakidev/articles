@@ -4,7 +4,7 @@
  * instantânea, como antes.
  */
 
-/** Classe no <html> enquanto a transição roda; o app.css escolhe o efeito por ela. */
+/** Classe no <html> enquanto a transição roda; css/app/transitions.css escolhe o efeito por ela. */
 export type TransitionKind = 'vt-theme' | 'vt-locale';
 
 export function canAnimateTransition(): boolean {

@@ -4,12 +4,13 @@ import NotificationRow from '@/components/notifications/notification-row';
 import type { NotificationItem } from '@/components/notifications/types';
 import { Button } from '@/components/ui/button';
 import Mascot from '@/components/ui/mascot';
+import MascotStage from '@/components/ui/mascot-stage';
 import Pagination from '@/components/ui/pagination';
 import { isToday } from '@/lib/dates';
 import { useTranslation } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/i18n';
-import { cn } from '@/lib/utils';
 import { mine } from '@/routes/articles';
+import SegmentedNav from '@/components/ui/segmented-nav';
 import * as notifications from '@/routes/notifications';
 
 type Filter = 'todas' | 'nao-lidas';
@@ -126,35 +127,34 @@ export default function Notifications({
                     </div>
                 </div>
 
-                <nav
-                    aria-label={t('notifications.filter')}
-                    className="inline-flex gap-1 self-start rounded-full bg-surface-muted p-1"
-                >
-                    {(['todas', 'nao-lidas'] as const).map((option) => (
-                        <Link
-                            key={option}
-                            href={pageUrl(option)}
-                            preserveScroll
-                            aria-current={
-                                filter === option ? 'page' : undefined
-                            }
-                            className={cn(
-                                'inline-flex h-9 items-center rounded-full px-4 text-meta font-bold',
-                                filter === option
-                                    ? 'bg-surface shadow-sm'
-                                    : 'text-text-secondary hover:text-text-primary',
-                            )}
-                        >
-                            {option === 'todas'
-                                ? t('notifications.all')
-                                : unread > 0
-                                  ? t('notifications.unread_tab', {
-                                        count: unread,
-                                    })
-                                  : t('notifications.unread_tab_empty')}
-                        </Link>
-                    ))}
-                </nav>
+                <SegmentedNav
+                    label={t('notifications.filter')}
+
+                    current={filter}
+
+                    preserveScroll
+
+                    items={[
+                        {
+                            key: 'todas',
+                            href: pageUrl('todas'),
+                            label: t('notifications.all'),
+                        },
+
+                        {
+                            key: 'nao-lidas',
+
+                            href: pageUrl('nao-lidas'),
+
+                            label:
+                                unread > 0
+                                    ? t('notifications.unread_tab', {
+                                          count: unread,
+                                      })
+                                    : t('notifications.unread_tab_empty'),
+                        },
+                    ]}
+                />
 
                 {page.total === 0 ? (
                     <Empty filtered={filter === 'nao-lidas'} />
@@ -206,21 +206,9 @@ function Empty({ filtered }: { filtered: boolean }) {
 
     return (
         <section className="flex flex-col items-center gap-3.5 px-2 py-8 text-center">
-            <div className="relative flex items-center justify-center p-6">
-                {ripples.map((size, index) => (
-                    <span
-                        key={size}
-                        aria-hidden="true"
-                        className="ripple"
-                        style={{
-                            width: size,
-                            height: size,
-                            animationDelay: `${index * 0.7}s`,
-                        }}
-                    />
-                ))}
+            <MascotStage ripples={ripples} className="p-6">
                 <Mascot art="dormindo" size={180} float className="relative" />
-            </div>
+            </MascotStage>
             <strong className="font-display text-[1.375rem] font-extrabold">
                 {t(
                     filtered

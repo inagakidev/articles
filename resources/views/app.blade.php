@@ -26,7 +26,7 @@
             })();
         </script>
 
-        {{-- Fundo antes de o CSS carregar: --color-bg de cada tema (app.css), conferido em design-tokens.test.ts --}}
+        {{-- Fundo antes de o CSS carregar: --color-bg de cada tema (css/app/tokens.css), conferido em design-tokens.test.ts --}}
         <style nonce="{{ Vite::cspNonce() }}">
             html {
                 background-color: #fffdf8;

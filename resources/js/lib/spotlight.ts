@@ -1,7 +1,7 @@
 import type { PointerEvent } from 'react';
 
 /**
- * Leva a posição do mouse para o brilho `.spotlight` (app.css). Só o mouse:
+ * Leva a posição do mouse para o brilho `.spotlight` (css/app/effects.css). Só o mouse:
  * no toque, o brilho não aparece.
  */
 export function followPointer(event: PointerEvent<HTMLElement>): void {

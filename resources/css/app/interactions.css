@@ -1,0 +1,88 @@
+/* Interações da leitura: comentário recém-publicado e a rajada de corações ao curtir (D88). */
+@layer components {
+    /* Comentário recém-publicado: entra subindo e o destaque se apaga */
+    .comment-new {
+        animation: comment-new 2.4s var(--ease-emphasized);
+    }
+    @keyframes comment-new {
+        0% {
+            opacity: 0;
+            transform: translateY(0.5rem);
+            background: var(--color-surface-selected);
+        }
+        15% {
+            opacity: 1;
+            transform: none;
+            background: var(--color-surface-selected);
+        }
+        100% {
+            background: transparent;
+        }
+    }
+    .motion-paused .comment-new {
+        animation: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .comment-new {
+            animation: none;
+            background: var(--color-surface-selected);
+        }
+    }
+    /* Curtir: o coração pula e solta uma rajada de corações que sobem */
+    .like-hearts {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+    .like-hearts i {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        color: var(--color-primary);
+        opacity: 0;
+        animation: like-heart 0.85s var(--ease-emphasized) forwards;
+    }
+    .like-hearts i svg {
+        width: 0.75rem;
+        height: 0.75rem;
+    }
+    @keyframes like-heart {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.3);
+        }
+        20% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            transform: translate(
+                    calc(-50% + var(--heart-x)),
+                    calc(-50% + var(--heart-y))
+                )
+                scale(var(--heart-scale));
+        }
+    }
+    .like-pop {
+        animation: like-pop 0.35s var(--ease-emphasized);
+    }
+    @keyframes like-pop {
+        40% {
+            transform: scale(1.3);
+        }
+    }
+    .motion-paused .like-hearts {
+        display: none;
+    }
+    .motion-paused .like-pop {
+        animation: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .like-hearts {
+            display: none;
+        }
+        .like-pop {
+            animation: none;
+        }
+    }
+}
